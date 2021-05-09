@@ -4,16 +4,15 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 
 public class MainWindow
 {
 
     //public static String workFolder;
-    final static double regPer = 0.1, midPer = 0.2, finPer = 0.7;
+    final static double REG_PER = 0.1, MID_PER = 0.2, FIN_PER = 0.7;
     private static final int W = 600, H = 450;
     static Student CURRENT_STUDENT = null;
-    private static JFrame mainWindow = new JFrame();
+    private static final JFrame mainWindow = new JFrame();
 
 
     static JMenu help;
@@ -193,8 +192,6 @@ public class MainWindow
         degreeBoxPanel.add(BA_);
         degreeBoxPanel.add(MA_);
         degreeBoxPanel.add(DO_);
-
-
         pInfoPanelSec = new JPanel(new GridLayout(8, 1));
         pInfoPanel.add(pInfoPanelSec);
         nameP = new QuickPanelWithTwoLabels("姓名:");
@@ -279,7 +276,10 @@ public class MainWindow
             public void mouseReleased(MouseEvent e)
             {
 
+
                 System.out.println("修改成功");
+                //重新加载
+                switchStu(CURRENT_STUDENT);
             }
         });
         cInfoPanel.add(confirmCgInfoButton);
@@ -373,7 +373,7 @@ public class MainWindow
                 super.mouseReleased(e);
                 for (Grade g : CURRENT_STUDENT.gradeArrayList)
                 {
-                    if (gradeSearch.t.getText().equals(g.courseID) || gradeSearch.t.getText().equals(g.courseName))
+                    if (gradeChangeSearchP.t.getText().equals(g.courseID) || gradeChangeSearchP.t.getText().equals(g.courseName))
                     {
                         courseName_cP.setText(g.courseName);
                         courseID_cP.setText(g.courseID);
@@ -461,6 +461,29 @@ public class MainWindow
         JButton changeConfirmButton = new JButton("确认修改");
         changeConfirmPanel.add(changeConfirmButton);
 
+        //修改成绩按钮监听
+        changeConfirmButton.addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseReleased(MouseEvent e)
+            {
+                super.mouseReleased(e);
+                for (int i = 0; i < CURRENT_STUDENT.gradeArrayList.size(); i++)
+                {
+                    if (gradeChangeSearchP.t.getText().equals(CURRENT_STUDENT.gradeArrayList.get(i).courseID)
+                            || gradeChangeSearchP.t.getText().equals(CURRENT_STUDENT.gradeArrayList.get(i).courseName))
+                    {
+                        CURRENT_STUDENT.gradeArrayList.get(i).reg = Integer.parseInt(courseRegG_cP.text.getText());
+                        CURRENT_STUDENT.gradeArrayList.get(i).mid = Integer.parseInt(courseMidG_cP.text.getText());
+                        CURRENT_STUDENT.gradeArrayList.get(i).fin = Integer.parseInt(courseFinG_cP.text.getText());
+
+                        break;
+                    }
+
+                }
+            }
+        });
+
 
         SimpleMotion.openMotion(mainWindow, W, H);
 
@@ -530,8 +553,7 @@ public class MainWindow
 
     static int calculateAvgGrade(int reg, int mid, int fin)
     {
-        int avg = (int) (reg * regPer + mid * midPer + fin * finPer);//改进try
-        return avg;
+        return (int) (reg * REG_PER + mid * MID_PER + fin * FIN_PER);
     }
 
     static boolean verifyGradeEditLegit(QuickPanelWithLabelAndText gradeEditPanel) throws InterruptedException, AWTException
@@ -554,12 +576,21 @@ public class MainWindow
 
     static boolean verifyInteger(String s)
     {
+        char[] cs = s.toCharArray();
+        for (var c : cs)
+        {
+            if (!Character.isDigit(c))
+            {
+                return false;
+            }
+        }
+        return true;
         //来源https://zhidao.baidu.com/question/584487915.html
-        Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
-        return pattern.matcher(s).matches();
+//        Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
+//        return pattern.matcher(s).matches();
     }
 
-    ArrayList<Student> initializeStudent() throws IOException
+    ArrayList<Student> initializeStudent()
     {
         ArrayList<Student> studentArrayList = new ArrayList<>();
         try
@@ -583,11 +614,12 @@ public class MainWindow
 
                 line = bufferedReader.readLine();
             }
-        } catch (IOException e)
+        } catch (IOException ignored)
         {
+
         }
         //加载整个成绩单
-        int csNum = 0;
+//      int csNum = 0;
         ArrayList<Grade> wholeGradeData = new ArrayList<Grade>();
         try
         {
@@ -600,17 +632,17 @@ public class MainWindow
             while (courseLine != null)
             {
                 String[] gradeLineArr = courseLine.split(",");//分割字符串
-                csNum = (gradeLineArr.length - 1) / 6;
+                //csNum = (gradeLineArr.length - 1) / 6;
                 for (int i = 1; i < gradeLineArr.length - 1; i += 6)
                 {
                     wholeGradeData.add(new Grade(gradeLineArr[0], gradeLineArr[i + 1], gradeLineArr[i],
-                            gradeLineArr[i + 2], Integer.valueOf(gradeLineArr[i + 3]),
-                            Integer.valueOf(gradeLineArr[i + 4]), Integer.valueOf(gradeLineArr[i + 5])));
+                            gradeLineArr[i + 2], Integer.parseInt(gradeLineArr[i + 3]),
+                            Integer.parseInt(gradeLineArr[i + 4]), Integer.parseInt(gradeLineArr[i + 5])));
                 }
 
                 courseLine = bufferedReader.readLine();
             }
-        } catch (IOException e)
+        } catch (IOException ignored)
         {
         }
         //学习来源：https://blog.csdn.net/shenziheng1/article/details/100110816

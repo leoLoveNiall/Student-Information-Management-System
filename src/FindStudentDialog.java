@@ -101,6 +101,7 @@ public class FindStudentDialog extends JDialog
                     try
                     {
                         SimpleMotion.displayErrorInfo(searchPanel.t, "找不到此学生");
+                        switchStuButton.setVisible(false);
                     } catch (InterruptedException interruptedException)
                     {
                         interruptedException.printStackTrace();
@@ -109,7 +110,7 @@ public class FindStudentDialog extends JDialog
                         awtException.printStackTrace();
                     }
                 }
-
+                else switchStuButton.setVisible(true);
                 SimpleMotion.upAndDown_B(findDialog, HEIGHT);
 
             }
