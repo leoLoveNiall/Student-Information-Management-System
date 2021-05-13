@@ -51,7 +51,8 @@ public class FindStudentDialog extends JDialog
             {
                 SimpleMotion.upAndDown_A(findDialog, HEIGHT);
                 stuSerInfoPanel.removeAll();
-                stuSerInfoPanel.add(new JLabel("查询结果："));
+                JLabel findLabel = new JLabel("查询到");
+                stuSerInfoPanel.add(findLabel);
                 ArrayList<JRadioButton> resultStu = new ArrayList<JRadioButton>();
                 ButtonGroup buttonGroup = new ButtonGroup();
 
@@ -71,6 +72,7 @@ public class FindStudentDialog extends JDialog
                         foundOrNot = true;
                         index++;
                         System.out.println("found:" + tmpStu.getName());
+                        findLabel.setText("查询到"+ resultStu.size()+"个结果");
 
                     }
                 }

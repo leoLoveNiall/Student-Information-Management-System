@@ -13,6 +13,7 @@ public class AddStudentDialog extends JDialog
     //最开始的时候都把swing控件写在构造函数里了，后来又全部移出来，方便操作
     //最开始的时候都把swing控件写在构造函数里了，后来又全部移出来，方便操作
     JComboBox degreeCB, genderCB;
+    Student add;
     QuickPanelWithLabelAndText a_IDP;
     JPanel a_genderP;
     QuickPanelWithLabelAndText a_nameP;
@@ -69,6 +70,8 @@ public class AddStudentDialog extends JDialog
         a_labP.setText("不可用", false);
         addBtn = new JButton("确认添加");
         addStuPanel.add(addBtn);
+
+
         addBtn.addMouseListener(new MouseAdapter()
         {
             @Override
@@ -77,14 +80,30 @@ public class AddStudentDialog extends JDialog
                 super.mouseReleased(e);
                 switch (degree[degreeCB.getSelectedIndex()])
                 {
+                    //待改进：应该排除学号相同的情况
+
                     case "本科":
-                        //MainWindow.studentArrayList.add(new Bachelor(a_nameP.text.getText(),a_IDP.text.getText()))
+                        add = new Bachelor(a_nameP.text.getText(), a_IDP.text.getText(),
+                                gender[genderCB.getSelectedIndex()], a_majorP.text.getText(),
+                                a_dormP.text.getText());
                         break;
                     case "硕士":
+                        add = new Master(a_nameP.text.getText(), a_IDP.text.getText(),
+                                gender[genderCB.getSelectedIndex()], a_majorP.text.getText(),
+                                a_dormP.text.getText(),a_tutorP.text.getText());
                         break;
                     case "博士":
+                        add = new Doctor(a_nameP.text.getText(), a_IDP.text.getText(),
+                                gender[genderCB.getSelectedIndex()], a_majorP.text.getText(),
+                                a_dormP.text.getText(),a_tutorP.text.getText(),a_labP.text.getText());
                         break;
                 }
+                MainWindow.studentArrayList.add(add);
+                SimpleMotion.exitMotion(addDialog);
+                addDialog.dispose();
+                MainWindow.switchStu(add);
+
+
             }
         });
         //根据学位选择是否展示tutor和lab

@@ -87,6 +87,11 @@ public class Student
         initializeGrade();
     }
 
+    public Student()
+    {
+
+    }
+
     void initializeGrade()
     {
 
@@ -132,6 +137,7 @@ class Bachelor extends Student
     {
         super(name, ID, gender, major, dorm);
     }
+    Bachelor(){}
 
     @Override
     String getTag()
@@ -149,6 +155,7 @@ class Master extends Bachelor
         super(name, ID, gender,major, dorm);
         this.tutor = tutor;
     }
+    Master(){}
     @Override
     String getTag()
     {
@@ -180,11 +187,11 @@ class Doctor extends Master
     {
         return tutor;
     }
+    Doctor (){}
 
     public String getLab()
     {
         return lab;
     }
 }
-
 
