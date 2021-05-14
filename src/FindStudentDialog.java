@@ -107,9 +107,6 @@ public class FindStudentDialog extends JDialog
                     } catch (InterruptedException interruptedException)
                     {
                         interruptedException.printStackTrace();
-                    } catch (AWTException awtException)
-                    {
-                        awtException.printStackTrace();
                     }
                 }
                 else switchStuButton.setVisible(true);

@@ -10,17 +10,16 @@ public class MainWindow
 
     //public static String workFolder;
     final static double REG_PER = 0.1, MID_PER = 0.2, FIN_PER = 0.7;
-    private static final int W = 600, H = 450;
-    static Student CURRENT_STUDENT = null;
-    private static final JFrame mainWindow = new JFrame();
+    private static final int MAIN_WINDOW_WIDTH = 600, MAIN_WINDOW_HEIGHT = 450;
+    static Student currentStudent = null;
+    private static final JFrame MAIN_WINDOW = new JFrame();
 
-
-    static JMenu help;
-    static JMenuItem helpItem;
     //关键元素
     //最开始的时候都把swing控件写在构造函数里了，后来又全部移出来，方便操作
     //最开始的时候都把swing控件写在构造函数里了，后来又全部移出来，方便操作
     //最开始的时候都把swing控件写在构造函数里了，后来又全部移出来，方便操作
+    static JMenu help;
+    static JMenuItem helpItem;
     static JMenuBar menuBar;
     static JMenu manipulate;
     static QuickPanelWithLabelAndText courseMidG_cP;
@@ -73,20 +72,20 @@ public class MainWindow
     static QuickPanelWithLabelAndText courseRegG_cP;
     public static ArrayList<Student> studentArrayList;
 
-    MainWindow() throws IOException
+    MainWindow()
     {
 
 //初始化窗口
         // mainWindow.setResizable(false);
         //mainWindow.setLocation(600, 600);
 
-        mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainWindow.setLayout(new BorderLayout());
+        MAIN_WINDOW.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        MAIN_WINDOW.setLayout(new BorderLayout());
 
 //设置基本框架
         //顶部菜单栏
         menuBar = new JMenuBar();
-        mainWindow.add(menuBar, BorderLayout.PAGE_START);
+        MAIN_WINDOW.add(menuBar, BorderLayout.PAGE_START);
         manipulate = new JMenu("操作(M)");
         addStu = new JMenuItem("新增学生(N)");
         addStu.addMouseListener(new MouseAdapter()
@@ -95,7 +94,7 @@ public class MainWindow
             public void mouseReleased(MouseEvent e)
             {
                 super.mouseReleased(e);
-                AddStudentDialog addStudentDialog = new AddStudentDialog(mainWindow, "新增学生", true);
+                AddStudentDialog addStudentDialog = new AddStudentDialog(MAIN_WINDOW, "新增学生", true);
 //                JDialog d = new JDialog(mainWindow, "新增学生", true);
 //                d.setSize(400,400);d.setVisible(true);
             }
@@ -109,7 +108,7 @@ public class MainWindow
                 super.mouseReleased(e);
                 try
                 {
-                    FindStudentDialog findStudentDialog = new FindStudentDialog(mainWindow, "切换学生", true);
+                    FindStudentDialog findStudentDialog = new FindStudentDialog(MAIN_WINDOW, "切换学生", true);
                 } catch (Exception exception)
                 {
                     exception.printStackTrace();
@@ -142,7 +141,7 @@ public class MainWindow
         menuBar.add(help);
         //右半边大块
         JPanel RIGHTPanel = new JPanel(new BorderLayout());
-        mainWindow.add(RIGHTPanel, BorderLayout.CENTER);
+        MAIN_WINDOW.add(RIGHTPanel, BorderLayout.CENTER);
         //顶部侧边栏
         JTabbedPane topTab = new JTabbedPane();
         //StandardSearchPanel studentSearchPanel = new StandardSearchPanel("操作学生:", "输入姓名或学号...", "操作");
@@ -155,11 +154,11 @@ public class MainWindow
         imageP.add(p1, BorderLayout.PAGE_START);
         imageP.add(p2, BorderLayout.CENTER);
         p1.add(new JLabel("PROFILE"));
-        mainWindow.add(imageP, BorderLayout.WEST);
+        MAIN_WINDOW.add(imageP, BorderLayout.WEST);
         JLabel iconLabel = new JLabel();
         p2.add(iconLabel);
 
-        ImageIcon icon = new ImageIcon(LaunchWindow.workFolder + "//profile.jpeg");
+        ImageIcon icon = new ImageIcon(LaunchWindow.WORK_FOLDER + "//profile.jpeg");
         Image img = icon.getImage();
         img = img.getScaledInstance(100, 140, Image.SCALE_DEFAULT);
         icon.setImage(img);
@@ -246,26 +245,22 @@ public class MainWindow
         c_tutorP.setText("不可用", false);
         c_labP.setText("不可用", false);
         //根据学位选择是否展示tutor和lab
-        cDegreeCB.addActionListener(new ActionListener()
+        cDegreeCB.addActionListener(e ->
         {
-            @Override
-            public void actionPerformed(ActionEvent e)
+            if (cDegreeCB.getSelectedItem().equals("本科"))
             {
-                if (cDegreeCB.getSelectedItem().equals("本科"))
-                {
-                    c_tutorP.setText("不可用", false);
-                    c_labP.setText("不可用", false);
-                }
-                if (cDegreeCB.getSelectedItem().equals("硕士"))
-                {
-                    c_tutorP.setText("...", true);
-                    c_labP.setText("不可用", false);
-                }
-                if (cDegreeCB.getSelectedItem().equals("博士"))
-                {
-                    c_tutorP.setText("...", true);
-                    c_labP.setText("...", true);
-                }
+                c_tutorP.setText("不可用", false);
+                c_labP.setText("不可用", false);
+            }
+            if (cDegreeCB.getSelectedItem().equals("硕士"))
+            {
+                c_tutorP.setText("...", true);
+                c_labP.setText("不可用", false);
+            }
+            if (cDegreeCB.getSelectedItem().equals("博士"))
+            {
+                c_tutorP.setText("...", true);
+                c_labP.setText("...", true);
             }
         });
 
@@ -279,7 +274,7 @@ public class MainWindow
 
                 System.out.println("修改成功");
                 //重新加载
-                switchStu(CURRENT_STUDENT);
+                switchStu(currentStudent);
             }
         });
         cInfoPanel.add(confirmCgInfoButton);
@@ -318,7 +313,7 @@ public class MainWindow
             public void mouseReleased(MouseEvent e)
             {
                 super.mouseReleased(e);
-                for (Grade g : CURRENT_STUDENT.gradeArrayList)
+                for (Grade g : currentStudent.gradeArrayList)
                 {
                     if (gradeSearch.t.getText().equals(g.courseID) || gradeSearch.t.getText().equals(g.courseName))
                     {
@@ -371,7 +366,7 @@ public class MainWindow
             public void mouseReleased(MouseEvent e)
             {
                 super.mouseReleased(e);
-                for (Grade g : CURRENT_STUDENT.gradeArrayList)
+                for (Grade g : currentStudent.gradeArrayList)
                 {
                     if (gradeChangeSearchP.t.getText().equals(g.courseID) || gradeChangeSearchP.t.getText().equals(g.courseName))
                     {
@@ -468,14 +463,14 @@ public class MainWindow
             public void mouseReleased(MouseEvent e)
             {
                 super.mouseReleased(e);
-                for (int i = 0; i < CURRENT_STUDENT.gradeArrayList.size(); i++)
+                for (int i = 0; i < currentStudent.gradeArrayList.size(); i++)
                 {
-                    if (gradeChangeSearchP.t.getText().equals(CURRENT_STUDENT.gradeArrayList.get(i).courseID)
-                            || gradeChangeSearchP.t.getText().equals(CURRENT_STUDENT.gradeArrayList.get(i).courseName))
+                    if (gradeChangeSearchP.t.getText().equals(currentStudent.gradeArrayList.get(i).courseID)
+                            || gradeChangeSearchP.t.getText().equals(currentStudent.gradeArrayList.get(i).courseName))
                     {
-                        CURRENT_STUDENT.gradeArrayList.get(i).reg = Integer.parseInt(courseRegG_cP.text.getText());
-                        CURRENT_STUDENT.gradeArrayList.get(i).mid = Integer.parseInt(courseMidG_cP.text.getText());
-                        CURRENT_STUDENT.gradeArrayList.get(i).fin = Integer.parseInt(courseFinG_cP.text.getText());
+                        currentStudent.gradeArrayList.get(i).reg = Integer.parseInt(courseRegG_cP.text.getText());
+                        currentStudent.gradeArrayList.get(i).mid = Integer.parseInt(courseMidG_cP.text.getText());
+                        currentStudent.gradeArrayList.get(i).fin = Integer.parseInt(courseFinG_cP.text.getText());
 
                         break;
                     }
@@ -485,7 +480,7 @@ public class MainWindow
         });
 
 
-        SimpleMotion.openMotion(mainWindow, W, H);
+        SimpleMotion.openMotion(MAIN_WINDOW, MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT);
 
 //主程序部分
         studentArrayList = initializeStudent();
@@ -496,12 +491,17 @@ public class MainWindow
         switchStu(randStu);
 
 
+
+
+
+
+
     }
 
     public static void switchStu(Student currentStu)
     {
-        SimpleMotion.upAndDown_A(mainWindow, H);
-        CURRENT_STUDENT = currentStu;
+        SimpleMotion.upAndDown_A(MAIN_WINDOW, MAIN_WINDOW_HEIGHT);
+        currentStudent = currentStu;
         System.out.println("切换学生:" + currentStu.toString());
         nameP.setSecondLabelText(currentStu.getName());
         idP.setSecondLabelText(currentStu.getID());
@@ -511,25 +511,20 @@ public class MainWindow
         MyCheckBox.quicklySetOneCheckBoxSelected(BA_, MA_, DO_, currentStu);
         switch (currentStu.getTag())
         {
-            case "BA":
-            {
-                tutorP.setSecondLabelText("⚠️不可用⚠️");
-                labP.setSecondLabelText("⚠️不可用⚠️");
+            case "BA" -> {
+                tutorP.setSecondLabelText("--不可用--");
+                labP.setSecondLabelText("--不可用--");
 
                 cDegreeCB.setSelectedIndex(0);
             }
-            break;
-            case "MA":
-            {
+            case "MA" -> {
                 tutorP.setSecondLabelText(currentStu.getTutor());
-                labP.setSecondLabelText("⚠️不可用⚠️");
+                labP.setSecondLabelText("--不可用--");
 
                 cDegreeCB.setSelectedIndex(1);
                 c_tutorP.text.setText(currentStu.getTutor());
             }
-            break;
-            case "DO":
-            {
+            case "DO" -> {
                 tutorP.setSecondLabelText(currentStu.getTutor());
                 labP.setSecondLabelText(currentStu.getLab());
 
@@ -537,7 +532,6 @@ public class MainWindow
                 c_tutorP.text.setText(currentStu.getTutor());
                 c_labP.text.setText(currentStu.getLab());
             }
-            break;
         }
         //更正信息面板内容填充⬆️⬇️
         c_nameP.text.setText(currentStu.getName());
@@ -547,7 +541,7 @@ public class MainWindow
         c_dormP.text.setText(currentStu.getDorm());
 
 
-        SimpleMotion.upAndDown_B(mainWindow, H);
+        SimpleMotion.upAndDown_B(MAIN_WINDOW, MAIN_WINDOW_HEIGHT);
     }
 
 
@@ -595,7 +589,7 @@ public class MainWindow
         ArrayList<Student> studentArrayList = new ArrayList<>();
         try
         {
-            String path = LaunchWindow.workFolder + "//STUDENT.txt";
+            String path = LaunchWindow.WORK_FOLDER + "//STUDENT.txt";
             File filename = new File(path);
             InputStreamReader reader = new InputStreamReader(new FileInputStream(filename));
             BufferedReader bufferedReader = new BufferedReader(reader);
@@ -623,7 +617,7 @@ public class MainWindow
         ArrayList<Grade> wholeGradeData = new ArrayList<Grade>();
         try
         {
-            String path = LaunchWindow.workFolder + "//GRADE.txt";
+            String path = LaunchWindow.WORK_FOLDER + "//GRADE.txt";
             File filename = new File(path);
             InputStreamReader reader = new InputStreamReader(new FileInputStream(filename));
             BufferedReader bufferedReader = new BufferedReader(reader);

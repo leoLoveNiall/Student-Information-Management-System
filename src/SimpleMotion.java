@@ -23,7 +23,7 @@ public class SimpleMotion
             try
             {
                 Thread.currentThread().sleep(15);
-            } catch (InterruptedException e)
+            } catch (InterruptedException ignored)
             {
 
             }
@@ -49,16 +49,15 @@ public class SimpleMotion
             try
             {
                 Thread.currentThread().sleep(15);
-            } catch (InterruptedException e)
+            } catch (InterruptedException ignored)
             {
-
             }
             centerize(window);
         }
         window.setSize(width, height);
     }
 
-    static void displayErrorInfo(JTextField tf, String info) throws InterruptedException, AWTException
+    static void displayErrorInfo(JTextField tf, String info) throws InterruptedException
     {
         tf.setText(info);
         tf.setEditable(false);
@@ -97,7 +96,7 @@ public class SimpleMotion
             c.setSize(c.getWidth(), c.getHeight() - h / seq);
             try
             {
-                Thread.currentThread().sleep(15);
+                Thread.sleep(15);
             } catch (InterruptedException e)
             {
                 e.printStackTrace();

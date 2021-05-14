@@ -36,35 +36,6 @@ class Grade
         return stuID;
     }
 
-    public String getCourseName()
-    {
-        return courseName;
-    }
-
-    public String getCourseID()
-    {
-        return courseID;
-    }
-
-    public String getCredit()
-    {
-        return credit;
-    }
-
-    public int getReg()
-    {
-        return reg;
-    }
-
-    public int getMid()
-    {
-        return mid;
-    }
-
-    public int getFin()
-    {
-        return fin;
-    }
 }
 
 public class Student
@@ -75,7 +46,7 @@ public class Student
     private String gender;
     private String major;
     private String dorm;
-    ArrayList<Grade> gradeArrayList = new ArrayList<Grade>();
+    ArrayList<Grade> gradeArrayList = new ArrayList<>();
 
     public Student(String name, String ID, String gender,String major, String dorm)
     {
@@ -137,7 +108,6 @@ class Bachelor extends Student
     {
         super(name, ID, gender, major, dorm);
     }
-    Bachelor(){}
 
     @Override
     String getTag()
@@ -155,7 +125,6 @@ class Master extends Bachelor
         super(name, ID, gender,major, dorm);
         this.tutor = tutor;
     }
-    Master(){}
     @Override
     String getTag()
     {
@@ -187,7 +156,6 @@ class Doctor extends Master
     {
         return tutor;
     }
-    Doctor (){}
 
     public String getLab()
     {

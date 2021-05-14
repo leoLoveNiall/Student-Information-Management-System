@@ -2,29 +2,24 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class LaunchWindow
 {
-    static final String workFolder = "//Users//kongweirui//Desktop//Java//Student-Information-Management-System//src";
-
+    static final String WORK_FOLDER = System.getProperty("user.dir")+"/src/";
+    //ps: Mac系统下文件系统使用右斜杠，Windows系统需要改进
     static void createMainWindow(JFrame LaunchWindow)
     {
+        System.out.println(System.getProperty("user.dir"));
         SimpleMotion.exitMotion(LaunchWindow);
         LaunchWindow.setVisible(false);
-        LaunchWindow = null; //销毁窗口
+
         System.gc();
-        try
-        {
-            MainWindow mainWindow = new MainWindow();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        MainWindow mainWindow = new MainWindow();
+        LaunchWindow.dispose(); //销毁窗口
     }
-
-
 
     public static void main(String[] args)
     {
@@ -38,7 +33,7 @@ public class LaunchWindow
 //      设置图标panel和标签
         JPanel iconPanel = new JPanel();
         JLabel iconLabel = new JLabel();
-        ImageIcon icon = new ImageIcon(workFolder + "//icon.jpeg");
+        ImageIcon icon = new ImageIcon(WORK_FOLDER + "//icon.jpeg");
         Image img = icon.getImage();
         img = img.getScaledInstance(160, 60, Image.SCALE_DEFAULT);
         icon.setImage(img);
@@ -66,6 +61,8 @@ public class LaunchWindow
         JTextField keyText = new JPasswordField("123", 10);
         JButton loginButton = new JButton("登录");
 
+        System.out.println(MD5.getMD5(keyText.getText()));
+
 //      放置控件
         iconPanel.add(iconLabel);
         topPanel.add(headLine);
@@ -86,7 +83,8 @@ public class LaunchWindow
         {
             public void mouseReleased(MouseEvent e)
             {
-                if (nameText.getText().equals("leo") && keyText.getText().equals("123"))
+                if (nameText.getText().equals("leo") &&
+                        MD5.getMD5(keyText.getText()).equals("202CB962AC59075B964B07152D234B70"))
                 {
                     createMainWindow(LaunchWindow);
 
@@ -94,8 +92,44 @@ public class LaunchWindow
             }
         });
 
-
         createMainWindow(LaunchWindow);
 
+    }
+}
+
+
+
+//以下MD5加密代码来自网络
+/*      作者：cxm
+        链接：https://zhuanlan.zhihu.com/p/269031563
+        来源：知乎
+        著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+*/
+
+class MD5 {
+    public static String getMD5(String src) {
+        // 需要加密的字符串
+        try {
+            // 加密对象，指定加密方式
+            MessageDigest md5 = MessageDigest.getInstance("md5");
+            // 准备要加密的数据
+            byte[] b = src.getBytes();
+            // 加密
+            byte[] digest = md5.digest(b);
+            // 十六进制的字符
+            char[] chars = new char[] { '0', '1', '2', '3', '4', '5',
+                    '6', '7' , '8', '9', 'A', 'B', 'C', 'D', 'E','F' };
+            StringBuffer sb = new StringBuffer();
+            // 处理成十六进制的字符串(通常)
+            for (byte bb : digest) {
+                sb.append(chars[(bb >> 4) & 15]);
+                sb.append(chars[bb & 15]);
+            }
+            // 打印加密后的字符串
+            return String.valueOf(sb);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }
