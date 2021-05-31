@@ -1,5 +1,5 @@
 import javax.swing.*;
-import javax.swing.event.MenuEvent;
+import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -12,6 +12,7 @@ public class MainWindow
     final static double REG_PER = 0.1, MID_PER = 0.2, FIN_PER = 0.7;
     private static final int MAIN_WINDOW_WIDTH = 600, MAIN_WINDOW_HEIGHT = 450;
     static Student currentStudent = null;
+    //个人tip：这里是引用，直接操作，不用重新赋
     private static final JFrame MAIN_WINDOW = new JFrame();
 
     //关键元素
@@ -28,6 +29,7 @@ public class MainWindow
     static JMenuItem saveS;
     static JMenu save;
     static JMenuItem saveAndExit;
+    static  JTabbedPane topTab;
     static JPanel pInfoPanelSec;
     static MyCheckBox MA_;
     static MyCheckBox DO_;
@@ -72,6 +74,7 @@ public class MainWindow
     static QuickPanelWithLabelAndText courseRegG_cP;
     public static ArrayList<Student> studentArrayList;
 
+    //PS：刚开始是学到了ArrayList，就用ArrayList写了。否来本来想用HashSet、HashTree写的，但是工程量比较大，于是就没有继续改进了。
     MainWindow()
     {
 
@@ -79,7 +82,19 @@ public class MainWindow
         // mainWindow.setResizable(false);
         //mainWindow.setLocation(600, 600);
 
-        MAIN_WINDOW.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        MAIN_WINDOW.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        //这里搞一个退出动画
+       MAIN_WINDOW.addWindowListener(new WindowAdapter()
+       {
+           @Override
+           public void windowClosing(WindowEvent e)
+           {
+               super.windowClosing(e);
+               //这里搞一个退出动画
+               SimpleMotion.exitToEdge(MAIN_WINDOW);
+               System.exit(0);
+           }
+       });
         MAIN_WINDOW.setLayout(new BorderLayout());
 
 //设置基本框架
@@ -131,19 +146,40 @@ public class MainWindow
         helpItem = new JMenuItem("获得帮助");
         helpItem.addMouseListener(new MouseAdapter()
                                   {
-                                      public void menuSelected(MenuEvent e)
+
+                                      @Override
+                                      public void mouseReleased(MouseEvent e)
                                       {
+                                          super.mouseReleased(e);
+                                          JDialog helpDialog = new JDialog();
+
+                                          helpDialog.setLayout(new FlowLayout());
+                                          helpDialog.setTitle("帮助");
+                                          helpDialog.add(new JLabel("学生管理系统 V1.0.0 by Leo 最初版本  2021®"));
+                                          SimpleMotion.openMotion(helpDialog, 300, 100);
+
                                           System.out.println("帮助");
+                                          helpDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+                                          helpDialog.addWindowListener(new WindowAdapter()
+                                          {
+                                              @Override
+                                              public void windowClosing(WindowEvent e)
+                                              {
+                                                  super.windowClosing(e);
+                                                  SimpleMotion.exitToEdge(helpDialog);
+                                              }
+                                          });
                                       }
                                   }
         );
         help.add(helpItem);
         menuBar.add(help);
         //右半边大块
+        topTab = new JTabbedPane();
         JPanel RIGHTPanel = new JPanel(new BorderLayout());
         MAIN_WINDOW.add(RIGHTPanel, BorderLayout.CENTER);
         //顶部侧边栏
-        JTabbedPane topTab = new JTabbedPane();
+
         //StandardSearchPanel studentSearchPanel = new StandardSearchPanel("操作学生:", "输入姓名或学号...", "操作");
         //RIGHTPanel.add(studentSearchPanel, BorderLayout.PAGE_START);
         RIGHTPanel.add(topTab, BorderLayout.CENTER);
@@ -270,10 +306,37 @@ public class MainWindow
         {
             public void mouseReleased(MouseEvent e)
             {
+                Student toBeAdd = null;
+                //edit
+                switch (degree[cDegreeCB.getSelectedIndex()])
+                {
+                    //待改进：应该排除学号相同的情况
 
+                    case "本科":
+                        toBeAdd = new Bachelor(c_nameP.text.getText(), c_idP.text.getText(),
+                                c_genderP.text.getText(), c_majorP.text.getText(),
+                                c_dormP.text.getText());
+                        break;
+                    case "硕士":
+                        toBeAdd = new Master(c_nameP.text.getText(), c_idP.text.getText(),
+                                c_genderP.text.getText(), c_majorP.text.getText(),
+                                c_dormP.text.getText(), c_tutorP.text.getText());
+                        break;
+                    case "博士":
+                        toBeAdd = new Doctor(c_nameP.text.getText(), c_idP.text.getText(),
+                                c_genderP.text.getText(), c_majorP.text.getText(),
+                                c_dormP.text.getText(), c_tutorP.text.getText(), c_labP.text.getText());
+                        break;
+                }
+                toBeAdd.gradeArrayList = currentStudent.gradeArrayList;
 
+                studentArrayList.remove(currentStudent);
+                studentArrayList.add(toBeAdd);
+                currentStudent = studentArrayList.get(studentArrayList.size()-1);
                 System.out.println("修改成功");
+
                 //重新加载
+
                 switchStu(currentStudent);
             }
         });
@@ -383,7 +446,9 @@ public class MainWindow
                 }
             }
         });
-
+        courseRegG_cP.addMouseListener(new MouseInputAdapter()
+        {
+        });
         //添加自动计算成绩脚本
         {
             courseRegG_cP.text.addKeyListener(new KeyAdapter()
@@ -491,11 +556,6 @@ public class MainWindow
         switchStu(randStu);
 
 
-
-
-
-
-
     }
 
     public static void switchStu(Student currentStu)
@@ -539,6 +599,8 @@ public class MainWindow
         c_genderP.text.setText(currentStu.getGender());
         c_majorP.text.setText(currentStu.getMajor());
         c_dormP.text.setText(currentStu.getDorm());
+
+        topTab.setSelectedIndex(0);
 
 
         SimpleMotion.upAndDown_B(MAIN_WINDOW, MAIN_WINDOW_HEIGHT);
@@ -614,7 +676,7 @@ public class MainWindow
         }
         //加载整个成绩单
 //      int csNum = 0;
-        ArrayList<Grade> wholeGradeData = new ArrayList<Grade>();
+        ArrayList<Grade> wholeGradeData = new ArrayList<>();
         try
         {
             String path = LaunchWindow.WORK_FOLDER + "//GRADE.txt";
@@ -638,6 +700,11 @@ public class MainWindow
             }
         } catch (IOException ignored)
         {
+
+        }
+        finally
+        {
+
         }
         //学习来源：https://blog.csdn.net/shenziheng1/article/details/100110816
 
@@ -655,10 +722,17 @@ public class MainWindow
             studentArrayList.remove(i);
 
         }
-
-
         return studentArrayList;
 
+    }
+
+    public boolean ifIDExists(String str)
+    {
+        for (Student stu : studentArrayList)
+        {
+            if (stu.getID().equals(str)) return true;
+        }
+        return false;
     }
 
 }

@@ -1,3 +1,5 @@
+import com.sun.tools.javac.Main;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
@@ -20,13 +22,7 @@ public class SimpleMotion
                     window.getX() + width / motionTick,
                     window.getY() + height / motionTick
             );
-            try
-            {
-                Thread.currentThread().sleep(15);
-            } catch (InterruptedException ignored)
-            {
-
-            }
+            sleep();
         }
     }
 
@@ -46,12 +42,7 @@ public class SimpleMotion
                     window.getX() - w / motionTick,
                     window.getY() - h / motionTick
             );
-            try
-            {
-                Thread.currentThread().sleep(15);
-            } catch (InterruptedException ignored)
-            {
-            }
+            sleep();
             centerize(window);
         }
         window.setSize(width, height);
@@ -74,7 +65,7 @@ public class SimpleMotion
                 this.cancel();
             }
         }, 1000);
-        System.out.println("延时1000");
+        //System.out.println("延时1000");
     }
 
     static void centerize(Component c)
@@ -94,13 +85,7 @@ public class SimpleMotion
         for (int i = 0; i < seq; i++)
         {
             c.setSize(c.getWidth(), c.getHeight() - h / seq);
-            try
-            {
-                Thread.sleep(15);
-            } catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
+            sleep();
         }
 
     }
@@ -112,15 +97,56 @@ public class SimpleMotion
         for (int i = 0; i < seq; i++)
         {
             d.setSize(d.getWidth(), d.getHeight() + h / seq);
-            try
-            {
-                Thread.currentThread().sleep(15);
-            } catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
+            sleep();
         }
         d.setSize(d.getWidth(), h);
 
     }
+
+    public static void exitToEdge(Component c)
+    {
+        final int seq = 30;
+        final int height = c.getHeight();
+        final int width = c.getWidth();
+        int sx = c.getX();
+        int sy = c.getY();
+        Toolkit kit = Toolkit.getDefaultToolkit();
+        Dimension screenSize = kit.getScreenSize();
+        final int sw = screenSize.width;
+        final int sh = screenSize.height;
+        for (int i = 0; i < seq; i++)
+        {
+            c.setBounds(c.getX() + (sw - sx) / seq, c.getY() + (sh - sy) / seq
+                    , c.getWidth() - width / seq, c.getHeight() - height / seq);
+            sleep();
+
+        }
+        c.setBounds(sw, sh, 0, 0);
+        //我不知道怎么销毁单一的窗口😐
+        c.setVisible(false);
+        c = null;
+    }
+
+    public static void sleep()
+    {
+        try
+        {
+            Thread.sleep(15);
+        } catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public static void sleep(int millis)
+    {
+        try
+        {
+            Thread.sleep(millis);
+        } catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
 }

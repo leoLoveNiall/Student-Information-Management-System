@@ -48,7 +48,7 @@ public class Student
     private String dorm;
     ArrayList<Grade> gradeArrayList = new ArrayList<>();
 
-    public Student(String name, String ID, String gender,String major, String dorm)
+    public Student(String name, String ID, String gender, String major, String dorm)
     {
         this.name = name;
         this.ID = ID;
@@ -98,13 +98,41 @@ public class Student
         return dorm;
     }
 
-    String getTutor(){return null;}
-    String getLab(){return null;}
+    String getTutor()
+    {
+        return null;
+    }
+
+    String getLab()
+    {
+        return null;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        //判断标准当然是学号啦
+        if (obj.hashCode() == this.hashCode()) return true;
+        return false;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Student{" +
+                "name='" + name + '\'' +
+                ", ID='" + ID + '\'' +
+                ", gender='" + gender + '\'' +
+                ", major='" + major + '\'' +
+                ", dorm='" + dorm + '\'' +
+                ", gradeArrayList=" + gradeArrayList +
+                '}';
+    }
 }
 
 class Bachelor extends Student
 {
-    public Bachelor(String name, String ID, String gender,String major, String dorm)
+    public Bachelor(String name, String ID, String gender, String major, String dorm)
     {
         super(name, ID, gender, major, dorm);
     }
@@ -122,9 +150,10 @@ class Master extends Bachelor
 
     public Master(String name, String ID, String gender, String major, String dorm, String tutor)
     {
-        super(name, ID, gender,major, dorm);
+        super(name, ID, gender, major, dorm);
         this.tutor = tutor;
     }
+
     @Override
     String getTag()
     {
@@ -139,13 +168,14 @@ class Master extends Bachelor
 
 class Doctor extends Master
 {
-     String lab;
+    String lab;
 
-    public Doctor(String name, String ID,  String gender,String major, String dorm, String tutor, String lab)
+    public Doctor(String name, String ID, String gender, String major, String dorm, String tutor, String lab)
     {
-        super(name, ID, gender, major, dorm,tutor);
+        super(name, ID, gender, major, dorm, tutor);
         this.lab = lab;
     }
+
     @Override
     String getTag()
     {

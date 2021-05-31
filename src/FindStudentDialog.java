@@ -71,7 +71,7 @@ public class FindStudentDialog extends JDialog
                         findDialog.setSize(findDialog.getWidth() - 1, findDialog.getHeight());
                         foundOrNot = true;
                         index++;
-                        System.out.println("found:" + tmpStu.getName());
+                        System.out.println("found:" + tmpStu.toString());
                         findLabel.setText("查询到"+ resultStu.size()+"个结果");
 
                     }
@@ -103,6 +103,7 @@ public class FindStudentDialog extends JDialog
                     try
                     {
                         SimpleMotion.displayErrorInfo(searchPanel.t, "找不到此学生");
+                        findLabel.setText("查询到0个结果");
                         switchStuButton.setVisible(false);
                     } catch (InterruptedException interruptedException)
                     {

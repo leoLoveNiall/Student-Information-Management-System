@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.print.PrinterAbortException;
 
 public class AddStudentDialog extends JDialog
 {
@@ -78,32 +79,35 @@ public class AddStudentDialog extends JDialog
             public void mouseReleased(MouseEvent e)
             {
                 super.mouseReleased(e);
-                switch (degree[degreeCB.getSelectedIndex()])
+                if (isAllFilled())
                 {
-                    //待改进：应该排除学号相同的情况
+                    switch (degree[degreeCB.getSelectedIndex()])
+                    {
+                        //待改进：应该排除学号相同的情况
 
-                    case "本科":
-                        add = new Bachelor(a_nameP.text.getText(), a_IDP.text.getText(),
-                                gender[genderCB.getSelectedIndex()], a_majorP.text.getText(),
-                                a_dormP.text.getText());
-                        break;
-                    case "硕士":
-                        add = new Master(a_nameP.text.getText(), a_IDP.text.getText(),
-                                gender[genderCB.getSelectedIndex()], a_majorP.text.getText(),
-                                a_dormP.text.getText(),a_tutorP.text.getText());
-                        break;
-                    case "博士":
-                        add = new Doctor(a_nameP.text.getText(), a_IDP.text.getText(),
-                                gender[genderCB.getSelectedIndex()], a_majorP.text.getText(),
-                                a_dormP.text.getText(),a_tutorP.text.getText(),a_labP.text.getText());
-                        break;
+                        case "本科":
+                            add = new Bachelor(a_nameP.text.getText(), a_IDP.text.getText(),
+                                    gender[genderCB.getSelectedIndex()], a_majorP.text.getText(),
+                                    a_dormP.text.getText());
+                            break;
+                        case "硕士":
+                            add = new Master(a_nameP.text.getText(), a_IDP.text.getText(),
+                                    gender[genderCB.getSelectedIndex()], a_majorP.text.getText(),
+                                    a_dormP.text.getText(), a_tutorP.text.getText());
+                            break;
+                        case "博士":
+                            add = new Doctor(a_nameP.text.getText(), a_IDP.text.getText(),
+                                    gender[genderCB.getSelectedIndex()], a_majorP.text.getText(),
+                                    a_dormP.text.getText(), a_tutorP.text.getText(), a_labP.text.getText());
+                            break;
+                    }
+                    MainWindow.studentArrayList.add(add);
+                    SimpleMotion.exitMotion(addDialog);
+                    addDialog.dispose();
+                    MainWindow.switchStu(add);
+
+
                 }
-                MainWindow.studentArrayList.add(add);
-                SimpleMotion.exitMotion(addDialog);
-                addDialog.dispose();
-                MainWindow.switchStu(add);
-
-
             }
         });
         //根据学位选择是否展示tutor和lab
@@ -143,5 +147,47 @@ public class AddStudentDialog extends JDialog
 //            }
 //        });
         SimpleMotion.openMotion(addDialog, 300, 500);
+    }
+
+    public boolean isAllFilled()
+    {
+        try
+        {
+            if (a_nameP.text.getText().equals(""))
+            {
+                SimpleMotion.displayErrorInfo(a_nameP.text, "姓名不能为空！");
+                return false;
+            }
+            if (a_IDP.text.getText().equals(""))
+            {
+                SimpleMotion.displayErrorInfo(a_IDP.text, "学号不能为空！");
+                return false;
+            }
+            if (a_majorP.text.getText().equals(""))
+            {
+                SimpleMotion.displayErrorInfo(a_majorP.text, "专业班级不能为空！");
+                return false;
+            }
+            if (a_dormP.text.getText().equals(""))
+            {
+                SimpleMotion.displayErrorInfo(a_dormP.text, "寝室号不能为空！");
+                return false;
+            }
+            if (a_tutorP.text.getText().equals(""))
+            {
+                SimpleMotion.displayErrorInfo(a_tutorP.text, "导师不能为空！");
+                return false;
+            }
+            if (a_labP.text.getText().equals(""))
+            {
+                SimpleMotion.displayErrorInfo(a_labP.text, "实验室不能为空！");
+                return false;
+            }
+            return true;
+        } catch (InterruptedException e)
+        {
+
+        }
+        return false;
     }
 }

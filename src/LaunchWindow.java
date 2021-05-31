@@ -8,7 +8,14 @@ import java.security.NoSuchAlgorithmException;
 
 public class LaunchWindow
 {
-    static final String WORK_FOLDER = System.getProperty("user.dir")+"/src/";
+    //static final String WORK_FOLDER = System.getProperty("user.dir")+"/src/";
+
+    static final String WORK_FOLDER ="/Users/kongweirui/Desktop/Java/Student-Inform" +
+            "ation-Management-System/out/production/Student-Information-Management-System";
+
+
+
+
     //ps: Mac系统下文件系统使用右斜杠，Windows系统需要改进
     static void createMainWindow(JFrame LaunchWindow)
     {
@@ -92,7 +99,7 @@ public class LaunchWindow
             }
         });
 
-        createMainWindow(LaunchWindow);
+        //createMainWindow(LaunchWindow);
 
     }
 }
