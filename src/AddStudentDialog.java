@@ -8,8 +8,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterAbortException;
 
-public class AddStudentDialog extends JDialog
-{
+public class AddStudentDialog extends JDialog {
     //最开始的时候都把swing控件写在构造函数里了，后来又全部移出来，方便操作
     //最开始的时候都把swing控件写在构造函数里了，后来又全部移出来，方便操作
     //最开始的时候都把swing控件写在构造函数里了，后来又全部移出来，方便操作
@@ -22,14 +21,15 @@ public class AddStudentDialog extends JDialog
     QuickPanelWithLabelAndText a_tutorP;
     QuickPanelWithLabelAndText a_dormP;
     QuickPanelWithLabelAndText a_labP;
-    JDialog addDialog = new JDialog();
-    JButton addBtn = new JButton();
+    JPanel addStuPanel;
+    JDialog addDialog;
+    JButton addBtn;
 
-    public AddStudentDialog(Frame owner, String title, boolean modal)
-    {
+    public AddStudentDialog(Frame owner, String title, boolean modal) {
         super(owner, title, modal);
 //owner.setEnabled(false);
-        JPanel addStuPanel = new JPanel(new GridLayout(10, 1));
+        addStuPanel = new JPanel(new GridLayout(10, 1));
+        addDialog = new JDialog();
         addDialog.add(addStuPanel, BorderLayout.CENTER);
 
 
@@ -73,17 +73,12 @@ public class AddStudentDialog extends JDialog
         addStuPanel.add(addBtn);
 
 
-        addBtn.addMouseListener(new MouseAdapter()
-        {
+        addBtn.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(MouseEvent e)
-            {
+            public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                if (isAllFilled())
-                {
-                    switch (degree[degreeCB.getSelectedIndex()])
-                    {
-                        //待改进：应该排除学号相同的情况
+                if (isAllFilled()&& !MainWindow.ifIDExists(a_IDP.text.getText())) {
+                    switch (degree[degreeCB.getSelectedIndex()]) {
 
                         case "本科":
                             add = new Bachelor(a_nameP.text.getText(), a_IDP.text.getText(),
@@ -111,23 +106,18 @@ public class AddStudentDialog extends JDialog
             }
         });
         //根据学位选择是否展示tutor和lab
-        degreeCB.addActionListener(new ActionListener()
-        {
+        degreeCB.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                if (degreeCB.getSelectedItem().equals("本科"))
-                {
+            public void actionPerformed(ActionEvent e) {
+                if (degreeCB.getSelectedItem().equals("本科")) {
                     a_tutorP.setText("不可用", false);
                     a_labP.setText("不可用", false);
                 }
-                if (degreeCB.getSelectedItem().equals("硕士"))
-                {
+                if (degreeCB.getSelectedItem().equals("硕士")) {
                     a_tutorP.setText("", true);
                     a_labP.setText("不可用", false);
                 }
-                if (degreeCB.getSelectedItem().equals("博士"))
-                {
+                if (degreeCB.getSelectedItem().equals("博士")) {
                     a_tutorP.setText("", true);
                     a_labP.setText("", true);
                 }
@@ -149,44 +139,34 @@ public class AddStudentDialog extends JDialog
         SimpleMotion.openMotion(addDialog, 300, 500);
     }
 
-    public boolean isAllFilled()
-    {
-        try
-        {
-            if (a_nameP.text.getText().equals(""))
-            {
+    public boolean isAllFilled() {
+        try {
+            if (a_nameP.text.getText().equals("")) {
                 SimpleMotion.displayErrorInfo(a_nameP.text, "姓名不能为空！");
                 return false;
             }
-            if (a_IDP.text.getText().equals(""))
-            {
+            if (a_IDP.text.getText().equals("")) {
                 SimpleMotion.displayErrorInfo(a_IDP.text, "学号不能为空！");
                 return false;
             }
-            if (a_majorP.text.getText().equals(""))
-            {
+            if (a_majorP.text.getText().equals("")) {
                 SimpleMotion.displayErrorInfo(a_majorP.text, "专业班级不能为空！");
                 return false;
             }
-            if (a_dormP.text.getText().equals(""))
-            {
+            if (a_dormP.text.getText().equals("")) {
                 SimpleMotion.displayErrorInfo(a_dormP.text, "寝室号不能为空！");
                 return false;
             }
-            if (a_tutorP.text.getText().equals(""))
-            {
+            if (a_tutorP.text.getText().equals("")) {
                 SimpleMotion.displayErrorInfo(a_tutorP.text, "导师不能为空！");
                 return false;
             }
-            if (a_labP.text.getText().equals(""))
-            {
+            if (a_labP.text.getText().equals("")) {
                 SimpleMotion.displayErrorInfo(a_labP.text, "实验室不能为空！");
                 return false;
             }
             return true;
-        } catch (InterruptedException e)
-        {
-
+        } catch (InterruptedException e) {
         }
         return false;
     }

@@ -5,20 +5,16 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
 
-public class MainWindow
-{
+public class MainWindow {
 
     //public static String workFolder;
     final static double REG_PER = 0.1, MID_PER = 0.2, FIN_PER = 0.7;
     private static final int MAIN_WINDOW_WIDTH = 600, MAIN_WINDOW_HEIGHT = 450;
     static Student currentStudent = null;
-    //个人tip：这里是引用，直接操作，不用重新赋
+    //tip：这里是引用，直接操作，不用重新赋
     private static final JFrame MAIN_WINDOW = new JFrame();
 
     //关键元素
-    //最开始的时候都把swing控件写在构造函数里了，后来又全部移出来，方便操作
-    //最开始的时候都把swing控件写在构造函数里了，后来又全部移出来，方便操作
-    //最开始的时候都把swing控件写在构造函数里了，后来又全部移出来，方便操作
     static JMenu help;
     static JMenuItem helpItem;
     static JMenuBar menuBar;
@@ -29,7 +25,7 @@ public class MainWindow
     static JMenuItem saveS;
     static JMenu save;
     static JMenuItem saveAndExit;
-    static  JTabbedPane topTab;
+    static JTabbedPane topTab;
     static JPanel pInfoPanelSec;
     static MyCheckBox MA_;
     static MyCheckBox DO_;
@@ -45,6 +41,7 @@ public class MainWindow
     static JPanel pInfoPanel;
     static JPanel cInfoPanel;
     static JPanel cDegreeP;
+    static JPanel RightPanel;
     static JComboBox cDegreeCB;
     static QuickPanelWithLabelAndText c_tutorP;
     static QuickPanelWithLabelAndText c_nameP;
@@ -74,27 +71,21 @@ public class MainWindow
     static QuickPanelWithLabelAndText courseRegG_cP;
     public static ArrayList<Student> studentArrayList;
 
-    //PS：刚开始是学到了ArrayList，就用ArrayList写了。否来本来想用HashSet、HashTree写的，但是工程量比较大，于是就没有继续改进了。
-    MainWindow()
-    {
-
+    //ArrayList待改进
+    MainWindow() {
 //初始化窗口
-        // mainWindow.setResizable(false);
-        //mainWindow.setLocation(600, 600);
 
         MAIN_WINDOW.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        //这里搞一个退出动画
-       MAIN_WINDOW.addWindowListener(new WindowAdapter()
-       {
-           @Override
-           public void windowClosing(WindowEvent e)
-           {
-               super.windowClosing(e);
-               //这里搞一个退出动画
-               SimpleMotion.exitToEdge(MAIN_WINDOW);
-               System.exit(0);
-           }
-       });
+        //退出动画
+        MAIN_WINDOW.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+                //退出动画
+                SimpleMotion.exitToEdge(MAIN_WINDOW);
+                System.exit(0);
+            }
+        });
         MAIN_WINDOW.setLayout(new BorderLayout());
 
 //设置基本框架
@@ -103,11 +94,9 @@ public class MainWindow
         MAIN_WINDOW.add(menuBar, BorderLayout.PAGE_START);
         manipulate = new JMenu("操作(M)");
         addStu = new JMenuItem("新增学生(N)");
-        addStu.addMouseListener(new MouseAdapter()
-        {
+        addStu.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(MouseEvent e)
-            {
+            public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
                 AddStudentDialog addStudentDialog = new AddStudentDialog(MAIN_WINDOW, "新增学生", true);
 //                JDialog d = new JDialog(mainWindow, "新增学生", true);
@@ -115,17 +104,13 @@ public class MainWindow
             }
         });
         findStu = new JMenuItem("切换学生(W)");
-        findStu.addMouseListener(new MouseAdapter()
-        {
+        findStu.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(MouseEvent e)
-            {
+            public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                try
-                {
+                try {
                     FindStudentDialog findStudentDialog = new FindStudentDialog(MAIN_WINDOW, "切换学生", true);
-                } catch (Exception exception)
-                {
+                } catch (Exception exception) {
                     exception.printStackTrace();
                 }
 
@@ -134,22 +119,20 @@ public class MainWindow
         manipulate.add(addStu);
         manipulate.add(findStu);
         menuBar.add(manipulate);
-
+///////////////////////////////////////////////////////////
         save = new JMenu("保存(S)");
         saveS = new JMenuItem("保存");
         save.add(saveS);
         saveAndExit = new JMenuItem("保存并退出");
         save.add(saveAndExit);
         menuBar.add(save);
-
+//////////////////////////////////////////////////////////
         help = new JMenu("帮助(H)");
         helpItem = new JMenuItem("获得帮助");
-        helpItem.addMouseListener(new MouseAdapter()
-                                  {
+        helpItem.addMouseListener(new MouseAdapter() {
 
                                       @Override
-                                      public void mouseReleased(MouseEvent e)
-                                      {
+                                      public void mouseReleased(MouseEvent e) {
                                           super.mouseReleased(e);
                                           JDialog helpDialog = new JDialog();
 
@@ -160,11 +143,9 @@ public class MainWindow
 
                                           System.out.println("帮助");
                                           helpDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-                                          helpDialog.addWindowListener(new WindowAdapter()
-                                          {
+                                          helpDialog.addWindowListener(new WindowAdapter() {
                                               @Override
-                                              public void windowClosing(WindowEvent e)
-                                              {
+                                              public void windowClosing(WindowEvent e) {
                                                   super.windowClosing(e);
                                                   SimpleMotion.exitToEdge(helpDialog);
                                               }
@@ -176,13 +157,10 @@ public class MainWindow
         menuBar.add(help);
         //右半边大块
         topTab = new JTabbedPane();
-        JPanel RIGHTPanel = new JPanel(new BorderLayout());
-        MAIN_WINDOW.add(RIGHTPanel, BorderLayout.CENTER);
+        RightPanel = new JPanel(new BorderLayout());
+        MAIN_WINDOW.add(RightPanel, BorderLayout.CENTER);
         //顶部侧边栏
-
-        //StandardSearchPanel studentSearchPanel = new StandardSearchPanel("操作学生:", "输入姓名或学号...", "操作");
-        //RIGHTPanel.add(studentSearchPanel, BorderLayout.PAGE_START);
-        RIGHTPanel.add(topTab, BorderLayout.CENTER);
+        RightPanel.add(topTab, BorderLayout.CENTER);
         //左边侧边栏(图片)
         JPanel imageP = new JPanel(new BorderLayout());
         JPanel p1 = new JPanel();
@@ -209,24 +187,14 @@ public class MainWindow
 
         degreeBoxPanel = new JPanel(new FlowLayout());
         pInfoPanel.add(degreeBoxPanel);
-        //1
-//        JCheckBox BA_ = new JCheckBox("学士", false);
-//        BA_.setEnabled(false);
-//        JCheckBox MA_ = new JCheckBox("硕士", false);
-//        MA_.setEnabled(false);
-//        JCheckBox DO_ = new JCheckBox("博士", true);
-//        DO_.setEnabled(false);
-        //2
         BA_ = new MyCheckBox("本科", false, false);
         MA_ = new MyCheckBox("硕士", false, false);
         DO_ = new MyCheckBox("博士", false, false);
 
-        //MyCheckBox.quicklySetOneCheckBoxSelected(BA_, MA_, DO_, DO_);
-
-
         degreeBoxPanel.add(BA_);
         degreeBoxPanel.add(MA_);
         degreeBoxPanel.add(DO_);
+        
         pInfoPanelSec = new JPanel(new GridLayout(8, 1));
         pInfoPanel.add(pInfoPanelSec);
         nameP = new QuickPanelWithTwoLabels("姓名:");
@@ -283,18 +251,15 @@ public class MainWindow
         //根据学位选择是否展示tutor和lab
         cDegreeCB.addActionListener(e ->
         {
-            if (cDegreeCB.getSelectedItem().equals("本科"))
-            {
+            if (cDegreeCB.getSelectedItem().equals("本科")) {
                 c_tutorP.setText("不可用", false);
                 c_labP.setText("不可用", false);
             }
-            if (cDegreeCB.getSelectedItem().equals("硕士"))
-            {
+            if (cDegreeCB.getSelectedItem().equals("硕士")) {
                 c_tutorP.setText("...", true);
                 c_labP.setText("不可用", false);
             }
-            if (cDegreeCB.getSelectedItem().equals("博士"))
-            {
+            if (cDegreeCB.getSelectedItem().equals("博士")) {
                 c_tutorP.setText("...", true);
                 c_labP.setText("...", true);
             }
@@ -302,14 +267,11 @@ public class MainWindow
 
 
         JButton confirmCgInfoButton = new JButton("确认修改");
-        confirmCgInfoButton.addMouseListener(new MouseAdapter()
-        {
-            public void mouseReleased(MouseEvent e)
-            {
+        confirmCgInfoButton.addMouseListener(new MouseAdapter() {
+            public void mouseReleased(MouseEvent e) {
                 Student toBeAdd = null;
                 //edit
-                switch (degree[cDegreeCB.getSelectedIndex()])
-                {
+                switch (degree[cDegreeCB.getSelectedIndex()]) {
                     //待改进：应该排除学号相同的情况
 
                     case "本科":
@@ -332,7 +294,7 @@ public class MainWindow
 
                 studentArrayList.remove(currentStudent);
                 studentArrayList.add(toBeAdd);
-                currentStudent = studentArrayList.get(studentArrayList.size()-1);
+                currentStudent = studentArrayList.get(studentArrayList.size() - 1);
                 System.out.println("修改成功");
 
                 //重新加载
@@ -370,16 +332,12 @@ public class MainWindow
         courseAvgP = new QuickPanelWithTwoLabels("综合成绩:");
         pGradePanelInfoP.add(courseAvgP);
 
-        gradeSearch.b.addMouseListener(new MouseAdapter()
-        {
+        gradeSearch.b.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(MouseEvent e)
-            {
+            public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                for (Grade g : currentStudent.gradeArrayList)
-                {
-                    if (gradeSearch.t.getText().equals(g.courseID) || gradeSearch.t.getText().equals(g.courseName))
-                    {
+                for (Grade g : currentStudent.gradeArrayList) {
+                    if (gradeSearch.t.getText().equals(g.courseID) || gradeSearch.t.getText().equals(g.courseName)) {
                         courseNameP.setSecondLabelText(g.courseName);
                         courseIDP.setSecondLabelText(g.courseID);
                         courseCreditP.setSecondLabelText(g.credit);
@@ -423,16 +381,12 @@ public class MainWindow
         courseAvg_cP.text.setEnabled(false);//自动计算，不能手动输入
 
         //修改成绩查询
-        gradeChangeSearchP.b.addMouseListener(new MouseAdapter()
-        {
+        gradeChangeSearchP.b.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(MouseEvent e)
-            {
+            public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                for (Grade g : currentStudent.gradeArrayList)
-                {
-                    if (gradeChangeSearchP.t.getText().equals(g.courseID) || gradeChangeSearchP.t.getText().equals(g.courseName))
-                    {
+                for (Grade g : currentStudent.gradeArrayList) {
+                    if (gradeChangeSearchP.t.getText().equals(g.courseID) || gradeChangeSearchP.t.getText().equals(g.courseName)) {
                         courseName_cP.setText(g.courseName);
                         courseID_cP.setText(g.courseID);
                         courseCredit_cP.setText(g.credit);
@@ -446,65 +400,49 @@ public class MainWindow
                 }
             }
         });
-        courseRegG_cP.addMouseListener(new MouseInputAdapter()
-        {
+        courseRegG_cP.addMouseListener(new MouseInputAdapter() {
         });
         //添加自动计算成绩脚本
         {
-            courseRegG_cP.text.addKeyListener(new KeyAdapter()
-            {
+            courseRegG_cP.text.addKeyListener(new KeyAdapter() {
                 @Override
-                public void keyReleased(KeyEvent e)
-                {
+                public void keyReleased(KeyEvent e) {
                     super.keyReleased(e);
-                    try
-                    {
-                        if (verifyGradeEditLegit(courseRegG_cP))
-                        {
+                    try {
+                        if (verifyGradeEditLegit(courseRegG_cP)) {
                             courseAvg_cP.text.setText(String.valueOf(calculateAvgGrade(Integer.parseInt(courseRegG_cP.getText()), Integer.parseInt(courseMidG_cP.getText()), Integer.parseInt(courseFinG_cP.getText()))));
                         } else courseAvg_cP.setText("...");
-                    } catch (InterruptedException | AWTException interruptedException)
-                    {
+                    } catch (InterruptedException | AWTException interruptedException) {
                         interruptedException.printStackTrace();
                     }
 
                 }
             });
-            courseMidG_cP.text.addKeyListener(new KeyAdapter()
-            {
+            courseMidG_cP.text.addKeyListener(new KeyAdapter() {
                 @Override
-                public void keyReleased(KeyEvent e)
-                {
+                public void keyReleased(KeyEvent e) {
                     super.keyReleased(e);
-                    try
-                    {
-                        if (verifyGradeEditLegit(courseMidG_cP))
-                        {
+                    try {
+                        if (verifyGradeEditLegit(courseMidG_cP)) {
                             courseAvg_cP.text.setText(String.valueOf(calculateAvgGrade(Integer.parseInt(courseRegG_cP.getText()), Integer.parseInt(courseMidG_cP.getText()), Integer.parseInt(courseFinG_cP.getText()))));
 
                         } else courseAvg_cP.setText("...");
-                    } catch (InterruptedException | AWTException interruptedException)
-                    {
+                    } catch (InterruptedException | AWTException interruptedException) {
                         interruptedException.printStackTrace();
                     }
 
                 }
             });
-            courseFinG_cP.text.addKeyListener(new KeyAdapter()
-            {
+            courseFinG_cP.text.addKeyListener(new KeyAdapter() {
                 @Override
-                public void keyReleased(KeyEvent e)
-                {
+                public void keyReleased(KeyEvent e) {
                     super.keyReleased(e);
-                    try
-                    {
-                        if (verifyGradeEditLegit(courseFinG_cP))
-                        {
+                    try {
+                        if (verifyGradeEditLegit(courseFinG_cP)) {
                             courseAvg_cP.text.setText(String.valueOf(calculateAvgGrade(Integer.parseInt(courseRegG_cP.getText()), Integer.parseInt(courseMidG_cP.getText()), Integer.parseInt(courseFinG_cP.getText()))));
 
                         } else courseAvg_cP.setText("...");
-                    } catch (InterruptedException | AWTException interruptedException)
-                    {
+                    } catch (InterruptedException | AWTException interruptedException) {
                         interruptedException.printStackTrace();
                     }
                 }
@@ -522,21 +460,17 @@ public class MainWindow
         changeConfirmPanel.add(changeConfirmButton);
 
         //修改成绩按钮监听
-        changeConfirmButton.addMouseListener(new MouseAdapter()
-        {
+        changeConfirmButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(MouseEvent e)
-            {
+            public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                for (int i = 0; i < currentStudent.gradeArrayList.size(); i++)
-                {
+                for (int i = 0; i < currentStudent.gradeArrayList.size(); i++) {
                     if (gradeChangeSearchP.t.getText().equals(currentStudent.gradeArrayList.get(i).courseID)
-                            || gradeChangeSearchP.t.getText().equals(currentStudent.gradeArrayList.get(i).courseName))
-                    {
+                            || gradeChangeSearchP.t.getText().equals(currentStudent.gradeArrayList.get(i).courseName)) {
                         currentStudent.gradeArrayList.get(i).reg = Integer.parseInt(courseRegG_cP.text.getText());
                         currentStudent.gradeArrayList.get(i).mid = Integer.parseInt(courseMidG_cP.text.getText());
                         currentStudent.gradeArrayList.get(i).fin = Integer.parseInt(courseFinG_cP.text.getText());
-
+                        switchStu(currentStudent);
                         break;
                     }
 
@@ -558,8 +492,7 @@ public class MainWindow
 
     }
 
-    public static void switchStu(Student currentStu)
-    {
+    public static void switchStu(Student currentStu) {
         SimpleMotion.upAndDown_A(MAIN_WINDOW, MAIN_WINDOW_HEIGHT);
         currentStudent = currentStu;
         System.out.println("切换学生:" + currentStu.toString());
@@ -569,8 +502,7 @@ public class MainWindow
         majorP.setSecondLabelText(currentStu.getMajor());
         dormP.setSecondLabelText(currentStu.getDorm());
         MyCheckBox.quicklySetOneCheckBoxSelected(BA_, MA_, DO_, currentStu);
-        switch (currentStu.getTag())
-        {
+        switch (currentStu.getTag()) {
             case "BA" -> {
                 tutorP.setSecondLabelText("--不可用--");
                 labP.setSecondLabelText("--不可用--");
@@ -607,58 +539,46 @@ public class MainWindow
     }
 
 
-    static int calculateAvgGrade(int reg, int mid, int fin)
-    {
+    static int calculateAvgGrade(int reg, int mid, int fin) {
         return (int) (reg * REG_PER + mid * MID_PER + fin * FIN_PER);
     }
 
-    static boolean verifyGradeEditLegit(QuickPanelWithLabelAndText gradeEditPanel) throws InterruptedException, AWTException
-    {
+    static boolean verifyGradeEditLegit(QuickPanelWithLabelAndText gradeEditPanel) throws InterruptedException, AWTException {
         //其他字符验证
-        if (!verifyInteger(gradeEditPanel.getText()))
-        {
+        if (!verifyInteger(gradeEditPanel.getText())) {
             SimpleMotion.displayErrorInfo(gradeEditPanel.text, "输入了不合法的字符");
             return false;
         }
 
         //区间位于0～100
-        if (Integer.parseInt(gradeEditPanel.getText()) > 100 || Integer.parseInt(gradeEditPanel.getText()) < 0)
-        {
+        if (Integer.parseInt(gradeEditPanel.getText()) > 100 || Integer.parseInt(gradeEditPanel.getText()) < 0) {
             SimpleMotion.displayErrorInfo(gradeEditPanel.text, "成绩须为0～100");
             return false;
         }
+
         return true;
     }
 
-    static boolean verifyInteger(String s)
-    {
+    static boolean verifyInteger(String s) {
         char[] cs = s.toCharArray();
-        for (var c : cs)
-        {
-            if (!Character.isDigit(c))
-            {
+        for (var c : cs) {
+            if (!Character.isDigit(c)) {
                 return false;
             }
         }
         return true;
-        //来源https://zhidao.baidu.com/question/584487915.html
-//        Pattern pattern = Pattern.compile("^[-\\+]?[\\d]*$");
-//        return pattern.matcher(s).matches();
     }
 
-    ArrayList<Student> initializeStudent()
-    {
+    ArrayList<Student> initializeStudent() {
         ArrayList<Student> studentArrayList = new ArrayList<>();
-        try
-        {
+        try {
             String path = LaunchWindow.WORK_FOLDER + "//STUDENT.txt";
             File filename = new File(path);
             InputStreamReader reader = new InputStreamReader(new FileInputStream(filename));
             BufferedReader bufferedReader = new BufferedReader(reader);
             String line;
             line = bufferedReader.readLine();
-            while (line != null)
-            {
+            while (line != null) {
                 //line格式如：黄京源 14408010120 男 软件工程1401 博士 史晓楠 科创 9#232
                 String[] infoLine = line.split("\\s+");//分割字符串
                 if (infoLine[4].equals("本科"))
@@ -670,27 +590,23 @@ public class MainWindow
 
                 line = bufferedReader.readLine();
             }
-        } catch (IOException ignored)
-        {
+        } catch (IOException ignored) {
 
         }
         //加载整个成绩单
 //      int csNum = 0;
         ArrayList<Grade> wholeGradeData = new ArrayList<>();
-        try
-        {
+        try {
             String path = LaunchWindow.WORK_FOLDER + "//GRADE.txt";
             File filename = new File(path);
             InputStreamReader reader = new InputStreamReader(new FileInputStream(filename));
             BufferedReader bufferedReader = new BufferedReader(reader);
             String courseLine = bufferedReader.readLine();
 
-            while (courseLine != null)
-            {
+            while (courseLine != null) {
                 String[] gradeLineArr = courseLine.split(",");//分割字符串
                 //csNum = (gradeLineArr.length - 1) / 6;
-                for (int i = 1; i < gradeLineArr.length - 1; i += 6)
-                {
+                for (int i = 1; i < gradeLineArr.length - 1; i += 6) {
                     wholeGradeData.add(new Grade(gradeLineArr[0], gradeLineArr[i + 1], gradeLineArr[i],
                             gradeLineArr[i + 2], Integer.parseInt(gradeLineArr[i + 3]),
                             Integer.parseInt(gradeLineArr[i + 4]), Integer.parseInt(gradeLineArr[i + 5])));
@@ -698,23 +614,16 @@ public class MainWindow
 
                 courseLine = bufferedReader.readLine();
             }
-        } catch (IOException ignored)
-        {
-
-        }
-        finally
-        {
+        } catch (IOException ignored) {
 
         }
         //学习来源：https://blog.csdn.net/shenziheng1/article/details/100110816
 
         //将每个Grade成员赋给相应的Student
-        for (int i = 0; i < studentArrayList.size(); i++)
-        {
+        for (int i = 0; i < studentArrayList.size(); i++) {
             Student tmpStuEl = studentArrayList.get(i);
 
-            for (Grade tmpGradeEl : wholeGradeData)
-            {
+            for (Grade tmpGradeEl : wholeGradeData) {
                 if (tmpGradeEl.getStuID().equals(tmpStuEl.getID()))
                     tmpStuEl.gradeArrayList.add(tmpGradeEl);
             }
@@ -726,10 +635,8 @@ public class MainWindow
 
     }
 
-    public boolean ifIDExists(String str)
-    {
-        for (Student stu : studentArrayList)
-        {
+    public static boolean ifIDExists(String str) {
+        for (Student stu : studentArrayList) {
             if (stu.getID().equals(str)) return true;
         }
         return false;

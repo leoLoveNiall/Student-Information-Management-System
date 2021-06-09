@@ -4,20 +4,17 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-public class FindStudentDialog extends JDialog
-{
+public class FindStudentDialog extends JDialog {
     JDialog findDialog = new JDialog();
     static Student selectedStu = null;
     static private final int HEIGHT = 300, WIDTH = 400;
 
-    static String findStu(ArrayList<Student> studentArrayList)
-    {
+    static String findStu(ArrayList<Student> studentArrayList) {
         return "";
     }
 
 
-    public FindStudentDialog(Frame owner, String title, boolean modal) throws Exception
-    {
+    public FindStudentDialog(Frame owner, String title, boolean modal) throws Exception {
 
         //初始化窗体
         JPanel mainPanel = new JPanel();
@@ -44,11 +41,9 @@ public class FindStudentDialog extends JDialog
 
         //结果
 
-        searchPanel.b.addMouseListener(new MouseAdapter()
-        {
+        searchPanel.b.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(MouseEvent e)
-            {
+            public void mouseReleased(MouseEvent e) {
                 SimpleMotion.upAndDown_A(findDialog, HEIGHT);
                 stuSerInfoPanel.removeAll();
                 JLabel findLabel = new JLabel("查询到");
@@ -59,10 +54,8 @@ public class FindStudentDialog extends JDialog
                 int index = 0;
                 super.mouseReleased(e);
                 boolean foundOrNot = false;
-                for (Student tmpStu : MainWindow.studentArrayList)
-                {
-                    if (tmpStu.getName().equals(searchPanel.t.getText()) || tmpStu.getID().equals(searchPanel.t.getText()))
-                    {
+                for (Student tmpStu : MainWindow.studentArrayList) {
+                    if (tmpStu.getName().equals(searchPanel.t.getText()) || tmpStu.getID().equals(searchPanel.t.getText())) {
 
                         resultStu.add(new JRadioButton(tmpStu.getName() + "," + tmpStu.getMajor() + "," + tmpStu.getID()));
                         stuSerInfoPanel.add(resultStu.get(index));
@@ -72,25 +65,20 @@ public class FindStudentDialog extends JDialog
                         foundOrNot = true;
                         index++;
                         System.out.println("found:" + tmpStu.toString());
-                        findLabel.setText("查询到"+ resultStu.size()+"个结果");
+                        findLabel.setText("查询到" + resultStu.size() + "个结果");
 
                     }
                 }
                 stuSerInfoPanel.add(switchStuButton);
-                switchStuButton.addMouseListener(new MouseAdapter()
-                {
+                switchStuButton.addMouseListener(new MouseAdapter() {
                     @Override
-                    public void mouseReleased(MouseEvent e)
-                    {
+                    public void mouseReleased(MouseEvent e) {
                         super.mouseReleased(e);
                         String[] s = new String[3];
-                        for (JRadioButton rb : resultStu)
-                        {
-                            if (rb.isSelected())
-                            {
+                        for (JRadioButton rb : resultStu) {
+                            if (rb.isSelected()) {
                                 s = rb.getText().split(",");
-                                for (Student stu : MainWindow.studentArrayList)
-                                {
+                                for (Student stu : MainWindow.studentArrayList) {
                                     if (stu.getID().equals(s[2])) MainWindow.switchStu(stu);
                                 }
                                 break;
@@ -98,44 +86,23 @@ public class FindStudentDialog extends JDialog
                         }
                     }
                 });
-                if (!foundOrNot)
-                {
-                    try
-                    {
+                if (!foundOrNot) {
+                    try {
                         SimpleMotion.displayErrorInfo(searchPanel.t, "找不到此学生");
                         findLabel.setText("查询到0个结果");
                         switchStuButton.setVisible(false);
-                    } catch (InterruptedException interruptedException)
-                    {
+                    } catch (InterruptedException interruptedException) {
                         interruptedException.printStackTrace();
                     }
-                }
-                else switchStuButton.setVisible(true);
+                } else switchStuButton.setVisible(true);
                 SimpleMotion.upAndDown_B(findDialog, HEIGHT);
 
             }
         });
 
-
-//
-//        JRadioButton jrb1 = new JRadioButton("张三 本科生 1234 软件工程2001");
-//        JRadioButton jrb2 = new JRadioButton("李四 本科生 5678 计算机科学与技术2002");
-//        JRadioButton jrb3 = new JRadioButton("王五 本科生 9012 大数据2003");
-//        btnG.add(jrb1);
-//        btnG.add(jrb2);
-//        btnG.add(jrb3);
-//        stuSerInfoPanel.add(jrb1);
-//        stuSerInfoPanel.add(jrb2);
-//        stuSerInfoPanel.add(jrb3);
-
-        //https://blog.csdn.net/xietansheng/article/details/74363379?utm_source=app&app_version=4.7.0
-
-
-        switchStuButton.addMouseListener(new MouseAdapter()
-        {
+        switchStuButton.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseReleased(MouseEvent e)
-            {
+            public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
                 //System.out.println("切换至学生" + group.getSelection().toString());
 

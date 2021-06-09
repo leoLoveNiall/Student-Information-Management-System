@@ -6,19 +6,15 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class LaunchWindow
-{
+public class LaunchWindow {
     //static final String WORK_FOLDER = System.getProperty("user.dir")+"/src/";
 
-    static final String WORK_FOLDER ="/Users/kongweirui/Desktop/Java/Student-Inform" +
+    static final String WORK_FOLDER = "/Users/kongweirui/Desktop/Java/Student-Inform" +
             "ation-Management-System/out/production/Student-Information-Management-System";
 
 
-
-
     //ps: Mac系统下文件系统使用右斜杠，Windows系统需要改进
-    static void createMainWindow(JFrame LaunchWindow)
-    {
+    static void createMainWindow(JFrame LaunchWindow) {
         System.out.println(System.getProperty("user.dir"));
         SimpleMotion.exitMotion(LaunchWindow);
         LaunchWindow.setVisible(false);
@@ -28,8 +24,7 @@ public class LaunchWindow
         LaunchWindow.dispose(); //销毁窗口
     }
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         JFrame LaunchWindow = new JFrame("西安科技大学·学生管理系统");
         LaunchWindow.setLayout(new GridLayout(6, 1));
         LaunchWindow.setSize(400, 300);
@@ -77,22 +72,16 @@ public class LaunchWindow
         keyPanel.add(keyLabel, keyText);
         buttonPanel.add(loginButton);
 
-
-
-
 //      创建窗口
         SimpleMotion.centerize(LaunchWindow);
         SimpleMotion.openMotion(LaunchWindow, 400, 300);
 //      登陆
 
 
-        loginButton.addMouseListener(new MouseAdapter()
-        {
-            public void mouseReleased(MouseEvent e)
-            {
+        loginButton.addMouseListener(new MouseAdapter() {
+            public void mouseReleased(MouseEvent e) {
                 if (nameText.getText().equals("leo") &&
-                        MD5.getMD5(keyText.getText()).equals("202CB962AC59075B964B07152D234B70"))
-                {
+                        MD5.getMD5(keyText.getText()).equals("202CB962AC59075B964B07152D234B70")) {
                     createMainWindow(LaunchWindow);
 
                 }
@@ -100,10 +89,8 @@ public class LaunchWindow
         });
 
         //createMainWindow(LaunchWindow);
-
     }
 }
-
 
 
 //以下MD5加密代码来自网络
@@ -112,7 +99,6 @@ public class LaunchWindow
         来源：知乎
         著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 */
-
 class MD5 {
     public static String getMD5(String src) {
         // 需要加密的字符串
@@ -124,8 +110,8 @@ class MD5 {
             // 加密
             byte[] digest = md5.digest(b);
             // 十六进制的字符
-            char[] chars = new char[] { '0', '1', '2', '3', '4', '5',
-                    '6', '7' , '8', '9', 'A', 'B', 'C', 'D', 'E','F' };
+            char[] chars = new char[]{'0', '1', '2', '3', '4', '5',
+                    '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
             StringBuffer sb = new StringBuffer();
             // 处理成十六进制的字符串(通常)
             for (byte bb : digest) {
