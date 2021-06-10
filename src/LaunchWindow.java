@@ -29,7 +29,6 @@ public class LaunchWindow {
         JFrame LaunchWindow = new JFrame("西安科技大学·学生管理系统");
         LaunchWindow.setLayout(new GridLayout(6, 1));
         LaunchWindow.setSize(400, 300);
-
         LaunchWindow.setResizable(false);
         LaunchWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //LaunchWindow.setLocation(600, 600);
@@ -89,7 +88,7 @@ public class LaunchWindow {
             }
         });
 
-        //createMainWindow(LaunchWindow);
+        System.out.println("YEE");
     }
 }
 
