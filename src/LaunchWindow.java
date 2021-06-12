@@ -1,37 +1,42 @@
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class LaunchWindow {
+public class LaunchWindow{
     //static final String WORK_FOLDER = System.getProperty("user.dir")+"/src/";
-
+    static JFrame LAUNCH_WINDOW = new JFrame("西安科技大学·学生管理系统");
     static final String WORK_FOLDER = "/Users/kongweirui/Desktop/Java/Student-Inform" +
             "ation-Management-System/out/production/Student-Information-Management-System";
 
+    static JLabel nameLabel = new JLabel("用户名：");
+    static JTextField nameText = new JTextField("leo", 10);
+    static JLabel keyLabel = new JLabel("  密码：");
+    static JTextField keyText = new JPasswordField("123", 10);
+    static JButton loginButton = new JButton("登录");
+
 
     //ps: Mac系统下文件系统使用右斜杠，Windows系统需要改进
-    static void createMainWindow(JFrame LaunchWindow) {
+    static void createMainWindow(JFrame LAUNCH_WINDOW) {
         System.out.println(System.getProperty("user.dir"));
-        SimpleMotion.exitMotion(LaunchWindow);
-        LaunchWindow.setVisible(false);
+        SimpleMotion.exitMotion(LAUNCH_WINDOW);
+        LAUNCH_WINDOW.setVisible(false);
 
         System.gc();
         MainWindow mainWindow = new MainWindow();
-        LaunchWindow.dispose(); //销毁窗口
+        LAUNCH_WINDOW.dispose(); //销毁窗口
     }
 
     public static void main(String[] args) {
-        JFrame LaunchWindow = new JFrame("西安科技大学·学生管理系统");
-        LaunchWindow.setLayout(new GridLayout(6, 1));
-        LaunchWindow.setSize(400, 300);
-        LaunchWindow.setResizable(false);
-        LaunchWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //LaunchWindow.setLocation(600, 600);
+
+        LAUNCH_WINDOW.setLayout(new GridLayout(6, 1));
+        LAUNCH_WINDOW.setSize(400, 300);
+        LAUNCH_WINDOW.setResizable(false);
+        LAUNCH_WINDOW.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //LAUNCH_WINDOW.setLocation(600, 600);
 //      设置图标panel和标签
         JPanel iconPanel = new JPanel();
         JLabel iconLabel = new JLabel();
@@ -49,19 +54,12 @@ public class LaunchWindow {
         JLabel headLine = new JLabel("学生信息管理系统");
         Captcha captcha = new Captcha();
 //      添加panel和img
-        LaunchWindow.add(iconPanel);
-        LaunchWindow.add(topPanel);
-        LaunchWindow.add(userPanel);
-        LaunchWindow.add(keyPanel);
-        LaunchWindow.add(captcha);
-        LaunchWindow.add(buttonPanel);
-
-
-        JLabel nameLabel = new JLabel("用户名：");
-        JTextField nameText = new JTextField("leo", 10);
-        JLabel keyLabel = new JLabel("  密码：");
-        JTextField keyText = new JPasswordField("123", 10);
-        JButton loginButton = new JButton("登录");
+        LAUNCH_WINDOW.add(iconPanel);
+        LAUNCH_WINDOW.add(topPanel);
+        LAUNCH_WINDOW.add(userPanel);
+        LAUNCH_WINDOW.add(keyPanel);
+        LAUNCH_WINDOW.add(captcha);
+        LAUNCH_WINDOW.add(buttonPanel);
 
         System.out.println(MD5.getMD5(keyText.getText()));
 
@@ -73,8 +71,8 @@ public class LaunchWindow {
         buttonPanel.add(loginButton);
 
 //      创建窗口
-        SimpleMotion.centerize(LaunchWindow);
-        SimpleMotion.openMotion(LaunchWindow, 400, 300);
+        SimpleMotion.centerize(LAUNCH_WINDOW);
+        SimpleMotion.openMotion(LAUNCH_WINDOW, 400, 300);
 //      登陆
 
 
@@ -82,11 +80,32 @@ public class LaunchWindow {
             public void mouseReleased(MouseEvent e) {
                 if (nameText.getText().equals("leo") &&
                         MD5.getMD5(keyText.getText()).equals("202CB962AC59075B964B07152D234B70")) {
-                    createMainWindow(LaunchWindow);
+                    createMainWindow(LAUNCH_WINDOW);
 
                 }
             }
         });
+
+        KeyListener enterToEnter = new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+            @Override
+            public void keyPressed(KeyEvent e) {
+                System.out.println(e.getKeyChar());
+                if (e.getKeyChar() == '\n') {
+
+                    loginButton.doClick();
+                }
+            }
+            @Override
+            public void keyReleased(KeyEvent e) {
+            }
+        };
+        LAUNCH_WINDOW.addKeyListener(enterToEnter);
+        nameLabel.addKeyListener(enterToEnter);
+        keyLabel.addKeyListener(enterToEnter);
 
         System.out.println("YEE");
     }

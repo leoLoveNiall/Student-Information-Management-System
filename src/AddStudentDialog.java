@@ -53,7 +53,7 @@ public class AddStudentDialog extends JDialog {
         a_genderP.setLayout(new FlowLayout());
         a_genderP.add(new JLabel("性别"));
         String[] gender = {"顺性男 Cis Man", "顺性女 Cis Woman", "双性人 Bigender", "无性别 Agender",
-                "跨性别 Trans", "流性人 Gender Fluid", "非常规 Nonconforming", "酷儿性别 Genderqueer",
+                "跨性别 Trans", "流性人 Gender Fluid", "非常规性别 Nonconforming", "酷儿性别 Genderqueer",
                 "间性人 Intersex", "泛性别 Pangender", "不确定"};
         genderCB = new JComboBox(gender);
         a_genderP.add(genderCB);

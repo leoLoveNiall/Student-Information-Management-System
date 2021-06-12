@@ -185,5 +185,15 @@ class MyCheckBox extends JCheckBox {
     }
 }
 
-
+class TemporaryDialogDisposer extends Thread{
+    int time = 1000;
+    public void start(Window w) {
+        super.start();
+        SimpleMotion.sleep(time);
+        w.dispose();
+    }
+    public void setTime(int time) {
+        this.time = time;
+    }
+}
 

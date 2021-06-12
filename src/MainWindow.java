@@ -70,6 +70,7 @@ public class MainWindow {
     static QuickPanelWithLabelAndText courseFinG_cP;
     static QuickPanelWithLabelAndText courseRegG_cP;
     public static ArrayList<Student> studentArrayList;
+    JButton confirmCgInfoButton;
 
     //ArrayList待改进
     MainWindow() {
@@ -162,29 +163,29 @@ public class MainWindow {
         //顶部侧边栏
         RightPanel.add(topTab, BorderLayout.CENTER);
         //左边侧边栏(图片)
-        JPanel imageP = new JPanel(new BorderLayout());
-        JPanel p1 = new JPanel();
-        JPanel p2 = new JPanel();
-        imageP.add(p1, BorderLayout.PAGE_START);
-        imageP.add(p2, BorderLayout.CENTER);
-        p1.add(new JLabel("PROFILE"));
-        MAIN_WINDOW.add(imageP, BorderLayout.WEST);
-        JLabel iconLabel = new JLabel();
-        p2.add(iconLabel);
+        {
+            JPanel imageP = new JPanel(new BorderLayout());
+            JPanel p1 = new JPanel();
+            JPanel p2 = new JPanel();
+            imageP.add(p1, BorderLayout.PAGE_START);
+            imageP.add(p2, BorderLayout.CENTER);
+            p1.add(new JLabel("PROFILE"));
+            MAIN_WINDOW.add(imageP, BorderLayout.WEST);
+            JLabel iconLabel = new JLabel();
+            p2.add(iconLabel);
 
-        ImageIcon icon = new ImageIcon(LaunchWindow.WORK_FOLDER + "//profile.jpeg");
-        Image img = icon.getImage();
-        img = img.getScaledInstance(100, 140, Image.SCALE_DEFAULT);
-        icon.setImage(img);
-        iconLabel.setIcon(icon);
+            ImageIcon icon = new ImageIcon(LaunchWindow.WORK_FOLDER + "//profile.jpeg");
+            Image img = icon.getImage();
+            img = img.getScaledInstance(100, 140, Image.SCALE_DEFAULT);
+            icon.setImage(img);
+            iconLabel.setIcon(icon);
+        }
 
 
         //详细组件
         //查询个人信息面板
         pInfoPanel = new JPanel(new GridLayout(1, 2));
         topTab.add("个人信息", pInfoPanel);
-
-
         degreeBoxPanel = new JPanel(new FlowLayout());
         pInfoPanel.add(degreeBoxPanel);
         BA_ = new MyCheckBox("本科", false, false);
@@ -194,7 +195,7 @@ public class MainWindow {
         degreeBoxPanel.add(BA_);
         degreeBoxPanel.add(MA_);
         degreeBoxPanel.add(DO_);
-        
+
         pInfoPanelSec = new JPanel(new GridLayout(8, 1));
         pInfoPanel.add(pInfoPanelSec);
         nameP = new QuickPanelWithTwoLabels("姓名:");
@@ -230,8 +231,6 @@ public class MainWindow {
         cDegreeCB = new JComboBox(degree);
         cDegreeP.add(cDegreeCB);
         cInfoPanel.add(cDegreeP);
-
-
         c_nameP = new QuickPanelWithLabelAndText("  姓名:");
         cInfoPanel.add(c_nameP);
         c_idP = new QuickPanelWithLabelAndText("  学号:");
@@ -264,9 +263,7 @@ public class MainWindow {
                 c_labP.setText("...", true);
             }
         });
-
-
-        JButton confirmCgInfoButton = new JButton("确认修改");
+        confirmCgInfoButton = new JButton("确认修改");
         confirmCgInfoButton.addMouseListener(new MouseAdapter() {
             public void mouseReleased(MouseEvent e) {
                 Student toBeAdd = null;
@@ -290,16 +287,27 @@ public class MainWindow {
                                 c_dormP.text.getText(), c_tutorP.text.getText(), c_labP.text.getText());
                         break;
                 }
-                toBeAdd.gradeArrayList = currentStudent.gradeArrayList;
+                toBeAdd.gradeArrayList = (ArrayList<Grade>) currentStudent.gradeArrayList.clone();
 
-                studentArrayList.remove(currentStudent);
-                studentArrayList.add(toBeAdd);
-                currentStudent = studentArrayList.get(studentArrayList.size() - 1);
-                System.out.println("修改成功");
+                if (ifIDExists(toBeAdd.getID()) && !toBeAdd.getID().equals(currentStudent.getID())) {
+                    JDialog done = new JDialog();
+                    done.setSize(300, 200);
+                    done.setResizable(false);
+                    SimpleMotion.centerize(done);
+                    done.setLayout(new FlowLayout());
+                    done.add(new JLabel("学号已存在！"));
+                    done.setVisible(true);
+                    TemporaryDialogDisposer disposer = new TemporaryDialogDisposer();
+                    disposer.start(done);
+                } else {
+                    studentArrayList.remove(currentStudent);
+                    studentArrayList.add(toBeAdd);
+                    currentStudent = studentArrayList.get(studentArrayList.size() - 1);
+                    System.out.println("修改成功");
+                    //重新加载
 
-                //重新加载
-
-                switchStu(currentStudent);
+                    switchStu(currentStudent);
+                }
             }
         });
         cInfoPanel.add(confirmCgInfoButton);
