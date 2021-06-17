@@ -9,7 +9,6 @@ class StandardSearchPanel extends JPanel {
     JLabel l = new JLabel();
     JTextField t = new JTextField("", 10);
     JButton b = new JButton("查询");
-
     StandardSearchPanel(String label) {
         l.setText(label);
         add(l);
@@ -101,11 +100,10 @@ class QuickPanelWithLabelAndText extends DoublePanel {
 class QuickPanelWithTwoLabels extends DoublePanel {
 
     QuickPanelWithTwoLabels() {
-
     }
 
-    private JLabel label1 = new JLabel("");
-    private JLabel label2 = new JLabel("");
+     JLabel label1 = new JLabel();
+     JLabel label2 = new JLabel();
 
 
     QuickPanelWithTwoLabels(String str) {
@@ -158,17 +156,11 @@ class MyCheckBox extends JCheckBox {
         c2.setEnabled(false);
         c3.setEnabled(false);
         switch (s.getTag()) {
-            case "BA":
-                makeMyCheckBoxAbleButNotUsable(c1);
-                break;
-            case "MA":
-                makeMyCheckBoxAbleButNotUsable(c2);
-                break;
-            case "DO":
-                makeMyCheckBoxAbleButNotUsable(c3);
-                break;
+            case "BA" -> makeMyCheckBoxAbleButNotUsable(c1);
+            case "MA" -> makeMyCheckBoxAbleButNotUsable(c2);
+            case "DO" -> makeMyCheckBoxAbleButNotUsable(c3);
         }
-        ;
+
     }
 
 
@@ -185,15 +177,25 @@ class MyCheckBox extends JCheckBox {
     }
 }
 
-class TemporaryDialogDisposer extends Thread{
-    int time = 1000;
-    public void start(Window w) {
-        super.start();
-        SimpleMotion.sleep(time);
-        w.dispose();
+class TemporaryDialog extends JDialog {
+    int suspendTime = 1000;
+    int width = 200, height =100;
+    TemporaryDialog(String headline){
+        new TemporaryDialog(headline, height, width);
+        this.dispose();
+        //考虑到简化代码的同时并保持简便的实现
     }
-    public void setTime(int time) {
-        this.time = time;
+    TemporaryDialog(String headline, int height, int width) {
+        //创建窗口
+        var panel = new JPanel();
+        this.add(panel);
+        panel.add(new JLabel(headline));
+        SimpleMotion.openMotion(this, width, height);
+        //销毁窗口
+        new Thread(() -> {
+            SimpleMotion.sleep(suspendTime);
+            SimpleMotion.exitMotion(TemporaryDialog.this);
+        }).start();
     }
 }
 

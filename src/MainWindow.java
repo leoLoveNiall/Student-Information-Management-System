@@ -15,62 +15,62 @@ public class MainWindow {
     private static final JFrame MAIN_WINDOW = new JFrame();
 
     //关键元素
+    static ArrayList<Student> studentArrayList;
+    static JButton confirmCgInfoButton;
+    static JComboBox<String> cDegreeCB;
     static JMenu help;
-    static JMenuItem helpItem;
-    static JMenuBar menuBar;
     static JMenu manipulate;
-    static QuickPanelWithLabelAndText courseMidG_cP;
+    static JMenu save;
+    static JMenuBar menuBar;
     static JMenuItem addStu;
     static JMenuItem findStu;
-    static JMenuItem saveS;
-    static JMenu save;
+    static JMenuItem helpItem;
     static JMenuItem saveAndExit;
-    static JTabbedPane topTab;
-    static JPanel pInfoPanelSec;
-    static MyCheckBox MA_;
-    static MyCheckBox DO_;
-    static MyCheckBox BA_;
-    static QuickPanelWithTwoLabels nameP;
-    static QuickPanelWithTwoLabels genderP;
-    static QuickPanelWithTwoLabels tutorP;
-    static QuickPanelWithTwoLabels labP;
-    static QuickPanelWithTwoLabels dormP;
-    static QuickPanelWithTwoLabels idP;
-    static QuickPanelWithTwoLabels majorP;
-    static JPanel degreeBoxPanel;
-    static JPanel pInfoPanel;
-    static JPanel cInfoPanel;
+    static JMenuItem saveS;
     static JPanel cDegreeP;
-    static JPanel RightPanel;
-    static JComboBox cDegreeCB;
-    static QuickPanelWithLabelAndText c_tutorP;
-    static QuickPanelWithLabelAndText c_nameP;
-    static QuickPanelWithLabelAndText c_idP;
-    static QuickPanelWithLabelAndText c_genderP;
-    static QuickPanelWithLabelAndText c_majorP;
-    static QuickPanelWithLabelAndText c_labP;
-    static QuickPanelWithLabelAndText c_dormP;
+    static JPanel cInfoPanel;
+    static JPanel degreeBoxPanel;
     static JPanel pGradePanel;
-    static JPanel pGradePanelSearchP;
-    static StandardSearchPanel gradeSearch;
-    static JPanel pGradePanelInfoP;
-    static QuickPanelWithTwoLabels courseNameP;
-    static QuickPanelWithTwoLabels courseIDP;
-    static QuickPanelWithTwoLabels courseCreditP;
-    static QuickPanelWithTwoLabels courseRegGP;
-    static QuickPanelWithTwoLabels courseMidGP;
-    static QuickPanelWithTwoLabels courseAvgP;
-    static QuickPanelWithTwoLabels courseFinGP;
     static JPanel pGradePanelChangeP;
+    static JPanel pGradePanelInfoP;
+    static JPanel pGradePanelSearchP;
+    static JPanel pInfoPanel;
+    static JPanel pInfoPanelSec;
+    static JPanel RightPanel;
+    static JTabbedPane topTab;
+    static MyCheckBox BA_;
+    static MyCheckBox DO_;
+    static MyCheckBox MA_;
+    static QuickPanelWithLabelAndText c_dormP;
+    static QuickPanelWithLabelAndText c_genderP;
+    static QuickPanelWithLabelAndText c_idP;
+    static QuickPanelWithLabelAndText c_labP;
+    static QuickPanelWithLabelAndText c_majorP;
+    static QuickPanelWithLabelAndText c_nameP;
+    static QuickPanelWithLabelAndText c_tutorP;
     static QuickPanelWithLabelAndText courseAvg_cP;
-    static StandardSearchPanel gradeChangeSearchP;
-    static QuickPanelWithLabelAndText courseName_cP;
-    static QuickPanelWithLabelAndText courseID_cP;
     static QuickPanelWithLabelAndText courseCredit_cP;
     static QuickPanelWithLabelAndText courseFinG_cP;
+    static QuickPanelWithLabelAndText courseID_cP;
+    static QuickPanelWithLabelAndText courseMidG_cP;
+    static QuickPanelWithLabelAndText courseName_cP;
     static QuickPanelWithLabelAndText courseRegG_cP;
-    public static ArrayList<Student> studentArrayList;
-    JButton confirmCgInfoButton;
+    static QuickPanelWithTwoLabels courseAvgP;
+    static QuickPanelWithTwoLabels courseCreditP;
+    static QuickPanelWithTwoLabels courseFinGP;
+    static QuickPanelWithTwoLabels courseIDP;
+    static QuickPanelWithTwoLabels courseMidGP;
+    static QuickPanelWithTwoLabels courseNameP;
+    static QuickPanelWithTwoLabels courseRegGP;
+    static QuickPanelWithTwoLabels dormP;
+    static QuickPanelWithTwoLabels genderP;
+    static QuickPanelWithTwoLabels idP;
+    static QuickPanelWithTwoLabels labP;
+    static QuickPanelWithTwoLabels majorP;
+    static QuickPanelWithTwoLabels nameP;
+    static QuickPanelWithTwoLabels tutorP;
+    static StandardSearchPanel gradeChangeSearchP;
+    static StandardSearchPanel gradeSearch;
 
     //ArrayList待改进
     MainWindow() {
@@ -99,9 +99,7 @@ public class MainWindow {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                AddStudentDialog addStudentDialog = new AddStudentDialog(MAIN_WINDOW, "新增学生", true);
-//                JDialog d = new JDialog(mainWindow, "新增学生", true);
-//                d.setSize(400,400);d.setVisible(true);
+                new AddStudentDialog(MAIN_WINDOW, "新增学生", true);
             }
         });
         findStu = new JMenuItem("切换学生(W)");
@@ -109,12 +107,7 @@ public class MainWindow {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                try {
-                    FindStudentDialog findStudentDialog = new FindStudentDialog(MAIN_WINDOW, "切换学生", true);
-                } catch (Exception exception) {
-                    exception.printStackTrace();
-                }
-
+                    new FindStudentDialog();
             }
         });
         manipulate.add(addStu);
@@ -135,7 +128,7 @@ public class MainWindow {
                                       @Override
                                       public void mouseReleased(MouseEvent e) {
                                           super.mouseReleased(e);
-                                          JDialog helpDialog = new JDialog();
+                                          var helpDialog = new JDialog();
 
                                           helpDialog.setLayout(new FlowLayout());
                                           helpDialog.setTitle("帮助");
@@ -164,18 +157,18 @@ public class MainWindow {
         RightPanel.add(topTab, BorderLayout.CENTER);
         //左边侧边栏(图片)
         {
-            JPanel imageP = new JPanel(new BorderLayout());
-            JPanel p1 = new JPanel();
-            JPanel p2 = new JPanel();
+            var imageP = new JPanel(new BorderLayout());
+            var p1 = new JPanel();
+            var p2 = new JPanel();
             imageP.add(p1, BorderLayout.PAGE_START);
             imageP.add(p2, BorderLayout.CENTER);
             p1.add(new JLabel("PROFILE"));
             MAIN_WINDOW.add(imageP, BorderLayout.WEST);
-            JLabel iconLabel = new JLabel();
+            var iconLabel = new JLabel();
             p2.add(iconLabel);
 
-            ImageIcon icon = new ImageIcon(LaunchWindow.WORK_FOLDER + "//profile.jpeg");
-            Image img = icon.getImage();
+            var icon = new ImageIcon(LaunchWindow.ASSET_FOLDER + "//profile.jpeg");
+            var img = icon.getImage();
             img = img.getScaledInstance(100, 140, Image.SCALE_DEFAULT);
             icon.setImage(img);
             iconLabel.setIcon(icon);
@@ -228,7 +221,7 @@ public class MainWindow {
         cDegreeP = new JPanel(new FlowLayout());
         cDegreeP.add(new JLabel("学历："));
         String[] degree = {"本科", "硕士", "博士"};
-        cDegreeCB = new JComboBox(degree);
+        cDegreeCB = new JComboBox<>(degree);
         cDegreeP.add(cDegreeCB);
         cInfoPanel.add(cDegreeP);
         c_nameP = new QuickPanelWithLabelAndText("  姓名:");
@@ -250,6 +243,9 @@ public class MainWindow {
         //根据学位选择是否展示tutor和lab
         cDegreeCB.addActionListener(e ->
         {
+            if (cDegreeCB.getSelectedItem() == null) {
+                new TemporaryDialog("ERROR!");
+            }
             if (cDegreeCB.getSelectedItem().equals("本科")) {
                 c_tutorP.setText("不可用", false);
                 c_labP.setText("不可用", false);
@@ -266,39 +262,29 @@ public class MainWindow {
         confirmCgInfoButton = new JButton("确认修改");
         confirmCgInfoButton.addMouseListener(new MouseAdapter() {
             public void mouseReleased(MouseEvent e) {
-                Student toBeAdd = null;
-                //edit
-                switch (degree[cDegreeCB.getSelectedIndex()]) {
-                    //待改进：应该排除学号相同的情况
-
-                    case "本科":
-                        toBeAdd = new Bachelor(c_nameP.text.getText(), c_idP.text.getText(),
-                                c_genderP.text.getText(), c_majorP.text.getText(),
-                                c_dormP.text.getText());
-                        break;
-                    case "硕士":
-                        toBeAdd = new Master(c_nameP.text.getText(), c_idP.text.getText(),
-                                c_genderP.text.getText(), c_majorP.text.getText(),
-                                c_dormP.text.getText(), c_tutorP.text.getText());
-                        break;
-                    case "博士":
-                        toBeAdd = new Doctor(c_nameP.text.getText(), c_idP.text.getText(),
-                                c_genderP.text.getText(), c_majorP.text.getText(),
-                                c_dormP.text.getText(), c_tutorP.text.getText(), c_labP.text.getText());
-                        break;
+                Student toBeAdd = switch (degree[cDegreeCB.getSelectedIndex()]) {
+                    case "本科" -> new Bachelor(c_nameP.text.getText(), c_idP.text.getText(),
+                            c_genderP.text.getText(), c_majorP.text.getText(),
+                            c_dormP.text.getText());
+                    case "硕士" -> new Master(c_nameP.text.getText(), c_idP.text.getText(),
+                            c_genderP.text.getText(), c_majorP.text.getText(),
+                            c_dormP.text.getText(), c_tutorP.text.getText());
+                    case "博士" -> new Doctor(c_nameP.text.getText(), c_idP.text.getText(),
+                            c_genderP.text.getText(), c_majorP.text.getText(),
+                            c_dormP.text.getText(), c_tutorP.text.getText(), c_labP.text.getText());
+                    default -> null;
+                };
+                try {
+                    assert toBeAdd != null;
+                    toBeAdd.gradeArrayList = (ArrayList<Grade>) currentStudent.gradeArrayList.clone();
+                }catch (NullPointerException crash){
+                    new TemporaryDialog("发生异常！\n"+ crash);
                 }
-                toBeAdd.gradeArrayList = (ArrayList<Grade>) currentStudent.gradeArrayList.clone();
+
 
                 if (ifIDExists(toBeAdd.getID()) && !toBeAdd.getID().equals(currentStudent.getID())) {
-                    JDialog done = new JDialog();
-                    done.setSize(300, 200);
-                    done.setResizable(false);
-                    SimpleMotion.centerize(done);
-                    done.setLayout(new FlowLayout());
-                    done.add(new JLabel("学号已存在！"));
-                    done.setVisible(true);
-                    TemporaryDialogDisposer disposer = new TemporaryDialogDisposer();
-                    disposer.start(done);
+                    //一个短暂的对话框
+                    new TemporaryDialog("学号已存在！", 100, 300);
                 } else {
                     studentArrayList.remove(currentStudent);
                     studentArrayList.add(toBeAdd);
@@ -321,10 +307,8 @@ public class MainWindow {
         pGradePanel.add(pGradePanelSearchP, BorderLayout.PAGE_START);
         gradeSearch = new StandardSearchPanel("输入查询科目或者课程代码:");
         pGradePanelSearchP.add(gradeSearch);
-
         pGradePanelInfoP = new JPanel(new GridLayout(7, 1));
         pGradePanel.add(pGradePanelInfoP, BorderLayout.CENTER);
-
         courseNameP = new QuickPanelWithTwoLabels("课程名称:");
         pGradePanelInfoP.add(courseNameP);
         courseIDP = new QuickPanelWithTwoLabels("课程代码:");
@@ -339,12 +323,12 @@ public class MainWindow {
         pGradePanelInfoP.add(courseMidGP);
         courseAvgP = new QuickPanelWithTwoLabels("综合成绩:");
         pGradePanelInfoP.add(courseAvgP);
-
         gradeSearch.b.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                for (Grade g : currentStudent.gradeArrayList) {
+                var foundOrNot = false;
+                for (var g : currentStudent.gradeArrayList) {
                     if (gradeSearch.t.getText().equals(g.courseID) || gradeSearch.t.getText().equals(g.courseName)) {
                         courseNameP.setSecondLabelText(g.courseName);
                         courseIDP.setSecondLabelText(g.courseID);
@@ -353,15 +337,17 @@ public class MainWindow {
                         courseMidGP.setSecondLabelText(String.valueOf(g.mid));
                         courseFinGP.setSecondLabelText(String.valueOf(g.fin));
                         courseAvgP.setSecondLabelText(String.valueOf(calculateAvgGrade(g.reg, g.mid, g.fin)));
+                        foundOrNot = true;
                         break;
                     }
                 }
+                if(!foundOrNot) new TemporaryDialog("找不到此门科目！");
             }
         });
 
 
         //录入成绩面板
-        JPanel Grade_cPanel = new JPanel(new BorderLayout());
+        var Grade_cPanel = new JPanel(new BorderLayout());
         topTab.add("修改成绩", Grade_cPanel);
 
         gradeChangeSearchP = new StandardSearchPanel("输入课程代码:");
@@ -393,7 +379,8 @@ public class MainWindow {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                for (Grade g : currentStudent.gradeArrayList) {
+                var foundOrNot = false;
+                for (var g : currentStudent.gradeArrayList) {
                     if (gradeChangeSearchP.t.getText().equals(g.courseID) || gradeChangeSearchP.t.getText().equals(g.courseName)) {
                         courseName_cP.setText(g.courseName);
                         courseID_cP.setText(g.courseID);
@@ -402,10 +389,11 @@ public class MainWindow {
                         courseMidG_cP.setText(String.valueOf(g.mid));
                         courseFinG_cP.setText(String.valueOf(g.fin));
                         courseAvg_cP.setText(String.valueOf(calculateAvgGrade(g.reg, g.mid, g.fin)));
+                        foundOrNot = true;
                         break;
-
                     }
                 }
+                if(!foundOrNot) new TemporaryDialog("找不到此门科目！");
             }
         });
         courseRegG_cP.addMouseListener(new MouseInputAdapter() {
@@ -460,11 +448,10 @@ public class MainWindow {
 
         pGradePanelChangeP.add(courseAvg_cP);
 
-        JPanel changeConfirmPanel = new JPanel();
+        var changeConfirmPanel = new JPanel();
         pGradePanelChangeP.add(changeConfirmPanel);
-//        Captcha changeConfirmCaptcha = new Captcha();
-//        changeConfirmPanel.add(changeConfirmCaptcha);
-        JButton changeConfirmButton = new JButton("确认修改");
+
+        var changeConfirmButton = new JButton("确认修改");
         changeConfirmPanel.add(changeConfirmButton);
 
         //修改成绩按钮监听
@@ -472,7 +459,7 @@ public class MainWindow {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                for (int i = 0; i < currentStudent.gradeArrayList.size(); i++) {
+                for (var i = 0; i < currentStudent.gradeArrayList.size(); i++) {
                     if (gradeChangeSearchP.t.getText().equals(currentStudent.gradeArrayList.get(i).courseID)
                             || gradeChangeSearchP.t.getText().equals(currentStudent.gradeArrayList.get(i).courseName)) {
                         currentStudent.gradeArrayList.get(i).reg = Integer.parseInt(courseRegG_cP.text.getText());
@@ -494,7 +481,7 @@ public class MainWindow {
         System.out.println("加载完成");
 
         //随机展示一个学生
-        Student randStu = studentArrayList.get((int) (Math.random() * 100000) % studentArrayList.size());
+        var randStu = studentArrayList.get((int) (Math.random() * 100000) % studentArrayList.size());
         switchStu(randStu);
 
 
@@ -514,20 +501,17 @@ public class MainWindow {
             case "BA" -> {
                 tutorP.setSecondLabelText("--不可用--");
                 labP.setSecondLabelText("--不可用--");
-
                 cDegreeCB.setSelectedIndex(0);
             }
             case "MA" -> {
                 tutorP.setSecondLabelText(currentStu.getTutor());
                 labP.setSecondLabelText("--不可用--");
-
                 cDegreeCB.setSelectedIndex(1);
                 c_tutorP.text.setText(currentStu.getTutor());
             }
             case "DO" -> {
                 tutorP.setSecondLabelText(currentStu.getTutor());
                 labP.setSecondLabelText(currentStu.getLab());
-
                 cDegreeCB.setSelectedIndex(2);
                 c_tutorP.text.setText(currentStu.getTutor());
                 c_labP.text.setText(currentStu.getLab());
@@ -578,12 +562,12 @@ public class MainWindow {
     }
 
     ArrayList<Student> initializeStudent() {
-        ArrayList<Student> studentArrayList = new ArrayList<>();
+        var studentArrayList = new ArrayList<Student>();
         try {
-            String path = LaunchWindow.WORK_FOLDER + "//STUDENT.txt";
-            File filename = new File(path);
-            InputStreamReader reader = new InputStreamReader(new FileInputStream(filename));
-            BufferedReader bufferedReader = new BufferedReader(reader);
+            var path = LaunchWindow.ASSET_FOLDER + "//STUDENT.txt";
+            var filename = new File(path);
+            var reader = new InputStreamReader(new FileInputStream(filename));
+            var bufferedReader = new BufferedReader(reader);
             String line;
             line = bufferedReader.readLine();
             while (line != null) {
@@ -603,9 +587,9 @@ public class MainWindow {
         }
         //加载整个成绩单
 //      int csNum = 0;
-        ArrayList<Grade> wholeGradeData = new ArrayList<>();
+        var wholeGradeData = new ArrayList<Grade>();
         try {
-            String path = LaunchWindow.WORK_FOLDER + "//GRADE.txt";
+            String path = LaunchWindow.ASSET_FOLDER + "//GRADE.txt";
             File filename = new File(path);
             InputStreamReader reader = new InputStreamReader(new FileInputStream(filename));
             BufferedReader bufferedReader = new BufferedReader(reader);
@@ -614,7 +598,7 @@ public class MainWindow {
             while (courseLine != null) {
                 String[] gradeLineArr = courseLine.split(",");//分割字符串
                 //csNum = (gradeLineArr.length - 1) / 6;
-                for (int i = 1; i < gradeLineArr.length - 1; i += 6) {
+                for (var i = 1; i < gradeLineArr.length - 1; i += 6) {
                     wholeGradeData.add(new Grade(gradeLineArr[0], gradeLineArr[i + 1], gradeLineArr[i],
                             gradeLineArr[i + 2], Integer.parseInt(gradeLineArr[i + 3]),
                             Integer.parseInt(gradeLineArr[i + 4]), Integer.parseInt(gradeLineArr[i + 5])));
@@ -628,15 +612,19 @@ public class MainWindow {
         //学习来源：https://blog.csdn.net/shenziheng1/article/details/100110816
 
         //将每个Grade成员赋给相应的Student
-        for (int i = 0; i < studentArrayList.size(); i++) {
+        for (var i = 0; i < studentArrayList.size(); i++) {
             Student tmpStuEl = studentArrayList.get(i);
 
-            for (Grade tmpGradeEl : wholeGradeData) {
+            for (var tmpGradeEl : wholeGradeData) {
                 if (tmpGradeEl.getStuID().equals(tmpStuEl.getID()))
                     tmpStuEl.gradeArrayList.add(tmpGradeEl);
             }
             studentArrayList.add(i, tmpStuEl);
-            studentArrayList.remove(i);
+            try {
+                studentArrayList.remove(i);
+            } catch (Exception e) {
+                new TemporaryDialog("失败！请联系管理员");
+            }
 
         }
         return studentArrayList;
@@ -644,7 +632,7 @@ public class MainWindow {
     }
 
     public static boolean ifIDExists(String str) {
-        for (Student stu : studentArrayList) {
+        for (var stu : studentArrayList) {
             if (stu.getID().equals(str)) return true;
         }
         return false;

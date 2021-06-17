@@ -95,13 +95,7 @@ public class Student {
         return null;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        //判断标准当然是学号啦
-        if (obj.hashCode() == this.hashCode()) return true;
-        return false;
-    }
-
+    
     @Override
     public String toString() {
         return "Student{" +

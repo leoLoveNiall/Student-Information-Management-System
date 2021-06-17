@@ -6,11 +6,11 @@ import java.util.*;
 import java.util.Timer;
 
 public class SimpleMotion {
-    public static void exitMotion(Component window) {
-        int height = window.getHeight();
-        int width = window.getWidth();
-        final int motionTick = 50;
-        for (int i = 0; i < motionTick; i++) {
+    public static void exitMotion(Window window) {
+        var height = window.getHeight();
+        var width = window.getWidth();
+        final var motionTick = 50;
+        for (var i = 0; i < motionTick; i++) {
 
             height -= height / (motionTick - i);
             width -= width / (motionTick - i);
@@ -21,15 +21,17 @@ public class SimpleMotion {
             );
             sleep();
         }
+        window.dispose();
     }
 
-    public static void openMotion(Component window, int width, int height) {
+    public static void openMotion(Window window, int width, int height) {
 
         window.setSize(0, 0);
+        centerize(window);
         window.setVisible(true);
-        final int motionTick = 40;
-        int h = 0, w = 0;
-        for (int i = 0; i < motionTick; i++) {
+        final var motionTick = 40;
+        var h = 0; var w = 0;
+        for (var i = 0; i < motionTick; i++) {
             h += height / motionTick;
             w += width / motionTick;
             window.setSize(w, h);
@@ -43,7 +45,7 @@ public class SimpleMotion {
         window.setSize(width, height);
     }
 
-    static void displayErrorInfo(JTextField tf, String info) throws InterruptedException {
+    static void displayErrorInfo(JTextField tf, String info) {
         tf.setText(info);
         tf.setEditable(false);
         tf.setText(info);
@@ -51,38 +53,38 @@ public class SimpleMotion {
         Timer timer = new Timer();// 实例化Timer类
         timer.schedule(new TimerTask() {
             public void run() {
-
                 tf.setEditable(true);
                 tf.setText("");
                 this.cancel();
             }
         }, 1000);
+
         //System.out.println("延时1000");
     }
 
-    static void centerize(Component c) {
-        int w = c.getWidth();
-        int h = c.getHeight();
+    static void centerize(Window c) {
+        var w = c.getWidth();
+        var h = c.getHeight();
         Toolkit kit = Toolkit.getDefaultToolkit();
         Dimension screenSize = kit.getScreenSize();
-        int sw = screenSize.width;
-        int sh = screenSize.height;
+        var sw = screenSize.width;
+        var sh = screenSize.height;
         c.setLocation(sw / 2 - w / 2, sh / 2 - h / 2);
     }
 
-    public static void upAndDown_A(Component c, int h) {
-        final int seq = 20;
-        for (int i = 0; i < seq; i++) {
+    public static void upAndDown_A(Window c, int h) {
+        final var seq = 20;
+        for (var i = 0; i < seq; i++) {
             c.setSize(c.getWidth(), c.getHeight() - h / seq);
             sleep();
         }
 
     }
 
-    public static void upAndDown_B(Component d, int h) {
-        final int seq = 20;
+    public static void upAndDown_B(Window d, int h) {
+        final var seq = 20;
 
-        for (int i = 0; i < seq; i++) {
+        for (var i = 0; i < seq; i++) {
             d.setSize(d.getWidth(), d.getHeight() + h / seq);
             sleep();
         }
@@ -90,26 +92,23 @@ public class SimpleMotion {
 
     }
 
-    public static void exitToEdge(Component c) {
-        final int seq = 30;
-        final int height = c.getHeight();
-        final int width = c.getWidth();
-        int sx = c.getX();
-        int sy = c.getY();
+    public static void exitToEdge(Window c) {
+        final var seq = 30;
+        final var height = c.getHeight();
+        final var width = c.getWidth();
+        var sx = c.getX();
+        var sy = c.getY();
         Toolkit kit = Toolkit.getDefaultToolkit();
         Dimension screenSize = kit.getScreenSize();
-        final int sw = screenSize.width;
-        final int sh = screenSize.height;
-        for (int i = 0; i < seq; i++) {
+        final var sw = screenSize.width;
+        final var sh = screenSize.height;
+        for (var i = 0; i < seq; i++) {
             c.setBounds(c.getX() + (sw - sx) / seq, c.getY() + (sh - sy) / seq
                     , c.getWidth() - width / seq, c.getHeight() - height / seq);
             sleep();
 
         }
-        c.setBounds(sw, sh, 0, 0);
-        //我不知道怎么销毁单一的窗口😐
-        c.setVisible(false);
-        c = null;
+        c.dispose();
     }
 
     public static void sleep() {

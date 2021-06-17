@@ -2,15 +2,17 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class LaunchWindow{
-    //static final String WORK_FOLDER = System.getProperty("user.dir")+"/src/";
+public class LaunchWindow {
+    static final String ASSET_FOLDER = System.getProperty("user.dir") + "/src/asset/";
     static JFrame LAUNCH_WINDOW = new JFrame("西安科技大学·学生管理系统");
-    static final String WORK_FOLDER = "/Users/kongweirui/Desktop/Java/Student-Inform" +
-            "ation-Management-System/out/production/Student-Information-Management-System";
+    //static final String ASSET_FOLDER = "/Users/kongweirui/Desktop/Java/Student-Inform" +
+    //        "ation-Management-System/out/production/Student-Information-Management-System";
+
+    static final String userNameMD5 = "0F759DD1EA6C4C76CEDC299039CA4F23";
+    static final String userPasswordMD5 = "202CB962AC59075B964B07152D234B70";
 
     static JLabel nameLabel = new JLabel("用户名：");
     static JTextField nameText = new JTextField("leo", 10);
@@ -20,14 +22,9 @@ public class LaunchWindow{
 
 
     //ps: Mac系统下文件系统使用右斜杠，Windows系统需要改进
-    static void createMainWindow(JFrame LAUNCH_WINDOW) {
-        System.out.println(System.getProperty("user.dir"));
+    static void createMainWindow() {
         SimpleMotion.exitMotion(LAUNCH_WINDOW);
-        LAUNCH_WINDOW.setVisible(false);
-
-        System.gc();
-        MainWindow mainWindow = new MainWindow();
-        LAUNCH_WINDOW.dispose(); //销毁窗口
+        new MainWindow();
     }
 
     public static void main(String[] args) {
@@ -38,21 +35,21 @@ public class LaunchWindow{
         LAUNCH_WINDOW.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //LAUNCH_WINDOW.setLocation(600, 600);
 //      设置图标panel和标签
-        JPanel iconPanel = new JPanel();
-        JLabel iconLabel = new JLabel();
-        ImageIcon icon = new ImageIcon(WORK_FOLDER + "//icon.jpeg");
-        Image img = icon.getImage();
+        var iconPanel = new JPanel();
+        var iconLabel = new JLabel();
+        var icon = new ImageIcon(ASSET_FOLDER + "//icon.jpeg");
+        var img = icon.getImage();
         img = img.getScaledInstance(160, 60, Image.SCALE_DEFAULT);
         icon.setImage(img);
         iconLabel.setIcon(icon);
 
 //      设置窗体panel
-        DoublePanel userPanel = new DoublePanel(1, 2);
-        DoublePanel keyPanel = new DoublePanel(1, 2);
-        JPanel buttonPanel = new JPanel();
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JLabel headLine = new JLabel("学生信息管理系统");
-        Captcha captcha = new Captcha();
+        var userPanel = new DoublePanel(1, 2);
+        var keyPanel = new DoublePanel(1, 2);
+        var buttonPanel = new JPanel();
+        var topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        var headLine = new JLabel("学生信息管理系统");
+        var captcha = new Captcha();
 //      添加panel和img
         LAUNCH_WINDOW.add(iconPanel);
         LAUNCH_WINDOW.add(topPanel);
@@ -60,8 +57,6 @@ public class LaunchWindow{
         LAUNCH_WINDOW.add(keyPanel);
         LAUNCH_WINDOW.add(captcha);
         LAUNCH_WINDOW.add(buttonPanel);
-
-        System.out.println(MD5.getMD5(keyText.getText()));
 
 //      放置控件
         iconPanel.add(iconLabel);
@@ -77,37 +72,42 @@ public class LaunchWindow{
 
 
         loginButton.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseReleased(MouseEvent e) {
-                if (nameText.getText().equals("leo") &&
-                        MD5.getMD5(keyText.getText()).equals("202CB962AC59075B964B07152D234B70")) {
-                    createMainWindow(LAUNCH_WINDOW);
-
+                super.mouseReleased(e);
+                if (verifyUserValid()) {
+                    createMainWindow();
+                } else {
+                    new TemporaryDialog("账户错误！");
                 }
             }
+
         });
 
-        KeyListener enterToEnter = new KeyListener() {
+        var enterToEnter = new KeyAdapter() {
+
             @Override
             public void keyTyped(KeyEvent e) {
-
-            }
-            @Override
-            public void keyPressed(KeyEvent e) {
-                System.out.println(e.getKeyChar());
-                if (e.getKeyChar() == '\n') {
-
-                    loginButton.doClick();
+                if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+                    if (verifyUserValid()) {
+                        createMainWindow();
+                    } else {
+                        new TemporaryDialog("账户错误！");
+                    }
                 }
             }
-            @Override
-            public void keyReleased(KeyEvent e) {
-            }
+
         };
         LAUNCH_WINDOW.addKeyListener(enterToEnter);
-        nameLabel.addKeyListener(enterToEnter);
-        keyLabel.addKeyListener(enterToEnter);
+        nameText.addKeyListener(enterToEnter);
+        keyText.addKeyListener(enterToEnter);
 
         System.out.println("YEE");
+    }
+
+    static boolean verifyUserValid() {
+        return MD5.getMD5(nameText.getText()).equals(userNameMD5) &&
+                MD5.getMD5(keyText.getText()).equals(userPasswordMD5);
     }
 }
 
@@ -120,6 +120,8 @@ public class LaunchWindow{
 */
 class MD5 {
     public static String getMD5(String src) {
+        //计时
+        var starTime = System.currentTimeMillis();
         // 需要加密的字符串
         try {
             // 加密对象，指定加密方式
@@ -131,13 +133,20 @@ class MD5 {
             // 十六进制的字符
             char[] chars = new char[]{'0', '1', '2', '3', '4', '5',
                     '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             // 处理成十六进制的字符串(通常)
             for (byte bb : digest) {
                 sb.append(chars[(bb >> 4) & 15]);
                 sb.append(chars[bb & 15]);
             }
             // 打印加密后的字符串
+
+            //计时
+            long endTime = System.currentTimeMillis();
+            long Time = endTime - starTime;
+            System.out.println("MD5计算用时：" + Time + "ms");
+
+
             return String.valueOf(sb);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();

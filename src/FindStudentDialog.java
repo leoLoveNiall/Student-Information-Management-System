@@ -6,37 +6,31 @@ import java.util.ArrayList;
 
 public class FindStudentDialog extends JDialog {
     JDialog findDialog = new JDialog();
-    static Student selectedStu = null;
     static private final int HEIGHT = 300, WIDTH = 400;
 
-    static String findStu(ArrayList<Student> studentArrayList) {
-        return "";
-    }
 
-
-    public FindStudentDialog(Frame owner, String title, boolean modal) throws Exception {
+    public FindStudentDialog(){
 
         //初始化窗体
-        JPanel mainPanel = new JPanel();
+        var mainPanel = new JPanel();
         findDialog.add(mainPanel);
         mainPanel.setLayout(new BorderLayout());
-        ArrayList<Student> searchResultArrayList = new ArrayList<Student>();
         //查询控件
-        StandardSearchPanel searchPanel = new StandardSearchPanel("查询学生：");
+        var searchPanel = new StandardSearchPanel("查询学生：");
         mainPanel.add(searchPanel, BorderLayout.PAGE_START);
 
 
         //查询-结果,左侧学生简要信息，右侧切换
-        JPanel resultPanel = new JPanel();
+        var resultPanel = new JPanel();
         mainPanel.add(resultPanel);
         //resultPanel.setLayout(new GridLayout(1, 2));
 
 
-        JPanel stuSerInfoPanel = new JPanel();
+        var stuSerInfoPanel = new JPanel();
         stuSerInfoPanel.setLayout(new GridLayout(7, 1));
         //一般重名的人不会太多
         resultPanel.add(stuSerInfoPanel);
-        JButton switchStuButton = new JButton("切换至该学生");
+        var switchStuButton = new JButton("切换至该学生");
 
 
         //结果
@@ -46,12 +40,12 @@ public class FindStudentDialog extends JDialog {
             public void mouseReleased(MouseEvent e) {
                 SimpleMotion.upAndDown_A(findDialog, HEIGHT);
                 stuSerInfoPanel.removeAll();
-                JLabel findLabel = new JLabel("查询到");
+                var findLabel = new JLabel("查询到");
                 stuSerInfoPanel.add(findLabel);
-                ArrayList<JRadioButton> resultStu = new ArrayList<JRadioButton>();
-                ButtonGroup buttonGroup = new ButtonGroup();
+                ArrayList<JRadioButton> resultStu = new ArrayList<>();
+                var buttonGroup = new ButtonGroup();
 
-                int index = 0;
+                var index = 0;
                 super.mouseReleased(e);
                 boolean foundOrNot = false;
                 for (Student tmpStu : MainWindow.studentArrayList) {
@@ -64,7 +58,7 @@ public class FindStudentDialog extends JDialog {
                         findDialog.setSize(findDialog.getWidth() - 1, findDialog.getHeight());
                         foundOrNot = true;
                         index++;
-                        System.out.println("found:" + tmpStu.toString());
+                        System.out.println("found:" + tmpStu);
                         findLabel.setText("查询到" + resultStu.size() + "个结果");
 
                     }
@@ -74,7 +68,7 @@ public class FindStudentDialog extends JDialog {
                     @Override
                     public void mouseReleased(MouseEvent e) {
                         super.mouseReleased(e);
-                        String[] s = new String[3];
+                        String[] s;
                         for (JRadioButton rb : resultStu) {
                             if (rb.isSelected()) {
                                 s = rb.getText().split(",");
@@ -87,13 +81,11 @@ public class FindStudentDialog extends JDialog {
                     }
                 });
                 if (!foundOrNot) {
-                    try {
-                        SimpleMotion.displayErrorInfo(searchPanel.t, "找不到此学生");
-                        findLabel.setText("查询到0个结果");
-                        switchStuButton.setVisible(false);
-                    } catch (InterruptedException interruptedException) {
-                        interruptedException.printStackTrace();
-                    }
+
+                    SimpleMotion.displayErrorInfo(searchPanel.t, "找不到此学生");
+                    findLabel.setText("查询到0个结果");
+                    switchStuButton.setVisible(false);
+
                 } else switchStuButton.setVisible(true);
                 SimpleMotion.upAndDown_B(findDialog, HEIGHT);
 
