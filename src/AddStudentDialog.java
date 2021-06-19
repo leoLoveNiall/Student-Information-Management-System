@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class AddStudentDialog extends JDialog {
+public class AddStudentDialog{
     //最开始的时候都把swing控件写在构造函数里了，后来又全部移出来，方便操作
     //最开始的时候都把swing控件写在构造函数里了，后来又全部移出来，方便操作
     //最开始的时候都把swing控件写在构造函数里了，后来又全部移出来，方便操作
@@ -27,8 +27,7 @@ public class AddStudentDialog extends JDialog {
     static JPanel tpp;
     static JPanel degreeP;
 
-    public AddStudentDialog(Frame owner, String title, boolean modal) {
-        super(owner, title, modal);
+    public AddStudentDialog() {
 //owner.setEnabled(false);
         addStuPanel = new JPanel(new GridLayout(10, 1));
         addDialog = new JDialog();
@@ -117,18 +116,6 @@ public class AddStudentDialog extends JDialog {
 
         });
 
-//        JButton b = new JButton(Integer.toString((int) System.currentTimeMillis()));
-//        addDialog.add(b);
-//        b.addMouseListener(new MouseAdapter()
-//        {
-//            @Override
-//            public void mouseReleased(MouseEvent e)
-//            {
-//                super.mouseReleased(e);
-//                owner.setEnabled(true);
-//                addDialog.dispose();
-//            }
-//        });
         SimpleMotion.openMotion(addDialog, 300, 500);
     }
 

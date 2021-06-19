@@ -14,6 +14,7 @@ public class LaunchWindow {
     static final String userNameMD5 = "0F759DD1EA6C4C76CEDC299039CA4F23";
     static final String userPasswordMD5 = "202CB962AC59075B964B07152D234B70";
 
+    //核心组件
     static JLabel nameLabel = new JLabel("用户名：");
     static JTextField nameText = new JTextField("leo", 10);
     static JLabel keyLabel = new JLabel("  密码：");
@@ -125,7 +126,7 @@ class MD5 {
         // 需要加密的字符串
         try {
             // 加密对象，指定加密方式
-            MessageDigest md5 = MessageDigest.getInstance("md5");
+            var md5 = MessageDigest.getInstance("md5");
             // 准备要加密的数据
             byte[] b = src.getBytes();
             // 加密
@@ -133,7 +134,7 @@ class MD5 {
             // 十六进制的字符
             char[] chars = new char[]{'0', '1', '2', '3', '4', '5',
                     '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             // 处理成十六进制的字符串(通常)
             for (byte bb : digest) {
                 sb.append(chars[(bb >> 4) & 15]);
@@ -142,8 +143,8 @@ class MD5 {
             // 打印加密后的字符串
 
             //计时
-            long endTime = System.currentTimeMillis();
-            long Time = endTime - starTime;
+            var endTime = System.currentTimeMillis();
+            var Time = endTime - starTime;
             System.out.println("MD5计算用时：" + Time + "ms");
 
 

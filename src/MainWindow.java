@@ -99,7 +99,7 @@ public class MainWindow {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                new AddStudentDialog(MAIN_WINDOW, "新增学生", true);
+                new AddStudentDialog();
             }
         });
         findStu = new JMenuItem("切换学生(W)");
@@ -107,7 +107,7 @@ public class MainWindow {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                    new FindStudentDialog();
+                new FindStudentDialog();
             }
         });
         manipulate.add(addStu);
@@ -129,12 +129,10 @@ public class MainWindow {
                                       public void mouseReleased(MouseEvent e) {
                                           super.mouseReleased(e);
                                           var helpDialog = new JDialog();
-
                                           helpDialog.setLayout(new FlowLayout());
                                           helpDialog.setTitle("帮助");
                                           helpDialog.add(new JLabel("学生管理系统 V1.0.0 by Leo 最初版本  2021®"));
                                           SimpleMotion.openMotion(helpDialog, 300, 100);
-
                                           System.out.println("帮助");
                                           helpDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
                                           helpDialog.addWindowListener(new WindowAdapter() {
@@ -277,8 +275,8 @@ public class MainWindow {
                 try {
                     assert toBeAdd != null;
                     toBeAdd.gradeArrayList = (ArrayList<Grade>) currentStudent.gradeArrayList.clone();
-                }catch (NullPointerException crash){
-                    new TemporaryDialog("发生异常！\n"+ crash);
+                } catch (NullPointerException crash) {
+                    new TemporaryDialog("发生异常！\n" + crash);
                 }
 
 
@@ -291,7 +289,6 @@ public class MainWindow {
                     currentStudent = studentArrayList.get(studentArrayList.size() - 1);
                     System.out.println("修改成功");
                     //重新加载
-
                     switchStu(currentStudent);
                 }
             }
@@ -341,7 +338,7 @@ public class MainWindow {
                         break;
                     }
                 }
-                if(!foundOrNot) new TemporaryDialog("找不到此门科目！");
+                if (!foundOrNot) new TemporaryDialog("找不到此门科目！");
             }
         });
 
@@ -393,7 +390,7 @@ public class MainWindow {
                         break;
                     }
                 }
-                if(!foundOrNot) new TemporaryDialog("找不到此门科目！");
+                if (!foundOrNot) new TemporaryDialog("找不到此门科目！");
             }
         });
         courseRegG_cP.addMouseListener(new MouseInputAdapter() {
@@ -411,7 +408,6 @@ public class MainWindow {
                     } catch (InterruptedException | AWTException interruptedException) {
                         interruptedException.printStackTrace();
                     }
-
                 }
             });
             courseMidG_cP.text.addKeyListener(new KeyAdapter() {
@@ -426,7 +422,6 @@ public class MainWindow {
                     } catch (InterruptedException | AWTException interruptedException) {
                         interruptedException.printStackTrace();
                     }
-
                 }
             });
             courseFinG_cP.text.addKeyListener(new KeyAdapter() {
@@ -447,10 +442,8 @@ public class MainWindow {
         }
 
         pGradePanelChangeP.add(courseAvg_cP);
-
         var changeConfirmPanel = new JPanel();
         pGradePanelChangeP.add(changeConfirmPanel);
-
         var changeConfirmButton = new JButton("确认修改");
         changeConfirmPanel.add(changeConfirmButton);
 
@@ -523,13 +516,9 @@ public class MainWindow {
         c_genderP.text.setText(currentStu.getGender());
         c_majorP.text.setText(currentStu.getMajor());
         c_dormP.text.setText(currentStu.getDorm());
-
         topTab.setSelectedIndex(0);
-
-
         SimpleMotion.upAndDown_B(MAIN_WINDOW, MAIN_WINDOW_HEIGHT);
     }
-
 
     static int calculateAvgGrade(int reg, int mid, int fin) {
         return (int) (reg * REG_PER + mid * MID_PER + fin * FIN_PER);
@@ -589,11 +578,11 @@ public class MainWindow {
 //      int csNum = 0;
         var wholeGradeData = new ArrayList<Grade>();
         try {
-            String path = LaunchWindow.ASSET_FOLDER + "//GRADE.txt";
-            File filename = new File(path);
-            InputStreamReader reader = new InputStreamReader(new FileInputStream(filename));
-            BufferedReader bufferedReader = new BufferedReader(reader);
-            String courseLine = bufferedReader.readLine();
+            var path = LaunchWindow.ASSET_FOLDER + "//GRADE.txt";
+            var filename = new File(path);
+            var reader = new InputStreamReader(new FileInputStream(filename));
+            var bufferedReader = new BufferedReader(reader);
+            var courseLine = bufferedReader.readLine();
 
             while (courseLine != null) {
                 String[] gradeLineArr = courseLine.split(",");//分割字符串
@@ -613,7 +602,7 @@ public class MainWindow {
 
         //将每个Grade成员赋给相应的Student
         for (var i = 0; i < studentArrayList.size(); i++) {
-            Student tmpStuEl = studentArrayList.get(i);
+            var tmpStuEl = studentArrayList.get(i);
 
             for (var tmpGradeEl : wholeGradeData) {
                 if (tmpGradeEl.getStuID().equals(tmpStuEl.getID()))

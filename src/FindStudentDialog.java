@@ -4,7 +4,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-public class FindStudentDialog extends JDialog {
+public class FindStudentDialog {
     JDialog findDialog = new JDialog();
     static private final int HEIGHT = 300, WIDTH = 400;
 
@@ -63,23 +63,6 @@ public class FindStudentDialog extends JDialog {
 
                     }
                 }
-                stuSerInfoPanel.add(switchStuButton);
-                switchStuButton.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseReleased(MouseEvent e) {
-                        super.mouseReleased(e);
-                        String[] s;
-                        for (JRadioButton rb : resultStu) {
-                            if (rb.isSelected()) {
-                                s = rb.getText().split(",");
-                                for (Student stu : MainWindow.studentArrayList) {
-                                    if (stu.getID().equals(s[2])) MainWindow.switchStu(stu);
-                                }
-                                break;
-                            }
-                        }
-                    }
-                });
                 if (!foundOrNot) {
 
                     SimpleMotion.displayErrorInfo(searchPanel.t, "找不到此学生");
@@ -87,26 +70,40 @@ public class FindStudentDialog extends JDialog {
                     switchStuButton.setVisible(false);
 
                 } else switchStuButton.setVisible(true);
+
+                stuSerInfoPanel.add(switchStuButton);
+                switchStuButton.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                        super.mouseReleased(e);
+                        String[] s;
+                        var groupHasBeenSelected = false;
+                        for (var rb : resultStu) {
+                            if (rb.isSelected()) {
+                                groupHasBeenSelected = true;
+                                s = rb.getText().split(",");
+                                for (var stu : MainWindow.studentArrayList) {
+                                    if (stu.getID().equals(s[2])) {
+                                        SimpleMotion.exitMotion(findDialog);
+                                        MainWindow.switchStu(stu);
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                        if (!groupHasBeenSelected){
+                            new TemporaryDialog("请选择学生！");
+                        }
+
+                    }
+                });
+
                 SimpleMotion.upAndDown_B(findDialog, HEIGHT);
 
             }
         });
 
-        switchStuButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                super.mouseReleased(e);
-                //System.out.println("切换至学生" + group.getSelection().toString());
-
-                // MainWindow.switchStu();
-                SimpleMotion.exitMotion(findDialog);
-                findDialog.dispose();
-            }
-        });
-
-
         SimpleMotion.openMotion(findDialog, WIDTH, HEIGHT);
-        SimpleMotion.centerize(findDialog);
     }
 
 }

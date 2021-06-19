@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.util.Timer;
+import java.util.stream.IntStream;
 
 public class SimpleMotion {
     public static void exitMotion(Window window) {
@@ -42,7 +43,6 @@ public class SimpleMotion {
             sleep();
             centerize(window);
         }
-        window.setSize(width, height);
     }
 
     static void displayErrorInfo(JTextField tf, String info) {
@@ -74,21 +74,20 @@ public class SimpleMotion {
 
     public static void upAndDown_A(Window c, int h) {
         final var seq = 20;
-        for (var i = 0; i < seq; i++) {
+        IntStream.range(0, seq).forEach(i -> {
             c.setSize(c.getWidth(), c.getHeight() - h / seq);
             sleep();
-        }
+        });
 
     }
 
     public static void upAndDown_B(Window d, int h) {
         final var seq = 20;
 
-        for (var i = 0; i < seq; i++) {
+        IntStream.range(0, seq).forEach(i -> {
             d.setSize(d.getWidth(), d.getHeight() + h / seq);
             sleep();
-        }
-        d.setSize(d.getWidth(), h);
+        });
 
     }
 
@@ -102,12 +101,11 @@ public class SimpleMotion {
         Dimension screenSize = kit.getScreenSize();
         final var sw = screenSize.width;
         final var sh = screenSize.height;
-        for (var i = 0; i < seq; i++) {
+        IntStream.range(0, seq).forEach(i -> {
             c.setBounds(c.getX() + (sw - sx) / seq, c.getY() + (sh - sy) / seq
                     , c.getWidth() - width / seq, c.getHeight() - height / seq);
             sleep();
-
-        }
+        });
         c.dispose();
     }
 
