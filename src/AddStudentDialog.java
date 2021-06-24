@@ -27,10 +27,12 @@ public class AddStudentDialog{
     static JPanel tpp;
     static JPanel degreeP;
 
-    public AddStudentDialog() {
+     AddStudentDialog() {
 //owner.setEnabled(false);
+
         addStuPanel = new JPanel(new GridLayout(10, 1));
         addDialog = new JDialog();
+        addDialog.setAlwaysOnTop(true);
         addDialog.add(addStuPanel, BorderLayout.CENTER);
 
 
@@ -90,7 +92,7 @@ public class AddStudentDialog{
                     MainWindow.switchStu(add);
                 } else {
                     if (isAllFilled() && MainWindow.ifIDExists(a_IDP.text.getText())) {
-                        new TemporaryDialog("学号已存在！", 100, 200);
+                        new TemporaryDialog("学号已存在！", 100, 200, addDialog);
                     }
 
                 }
@@ -99,7 +101,7 @@ public class AddStudentDialog{
         //根据学位选择是否展示tutor和lab
         degreeCB.addActionListener(e -> {
             if (degreeCB.getSelectedItem() == null) {
-                new TemporaryDialog("还为选中一项！");
+                new TemporaryDialog("还为选中一项！", addDialog);
             }
             if (degreeCB.getSelectedItem().equals("本科")) {
                 a_tutorP.setText("不可用", false);
@@ -116,7 +118,7 @@ public class AddStudentDialog{
 
         });
 
-        SimpleMotion.openMotion(addDialog, 300, 500);
+        SimpleMotion.openMotion(addDialog, 300, 500,MainWindow.MAIN_WINDOW);
     }
 
     public boolean isAllFilled() {

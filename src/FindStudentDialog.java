@@ -2,15 +2,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
 import java.util.ArrayList;
 
 public class FindStudentDialog {
     JDialog findDialog = new JDialog();
-    static private final int HEIGHT = 300, WIDTH = 400;
+    static private final int HEIGHT = 350, WIDTH = 450;
 
 
-    public FindStudentDialog(){
-
+    FindStudentDialog(){
+        findDialog.setAlwaysOnTop(true);
         //初始化窗体
         var mainPanel = new JPanel();
         findDialog.add(mainPanel);
@@ -27,9 +28,10 @@ public class FindStudentDialog {
 
 
         var stuSerInfoPanel = new JPanel();
-        stuSerInfoPanel.setLayout(new GridLayout(7, 1));
-        //一般重名的人不会太多
+        stuSerInfoPanel.setLayout(new GridLayout(10,1));
+        //重名的人
         resultPanel.add(stuSerInfoPanel);
+
         var switchStuButton = new JButton("切换至该学生");
 
 
@@ -47,7 +49,7 @@ public class FindStudentDialog {
 
                 var index = 0;
                 super.mouseReleased(e);
-                boolean foundOrNot = false;
+                var foundOrNot = false;
                 for (Student tmpStu : MainWindow.studentArrayList) {
                     if (tmpStu.getName().equals(searchPanel.t.getText()) || tmpStu.getID().equals(searchPanel.t.getText())) {
 
@@ -92,7 +94,7 @@ public class FindStudentDialog {
                             }
                         }
                         if (!groupHasBeenSelected){
-                            new TemporaryDialog("请选择学生！");
+                            new TemporaryDialog("请选择学生！",findDialog);
                         }
 
                     }
@@ -103,7 +105,8 @@ public class FindStudentDialog {
             }
         });
 
-        SimpleMotion.openMotion(findDialog, WIDTH, HEIGHT);
+        SimpleMotion.openMotion(findDialog, WIDTH, HEIGHT,MainWindow.MAIN_WINDOW);
+
     }
 
 }

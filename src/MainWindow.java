@@ -12,7 +12,7 @@ public class MainWindow {
     private static final int MAIN_WINDOW_WIDTH = 600, MAIN_WINDOW_HEIGHT = 450;
     static Student currentStudent = null;
     //tip：这里是引用，直接操作，不用重新赋
-    private static final JFrame MAIN_WINDOW = new JFrame();
+    public static JFrame MAIN_WINDOW = new JFrame();
 
     //关键元素
     static ArrayList<Student> studentArrayList;
@@ -74,8 +74,11 @@ public class MainWindow {
 
     //ArrayList待改进
     MainWindow() {
+//主程序部分
+        SimpleMotion.openMotion(MAIN_WINDOW, MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, null);
+        studentArrayList = initializeStudent();
+        System.out.println("加载完成");
 //初始化窗口
-
         MAIN_WINDOW.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         //退出动画
         MAIN_WINDOW.addWindowListener(new WindowAdapter() {
@@ -116,8 +119,28 @@ public class MainWindow {
 ///////////////////////////////////////////////////////////
         save = new JMenu("保存(S)");
         saveS = new JMenuItem("保存");
+        saveS.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                TemporaryDialog.showLoadingCircleDialog("保存数据中", MAIN_WINDOW_HEIGHT, MAIN_WINDOW_WIDTH, false, MAIN_WINDOW);
+            }
+        });
         save.add(saveS);
         saveAndExit = new JMenuItem("保存并退出");
+        saveAndExit.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                TemporaryDialog.showLoadingCircleDialog("保存数据中", MAIN_WINDOW_HEIGHT, MAIN_WINDOW_WIDTH, false, MAIN_WINDOW);
+                new Thread(() -> {
+                    SimpleMotion.sleep(4000);
+                    SimpleMotion.exitToEdge(MAIN_WINDOW);
+                    System.exit(0);
+                }).start();
+
+            }
+        });
         save.add(saveAndExit);
         menuBar.add(save);
 //////////////////////////////////////////////////////////
@@ -132,7 +155,7 @@ public class MainWindow {
                                           helpDialog.setLayout(new FlowLayout());
                                           helpDialog.setTitle("帮助");
                                           helpDialog.add(new JLabel("学生管理系统 V1.0.0 by Leo 最初版本  2021®"));
-                                          SimpleMotion.openMotion(helpDialog, 300, 100);
+                                          SimpleMotion.openMotion(helpDialog, 300, 100, null);
                                           System.out.println("帮助");
                                           helpDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
                                           helpDialog.addWindowListener(new WindowAdapter() {
@@ -242,7 +265,7 @@ public class MainWindow {
         cDegreeCB.addActionListener(e ->
         {
             if (cDegreeCB.getSelectedItem() == null) {
-                new TemporaryDialog("ERROR!");
+                new TemporaryDialog("ERROR!", MAIN_WINDOW);
             }
             if (cDegreeCB.getSelectedItem().equals("本科")) {
                 c_tutorP.setText("不可用", false);
@@ -276,13 +299,12 @@ public class MainWindow {
                     assert toBeAdd != null;
                     toBeAdd.gradeArrayList = (ArrayList<Grade>) currentStudent.gradeArrayList.clone();
                 } catch (NullPointerException crash) {
-                    new TemporaryDialog("发生异常！\n" + crash);
+                    new TemporaryDialog("发生异常！\n" + crash, MAIN_WINDOW);
                 }
-
 
                 if (ifIDExists(toBeAdd.getID()) && !toBeAdd.getID().equals(currentStudent.getID())) {
                     //一个短暂的对话框
-                    new TemporaryDialog("学号已存在！", 100, 300);
+                    new TemporaryDialog("学号已存在！", 100, 300, MAIN_WINDOW);
                 } else {
                     studentArrayList.remove(currentStudent);
                     studentArrayList.add(toBeAdd);
@@ -338,7 +360,7 @@ public class MainWindow {
                         break;
                     }
                 }
-                if (!foundOrNot) new TemporaryDialog("找不到此门科目！");
+                if (!foundOrNot) new TemporaryDialog("找不到此门科目！", MAIN_WINDOW);
             }
         });
 
@@ -390,7 +412,7 @@ public class MainWindow {
                         break;
                     }
                 }
-                if (!foundOrNot) new TemporaryDialog("找不到此门科目！");
+                if (!foundOrNot) new TemporaryDialog("找不到此门科目！", MAIN_WINDOW);
             }
         });
         courseRegG_cP.addMouseListener(new MouseInputAdapter() {
@@ -466,12 +488,6 @@ public class MainWindow {
             }
         });
 
-
-        SimpleMotion.openMotion(MAIN_WINDOW, MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT);
-
-//主程序部分
-        studentArrayList = initializeStudent();
-        System.out.println("加载完成");
 
         //随机展示一个学生
         var randStu = studentArrayList.get((int) (Math.random() * 100000) % studentArrayList.size());
@@ -552,6 +568,8 @@ public class MainWindow {
 
     ArrayList<Student> initializeStudent() {
         var studentArrayList = new ArrayList<Student>();
+        TemporaryDialog.showLoadingCircleDialog("加载数据中…", MAIN_WINDOW_HEIGHT, MAIN_WINDOW_WIDTH, false, MAIN_WINDOW);//避免线程冲突
+
         try {
             var path = LaunchWindow.ASSET_FOLDER + "//STUDENT.txt";
             var filename = new File(path);
@@ -612,12 +630,10 @@ public class MainWindow {
             try {
                 studentArrayList.remove(i);
             } catch (Exception e) {
-                new TemporaryDialog("失败！请联系管理员");
+                new TemporaryDialog("失败！请联系管理员", MAIN_WINDOW);
             }
-
         }
         return studentArrayList;
-
     }
 
     public static boolean ifIDExists(String str) {

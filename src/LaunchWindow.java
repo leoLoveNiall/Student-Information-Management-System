@@ -43,7 +43,7 @@ public class LaunchWindow {
         img = img.getScaledInstance(160, 60, Image.SCALE_DEFAULT);
         icon.setImage(img);
         iconLabel.setIcon(icon);
-
+        new LoadingPanel();
 //      设置窗体panel
         var userPanel = new DoublePanel(1, 2);
         var keyPanel = new DoublePanel(1, 2);
@@ -68,7 +68,7 @@ public class LaunchWindow {
 
 //      创建窗口
         SimpleMotion.centerize(LAUNCH_WINDOW);
-        SimpleMotion.openMotion(LAUNCH_WINDOW, 400, 300);
+        SimpleMotion.openMotion(LAUNCH_WINDOW, 400, 300, null);
 //      登陆
 
 
@@ -79,7 +79,7 @@ public class LaunchWindow {
                 if (verifyUserValid()) {
                     createMainWindow();
                 } else {
-                    new TemporaryDialog("账户错误！");
+                    new TemporaryDialog("账户错误！", LAUNCH_WINDOW);
                 }
             }
 
@@ -93,7 +93,7 @@ public class LaunchWindow {
                     if (verifyUserValid()) {
                         createMainWindow();
                     } else {
-                        new TemporaryDialog("账户错误！");
+                        new TemporaryDialog("账户错误！", LAUNCH_WINDOW);
                     }
                 }
             }

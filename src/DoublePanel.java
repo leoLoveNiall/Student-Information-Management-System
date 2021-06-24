@@ -9,6 +9,7 @@ class StandardSearchPanel extends JPanel {
     JLabel l = new JLabel();
     JTextField t = new JTextField("", 10);
     JButton b = new JButton("查询");
+
     StandardSearchPanel(String label) {
         l.setText(label);
         add(l);
@@ -99,11 +100,9 @@ class QuickPanelWithLabelAndText extends DoublePanel {
 
 class QuickPanelWithTwoLabels extends DoublePanel {
 
-    QuickPanelWithTwoLabels() {
-    }
 
-     JLabel label1 = new JLabel();
-     JLabel label2 = new JLabel();
+    JLabel label1 = new JLabel();
+    JLabel label2 = new JLabel();
 
 
     QuickPanelWithTwoLabels(String str) {
@@ -177,24 +176,93 @@ class MyCheckBox extends JCheckBox {
     }
 }
 
-class TemporaryDialog extends JDialog {
+class TemporaryDialog {
+    JDialog dialog = new JDialog();
     int suspendTime = 1000;
-    int width = 200, height =100;
-    TemporaryDialog(String headline){
-        new TemporaryDialog(headline, height, width);
-        this.dispose();
+    int width = 200, height = 100;
+    boolean withOpeningMotion = true;
+    boolean isAboutToExit = false;
+    boolean showBar = true;
+
+    TemporaryDialog(String headline, int height, int width, int suspendTime, boolean withOpeningMotion, boolean withBar, Window f) {
+        this.height = height;
+        this.width = width;
+        this.suspendTime = suspendTime;
+        this.withOpeningMotion = withOpeningMotion;
+        this.showBar = withBar;
+        //考虑到简化代码的同时并保持简便的实现
+        showDialog(headline, f);
+    }
+
+    TemporaryDialog(String headline, int height, int width, int suspendTime, Window f,boolean showBar) {
+        this.height = height;
+        this.width = width;
+        this.suspendTime = suspendTime;
+        this.showBar = showBar;
+        //考虑到简化代码的同时并保持简便的实现
+        showDialog(headline, f);
+    }
+
+    TemporaryDialog(String headline, int height, int width, Window f) {
+        this.height = height;
+        this.width = width;
+        //考虑到简化代码的同时并保持简便的实现
+        showDialog(headline, f);
+    }
+
+    TemporaryDialog(String headline, int suspendTime, Window f) {
+        this.suspendTime = suspendTime;
+        showDialog(headline, f);
         //考虑到简化代码的同时并保持简便的实现
     }
-    TemporaryDialog(String headline, int height, int width) {
+
+    TemporaryDialog(String headline, Window f) {
+        dialog.setAlwaysOnTop(true);
+        dialog.setUndecorated(showBar);
+        showDialog(headline, f);
+    }
+
+    void showDialog(String headline, Window f) {
         //创建窗口
+        dialog.setUndecorated(!showBar);
         var panel = new JPanel();
-        this.add(panel);
+        dialog.add(panel);
         panel.add(new JLabel(headline));
-        SimpleMotion.openMotion(this, width, height);
+        dialog.setSize(width, height);
+        SimpleMotion.centerize(dialog, f);
+        if (withOpeningMotion) {
+            SimpleMotion.openMotion(dialog, width, height, f);
+        } else {
+            dialog.setVisible(true);
+        }
+
         //销毁窗口
         new Thread(() -> {
             SimpleMotion.sleep(suspendTime);
-            SimpleMotion.exitMotion(TemporaryDialog.this);
+            isAboutToExit = true;
+            SimpleMotion.exitMotion(dialog);
+        }).start();
+    }
+
+    static void showLoadingCircleDialog(String infoText, int height, int width, boolean withOpeningMotion, Window f) {
+        var loadDialog = new TemporaryDialog("", height + 20, width + 20, (int) (Math.random() * 10000) % 1000 + 3000, withOpeningMotion, false,MainWindow.MAIN_WINDOW);
+        var loadPanel = new LoadingPanel();
+        loadDialog.dialog.add(loadPanel);
+        loadPanel.setBackground(Color.WHITE);
+        loadPanel.show();
+        new TemporaryDialog(infoText, 80, 150, 3000, f,false);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true){
+                    SimpleMotion.sleep(50);//降低占用率
+                    if(loadDialog.isAboutToExit) break;
+                }
+                while (loadPanel.miniCounter < 200){
+                    loadPanel.miniCounter += 10;
+                    SimpleMotion.sleep(40);
+                }
+            }
         }).start();
     }
 }
