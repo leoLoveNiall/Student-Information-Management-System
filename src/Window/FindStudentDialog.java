@@ -1,8 +1,12 @@
+package Window;
+
+import FusionUIAsset.*;
+import MyUtil.*;
+import DataClassAsset.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
 import java.util.ArrayList;
 
 public class FindStudentDialog {
@@ -14,7 +18,6 @@ public class FindStudentDialog {
     FindStudentDialog(String title){
         findDialog = new JFrame();
         findDialog.setTitle(title);
-        findDialog.setAlwaysOnTop(true);
         //初始化窗体
         var mainPanel = new JPanel();
         findDialog.add(mainPanel);
@@ -35,15 +38,13 @@ public class FindStudentDialog {
         //重名的人
         resultPanel.add(stuSerInfoPanel);
 
-        var switchStuButton = new JButton("切换至该学生");
-
-
         //结果
 
         searchPanel.b.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
-                SimpleMotion.upAndDown_A(findDialog, HEIGHT);
+                var switchStuButton = new JButton("切换至该学生");
+                MotionUtil.upAndDown_A(findDialog, HEIGHT);
                 stuSerInfoPanel.removeAll();
                 var findLabel = new JLabel("查询到");
                 stuSerInfoPanel.add(findLabel);
@@ -70,7 +71,7 @@ public class FindStudentDialog {
                 }
                 if (!foundOrNot) {
 
-                    SimpleMotion.displayErrorInfo(searchPanel.t, "找不到此学生");
+                    MotionUtil.displayErrorInfo(searchPanel.t, "找不到此学生");
                     findLabel.setText("查询到0个结果");
                     switchStuButton.setVisible(false);
 
@@ -79,8 +80,7 @@ public class FindStudentDialog {
                 stuSerInfoPanel.add(switchStuButton);
                 switchStuButton.addMouseListener(new MouseAdapter() {
                     @Override
-                    public void mouseReleased(MouseEvent e) {
-                        super.mouseReleased(e);
+                    public void mouseClicked(MouseEvent e) {
                         String[] s;
                         var groupHasBeenSelected = false;
                         for (var rb : resultStu) {
@@ -89,7 +89,7 @@ public class FindStudentDialog {
                                 s = rb.getText().split(",");
                                 for (var stu : MainWindow.studentArrayList) {
                                     if (stu.getID().equals(s[2])) {
-                                        SimpleMotion.exitMotion(findDialog,MainWindow.MAIN_WINDOW);
+                                        MotionUtil.exitMotion(findDialog, MainWindow.MAIN_WINDOW);
                                         MainWindow.switchStu(stu);
                                         return;
                                     }
@@ -103,17 +103,16 @@ public class FindStudentDialog {
                     }
                 });
 
-                SimpleMotion.upAndDown_B(findDialog, HEIGHT);
+                MotionUtil.upAndDown_B(findDialog, HEIGHT);
 
             }
         });
-
-        SimpleMotion.openMotion(findDialog, WIDTH, HEIGHT,MainWindow.MAIN_WINDOW);
-
+        MotionUtil.addEscToExist(findDialog, MainWindow.MAIN_WINDOW, MainWindow.IN_WARD);
+        MotionUtil.openMotion(findDialog, WIDTH, HEIGHT, MainWindow.MAIN_WINDOW);
     }
 
     @Override
     public String toString() {
-        return "FindStudentDialog{}";
+        return "Window.FindStudentDialog{}";
     }
 }

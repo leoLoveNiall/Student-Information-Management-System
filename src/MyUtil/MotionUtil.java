@@ -1,11 +1,15 @@
+package MyUtil;
 
+import Window.*;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.*;
 import java.util.Timer;
 import java.util.stream.IntStream;
 
-public class SimpleMotion {
+public class MotionUtil {
     public static void exitMotion(Window window, Window f) {
 //        //全部采用浮点数，使剧中效果更佳
 //        final double height = window.getHeight();
@@ -36,7 +40,7 @@ public class SimpleMotion {
             assert wList != null;
 
             //尽早结束
-            if (wList.get(i) == 0 || 0 == hList.get(i)) break;
+            if (motionTick-i<=4) break;
 
             window.setSize(wList.get(i), hList.get(i));
             if (i > 3) if (f != null) {//降低割裂感
@@ -76,7 +80,7 @@ public class SimpleMotion {
 
     }
 
-    static void displayErrorInfo(JTextField tf, String info) {
+    public static void displayErrorInfo(JTextField tf, String info) {
         tf.setText(info);
         tf.setEditable(false);
         tf.setText(info);
@@ -93,13 +97,13 @@ public class SimpleMotion {
         //System.out.println("延时1000");
     }
 
-    static void centerize(Window window, Window father) {
+    public static void centerize(Window window, Window father) {
         var w = window.getWidth();
         var h = window.getHeight();
         window.setLocation(father.getX() + (father.getWidth() - w) / 2, father.getY() + (father.getHeight() - h) / 2);
     }
 
-    static void centerize(Window window) {
+    public static void centerize(Window window) {
         var w = window.getWidth();
         var h = window.getHeight();
         var kit = Toolkit.getDefaultToolkit();
@@ -198,6 +202,7 @@ public class SimpleMotion {
         c.dispose();
     }
 
+
     public static void sleep() {
         try {
             Thread.sleep(15);
@@ -258,15 +263,42 @@ public class SimpleMotion {
 
         switch (gra) {
             case INCREASE:
+                //System.out.println(finalList);
                 return finalList;
             case DECREASE:
                 var realFinalList = new ArrayList<Integer>();
                 for (int tmp : finalList) {
                     realFinalList.add(maximum - tmp);
                 }
+                //System.out.println(realFinalList);
                 return realFinalList;
             default:
                 return null;
+        }
+
+    }
+
+
+    public static void addEscToExist(Window w, Window f, int Motion) {
+        switch (Motion) {
+            case MainWindow.TO_EDGE -> w.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyReleased(KeyEvent e) {
+                    super.keyReleased(e);
+                    if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                        MotionUtil.exitToEdge(w);
+                    }
+                }
+            });
+            case MainWindow.IN_WARD -> w.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyReleased(KeyEvent e) {
+                    super.keyReleased(e);
+                    if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                        MotionUtil.exitMotion(w, f);
+                    }
+                }
+            });
         }
     }
 

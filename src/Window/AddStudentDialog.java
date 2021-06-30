@@ -1,3 +1,12 @@
+package Window;
+
+import DataClassAsset.Bachelor;
+import DataClassAsset.Doctor;
+import DataClassAsset.Master;
+import DataClassAsset.Student;
+import FusionUIAsset.QuickPanelWithLabelAndText;
+import FusionUIAsset.TemporaryDialog;
+import MyUtil.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,11 +41,9 @@ public class AddStudentDialog{
 
      AddStudentDialog(String title) {
 //owner.setEnabled(false);
-
         addStuPanel = new JPanel(new GridLayout(10, 1));
         addDialog = new JFrame();
         addDialog.setTitle(title);
-        addDialog.setAlwaysOnTop(true);
         addDialog.add(addStuPanel, BorderLayout.CENTER);
 
 
@@ -79,23 +86,23 @@ public class AddStudentDialog{
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                if (isAllFilled() && !MainWindow.ifIDExists(a_IDP.text.getText())) {
+                if (isAllFilled() && !MainWindow.ifIDExists(a_IDP.getText())) {
                     switch (degree[degreeCB.getSelectedIndex()]) {
-                        case "本科" -> add = new Bachelor(a_nameP.text.getText(), a_IDP.text.getText(),
-                                gender[genderCB.getSelectedIndex()], a_majorP.text.getText(),
-                                a_dormP.text.getText());
-                        case "硕士" -> add = new Master(a_nameP.text.getText(), a_IDP.text.getText(),
-                                gender[genderCB.getSelectedIndex()], a_majorP.text.getText(),
-                                a_dormP.text.getText(), a_tutorP.text.getText());
-                        case "博士" -> add = new Doctor(a_nameP.text.getText(), a_IDP.text.getText(),
-                                gender[genderCB.getSelectedIndex()], a_majorP.text.getText(),
-                                a_dormP.text.getText(), a_tutorP.text.getText(), a_labP.text.getText());
+                        case "本科" -> add = new Bachelor(a_nameP.getText(), a_IDP.getText(),
+                                gender[genderCB.getSelectedIndex()], a_majorP.getText(),
+                                a_dormP.getText());
+                        case "硕士" -> add = new Master(a_nameP.getText(), a_IDP.getText(),
+                                gender[genderCB.getSelectedIndex()], a_majorP.getText(),
+                                a_dormP.getText(), a_tutorP.getText());
+                        case "博士" -> add = new Doctor(a_nameP.getText(), a_IDP.getText(),
+                                gender[genderCB.getSelectedIndex()], a_majorP.getText(),
+                                a_dormP.getText(), a_tutorP.getText(), a_labP.getText());
                     }
                     MainWindow.studentArrayList.add(add);
-                    SimpleMotion.exitMotion(addDialog,MainWindow.MAIN_WINDOW);
+                    MotionUtil.exitMotion(addDialog, MainWindow.MAIN_WINDOW);
                     MainWindow.switchStu(add);
                 } else {
-                    if (isAllFilled() && MainWindow.ifIDExists(a_IDP.text.getText())) {
+                    if (isAllFilled() && MainWindow.ifIDExists(a_IDP.getText())) {
                         new TemporaryDialog("学号已存在！", 100, 200, addDialog);
                     }
 
@@ -122,33 +129,34 @@ public class AddStudentDialog{
 
         });
 
-        SimpleMotion.openMotion(addDialog, 300, 500,MainWindow.MAIN_WINDOW);
+        MotionUtil.addEscToExist(addDialog, MainWindow.MAIN_WINDOW, MainWindow.IN_WARD);
+        MotionUtil.openMotion(addDialog, 300, 500, MainWindow.MAIN_WINDOW);
     }
 
     public boolean isAllFilled() {
 
-        if (a_nameP.text.getText().equals("")) {
-            SimpleMotion.displayErrorInfo(a_nameP.text, "姓名不能为空！");
+        if (a_nameP.getText().equals("0")) {
+            MotionUtil.displayErrorInfo(a_nameP.text, "姓名不能为空！");
             return false;
         }
-        if (a_IDP.text.getText().equals("")) {
-            SimpleMotion.displayErrorInfo(a_IDP.text, "学号不能为空！");
+        if (a_IDP.getText().equals("0")) {
+            MotionUtil.displayErrorInfo(a_IDP.text, "学号不能为空！");
             return false;
         }
-        if (a_majorP.text.getText().equals("")) {
-            SimpleMotion.displayErrorInfo(a_majorP.text, "专业班级不能为空！");
+        if (a_majorP.getText().equals("0")) {
+            MotionUtil.displayErrorInfo(a_majorP.text, "专业班级不能为空！");
             return false;
         }
-        if (a_dormP.text.getText().equals("")) {
-            SimpleMotion.displayErrorInfo(a_dormP.text, "寝室号不能为空！");
+        if (a_dormP.getText().equals("0")) {
+            MotionUtil.displayErrorInfo(a_dormP.text, "寝室号不能为空！");
             return false;
         }
-        if (a_tutorP.text.getText().equals("")) {
-            SimpleMotion.displayErrorInfo(a_tutorP.text, "导师不能为空！");
+        if (a_tutorP.getText().equals("0")) {
+            MotionUtil.displayErrorInfo(a_tutorP.text, "导师不能为空！");
             return false;
         }
-        if (a_labP.text.getText().equals("")) {
-            SimpleMotion.displayErrorInfo(a_labP.text, "实验室不能为空！");
+        if (a_labP.getText().equals("0")) {
+            MotionUtil.displayErrorInfo(a_labP.text, "实验室不能为空！");
             return false;
         }
         return true;

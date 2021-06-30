@@ -1,3 +1,9 @@
+package Window;
+
+import FusionUIAsset.*;
+import MyUtil.*;
+import DataClassAsset.*;
+
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
@@ -8,16 +14,16 @@ import java.util.ArrayList;
 public class MainWindow {
 
     //public static String workFolder;
-    final static double REG_PER = 0.1, MID_PER = 0.2, FIN_PER = 0.7;
-    private static final int MAIN_WINDOW_WIDTH = 600, MAIN_WINDOW_HEIGHT = 450;
-    static Student currentStudent = null;
+    public final static double REG_PER = 0.1, MID_PER = 0.2, FIN_PER = 0.7;
+    private static final int MAIN_WINDOW_WIDTH = 550, MAIN_WINDOW_HEIGHT = 450;
+    private static Student currentStudent = null;
     //tip：这里是引用，直接操作，不用重新赋
     public static JFrame MAIN_WINDOW = new JFrame();
     //standard motion title
-    static final int IN_WARD = 0, TO_EDGE = 1;
+    public static final int IN_WARD = 0, TO_EDGE = 1;
 
     //关键元素
-    static ArrayList<Student> studentArrayList;
+    public static ArrayList<Student> studentArrayList;
     static JButton confirmCgInfoButton;
     static JComboBox<String> cDegreeCB;
     static JMenu help;
@@ -77,7 +83,10 @@ public class MainWindow {
     //ArrayList待改进
     MainWindow() {
 //主程序部分
-        SimpleMotion.openMotion(MAIN_WINDOW, MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, LaunchWindow.LAUNCH_WINDOW);
+        MAIN_WINDOW.setResizable(false);
+        MAIN_WINDOW.setTitle("学生信息管理系统");
+        MotionUtil.addEscToExist(MAIN_WINDOW,null,MainWindow.IN_WARD);
+        MotionUtil.openMotion(MAIN_WINDOW, MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, LaunchWindow.LAUNCH_WINDOW);
         studentArrayList = initializeStudent();
         System.out.println("加载完成");
 //初始化窗口
@@ -129,8 +138,8 @@ public class MainWindow {
                 super.mouseReleased(e);
                 TemporaryDialog.showLoadingCircleDialog("保存数据中", MAIN_WINDOW_HEIGHT, MAIN_WINDOW_WIDTH, true, MAIN_WINDOW);
                 new Thread(() -> {
-                    SimpleMotion.sleep(3100);
-                    SimpleMotion.exitToEdge(MAIN_WINDOW);
+                    MotionUtil.sleep(3100);
+                    MotionUtil.exitToEdge(MAIN_WINDOW);
                     System.exit(0);
                 }).start();
             }
@@ -149,14 +158,14 @@ public class MainWindow {
                                           helpDialog.setLayout(new FlowLayout());
                                           helpDialog.setTitle("帮助");
                                           helpDialog.add(new JLabel("学生管理系统 V2.0.2 by Leo  2021®"));
-                                          SimpleMotion.openMotion(helpDialog, 400, 150, MAIN_WINDOW);
+                                          MotionUtil.openMotion(helpDialog, 400, 150, MAIN_WINDOW);
                                           System.out.println("帮助");
                                           helpDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
                                           helpDialog.addWindowListener(new WindowAdapter() {
                                               @Override
                                               public void windowClosing(WindowEvent e) {
                                                   super.windowClosing(e);
-                                                  SimpleMotion.exitToEdge(helpDialog);
+                                                  MotionUtil.exitToEdge(helpDialog);
                                               }
                                           });
                                       }
@@ -182,7 +191,7 @@ public class MainWindow {
             var iconLabel = new JLabel();
             p2.add(iconLabel);
 
-            var icon = new ImageIcon(LaunchWindow.ASSET_FOLDER + "//profile.jpeg");
+            var icon = new ImageIcon(LaunchWindow.MEDIA_ASSET_FOLDER + "//profile.jpeg");
             var img = icon.getImage();
             img = img.getScaledInstance(100, 140, Image.SCALE_DEFAULT);
             icon.setImage(img);
@@ -341,15 +350,15 @@ public class MainWindow {
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
                 var foundOrNot = false;
-                for (var g : currentStudent.gradeArrayList) {
-                    if (gradeSearch.t.getText().equals(g.courseID) || gradeSearch.t.getText().equals(g.courseName)) {
-                        courseNameP.setSecondLabelText(g.courseName);
-                        courseIDP.setSecondLabelText(g.courseID);
-                        courseCreditP.setSecondLabelText(g.credit);
-                        courseRegGP.setSecondLabelText(String.valueOf(g.reg));
-                        courseMidGP.setSecondLabelText(String.valueOf(g.mid));
-                        courseFinGP.setSecondLabelText(String.valueOf(g.fin));
-                        courseAvgP.setSecondLabelText(String.valueOf(calculateAvgGrade(g.reg, g.mid, g.fin)));
+                for (Grade g : currentStudent.gradeArrayList) {
+                    if (gradeSearch.t.getText().equals(g.getCourseID()) || gradeSearch.t.getText().equals(g.getCourseName())) {
+                        courseNameP.setSecondLabelText(g.getCourseName());
+                        courseIDP.setSecondLabelText(g.getCourseID());
+                        courseCreditP.setSecondLabelText(g.getCredit());
+                        courseRegGP.setSecondLabelText(String.valueOf(g.getReg()));
+                        courseMidGP.setSecondLabelText(String.valueOf(g.getMid()));
+                        courseFinGP.setSecondLabelText(String.valueOf(g.getFin()));
+                        courseAvgP.setSecondLabelText(String.valueOf(calculateAvgGrade(g.getReg(), g.getMid(), g.getFin())));
                         foundOrNot = true;
                         break;
                     }
@@ -394,14 +403,14 @@ public class MainWindow {
                 super.mouseReleased(e);
                 var foundOrNot = false;
                 for (var g : currentStudent.gradeArrayList) {
-                    if (gradeChangeSearchP.t.getText().equals(g.courseID) || gradeChangeSearchP.t.getText().equals(g.courseName)) {
-                        courseName_cP.setText(g.courseName);
-                        courseID_cP.setText(g.courseID);
-                        courseCredit_cP.setText(g.credit);
-                        courseRegG_cP.setText(String.valueOf(g.reg));
-                        courseMidG_cP.setText(String.valueOf(g.mid));
-                        courseFinG_cP.setText(String.valueOf(g.fin));
-                        courseAvg_cP.setText(String.valueOf(calculateAvgGrade(g.reg, g.mid, g.fin)));
+                    if (gradeSearch.t.getText().equals(g.getCourseID()) || gradeSearch.t.getText().equals(g.getCourseName())) {
+                        courseName_cP.setText(g.getCourseName());
+                        courseID_cP.setText(g.getCourseID());
+                        courseCredit_cP.setText(g.getCredit());
+                        courseRegG_cP.setText(String.valueOf(g.getReg()));
+                        courseMidG_cP.setText(String.valueOf(g.getMid()));
+                        courseFinG_cP.setText(String.valueOf(g.getFin()));
+                        courseAvg_cP.setText(String.valueOf(calculateAvgGrade(g.getReg(), g.getMid(), g.getFin())));
                         foundOrNot = true;
                         break;
                     }
@@ -469,11 +478,12 @@ public class MainWindow {
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
                 for (var i = 0; i < currentStudent.gradeArrayList.size(); i++) {
-                    if (gradeChangeSearchP.t.getText().equals(currentStudent.gradeArrayList.get(i).courseID)
-                            || gradeChangeSearchP.t.getText().equals(currentStudent.gradeArrayList.get(i).courseName)) {
-                        currentStudent.gradeArrayList.get(i).reg = Integer.parseInt(courseRegG_cP.text.getText());
-                        currentStudent.gradeArrayList.get(i).mid = Integer.parseInt(courseMidG_cP.text.getText());
-                        currentStudent.gradeArrayList.get(i).fin = Integer.parseInt(courseFinG_cP.text.getText());
+                    if (gradeChangeSearchP.t.getText().equals(currentStudent.gradeArrayList.get(i).getCourseID())
+                            || gradeChangeSearchP.t.getText().equals(currentStudent.gradeArrayList.get(i).getCourseName())) {
+                        currentStudent.gradeArrayList.get(i).setGrade(
+                                Integer.parseInt(courseRegG_cP.text.getText()),
+                                Integer.parseInt(courseMidG_cP.text.getText()),
+                                Integer.parseInt(courseFinG_cP.text.getText()));
                         switchStu(currentStudent);
                         break;
                     }
@@ -491,7 +501,7 @@ public class MainWindow {
     }
 
     public static void switchStu(Student currentStu) {
-        SimpleMotion.upAndDown_A(MAIN_WINDOW, MAIN_WINDOW_HEIGHT);
+        MotionUtil.upAndDown_A(MAIN_WINDOW, MAIN_WINDOW_HEIGHT);
         currentStudent = currentStu;
         System.out.println("切换学生:" + currentStu.toString());
         nameP.setSecondLabelText(currentStu.getName());
@@ -527,7 +537,7 @@ public class MainWindow {
         c_majorP.text.setText(currentStu.getMajor());
         c_dormP.text.setText(currentStu.getDorm());
         topTab.setSelectedIndex(0);
-        SimpleMotion.upAndDown_B(MAIN_WINDOW, MAIN_WINDOW_HEIGHT);
+        MotionUtil.upAndDown_B(MAIN_WINDOW, MAIN_WINDOW_HEIGHT);
     }
 
     static int calculateAvgGrade(int reg, int mid, int fin) {
@@ -537,13 +547,13 @@ public class MainWindow {
     static boolean verifyGradeEditLegit(QuickPanelWithLabelAndText gradeEditPanel) throws InterruptedException, AWTException {
         //其他字符验证
         if (!verifyInteger(gradeEditPanel.getText())) {
-            SimpleMotion.displayErrorInfo(gradeEditPanel.text, "输入了不合法的字符");
+            MotionUtil.displayErrorInfo(gradeEditPanel.text, "输入了不合法的字符");
             return false;
         }
 
         //区间位于0～100
         if (Integer.parseInt(gradeEditPanel.getText()) > 100 || Integer.parseInt(gradeEditPanel.getText()) < 0) {
-            SimpleMotion.displayErrorInfo(gradeEditPanel.text, "成绩须为0～100");
+            MotionUtil.displayErrorInfo(gradeEditPanel.text, "成绩须为0～100");
             return false;
         }
 
@@ -564,7 +574,7 @@ public class MainWindow {
         var studentArrayList = new ArrayList<Student>();
         new Thread(() -> TemporaryDialog.showLoadingCircleDialog("", (int) (MAIN_WINDOW_HEIGHT*1.5), (int) (MAIN_WINDOW_WIDTH*1.5), true, MAIN_WINDOW)).start();
         try {
-            var path = LaunchWindow.ASSET_FOLDER + "//STUDENT.txt";
+            var path = LaunchWindow.MEDIA_ASSET_FOLDER + "//STUDENT.txt";
             var filename = new File(path);
             var reader = new InputStreamReader(new FileInputStream(filename));
             var bufferedReader = new BufferedReader(reader);
@@ -589,7 +599,7 @@ public class MainWindow {
 //      int csNum = 0;
         var wholeGradeData = new ArrayList<Grade>();
         try {
-            var path = LaunchWindow.ASSET_FOLDER + "//GRADE.txt";
+            var path = LaunchWindow.MEDIA_ASSET_FOLDER + "//GRADE.txt";
             var filename = new File(path);
             var reader = new InputStreamReader(new FileInputStream(filename));
             var bufferedReader = new BufferedReader(reader);
@@ -643,7 +653,7 @@ public class MainWindow {
             case IN_WARD:w.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent e) {
                     super.windowClosing(e);
-                    SimpleMotion.exitMotion(w,null);
+                    MotionUtil.exitMotion(w,null);
                     if (shutDownJVMOrNot) {
                         System.exit(0);
                     }
@@ -652,7 +662,7 @@ public class MainWindow {
             case TO_EDGE:w.addWindowListener(new WindowAdapter() {
                 public void windowClosing(WindowEvent e) {
                     super.windowClosing(e);
-                    SimpleMotion.exitToEdge(w);
+                    MotionUtil.exitToEdge(w);
                     if (shutDownJVMOrNot) {
                         System.exit(0);
                     }

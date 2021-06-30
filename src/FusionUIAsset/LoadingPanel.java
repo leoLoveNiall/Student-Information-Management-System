@@ -1,3 +1,5 @@
+package FusionUIAsset;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -23,7 +25,7 @@ public class LoadingPanel extends JPanel {
     int miniCounter = 0;
 
     public LoadingPanel() {
-        this.delay = 10;
+        this.delay = 12;
         this.orientation = CLOCKWISE;
         init();
     }
@@ -59,17 +61,17 @@ public class LoadingPanel extends JPanel {
         drawArc(g);
     }
 
-    static int r_c = 0, g_c = 40, b_c = 70;
+    static int r_c = 1, g_c = 35, b_c = 70;
     static boolean r_b = true, g_b = true, b_b = true;
-    static final int maxColorValue = 220,minColorValue = 40;
+    static final int maxColorValue = 220,minColorValue = 20;
     private void drawArc(Graphics g) {
 
-        if (r_b) r_c += 6;
-        else r_c -= 7;
-        if (g_b) g_c += 8;
-        else g_c -= 9;
-        if (b_b) b_c += 10;
-        else b_c -= 11;
+        if (r_b) r_c += 5;
+        else r_c -= 8;
+        if (g_b) g_c += 9;
+        else g_c -= 12;
+        if (b_b) b_c += 11;
+        else b_c -= 16;
         if (r_c >= maxColorValue) {
             r_b = false;
             r_c = maxColorValue;

@@ -1,3 +1,5 @@
+package FusionUIAsset;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +16,7 @@ public class Captcha extends JPanel {
     ImageIcon icon;
     JTextArea textArea = new JTextArea(0,8);
     String code;
-    Captcha(){
+    public Captcha(){
         var captcha = new ImageVerifyCode();
         icon = new ImageIcon(captcha.getImage());
         code = captcha.getText();
@@ -42,15 +44,11 @@ public class Captcha extends JPanel {
         });
     }
 
-    boolean isAuthorized() {
+    public boolean isAuthorized() {
         String code = this.code.toLowerCase();
         String text = textArea.getText().toLowerCase(Locale.ROOT);
         System.out.println("code:"+code+" text:"+text);
-        if (code.equals(text)){
-            return true;
-        }else {
-            return false;
-        }
+        return code.equals(text);
     }
     public static void main(String[] args){
         var imageVerifyCode = new ImageVerifyCode();
@@ -62,15 +60,15 @@ public class Captcha extends JPanel {
 //基于 https://blog.csdn.net/weixin_43625121/article/details/109180841 改进
 
 class ImageVerifyCode {
-    private int w = 50;
-    private int h = 28;
-    private Random r = new Random();
+    private final int w = 50;
+    private final int h = 28;
+    Random r = new Random();
 
-    private String[] fontNames = {"Arial", "Times New Roman","Comic Sans MS"};
+    private final String[] fontNames = {"Arial", "Times New Roman","Comic Sans MS"};
     // 可选字符
-    private String codes = "23456789abcdefghjkmnopqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ";
+    private final String codes = "23456789abcdefghjkmnopqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ";
     // 背景色
-    private Color bgColor = new Color(255, 255, 255);
+    private final Color bgColor = new Color(255, 255, 255);
     // 验证码上的文本
     private String text;
 
@@ -149,15 +147,12 @@ class ImageVerifyCode {
     /**
      * 将BufferedImage转换为InputStream
      *
-     * @param image
-     * @return
      */
     public InputStream bufferedImageToInputStream(BufferedImage image) {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
             ImageIO.write(image, "png", os);
-            InputStream input = new ByteArrayInputStream(os.toByteArray());
-            return input;
+            return new ByteArrayInputStream(os.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
         }
