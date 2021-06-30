@@ -5,6 +5,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class AddStudentDialog{
+    //名义上是dialog但实际上并不是
+
+
     //最开始的时候都把swing控件写在构造函数里了，后来又全部移出来，方便操作
     //最开始的时候都把swing控件写在构造函数里了，后来又全部移出来，方便操作
     //最开始的时候都把swing控件写在构造函数里了，后来又全部移出来，方便操作
@@ -22,16 +25,17 @@ public class AddStudentDialog{
     static QuickPanelWithLabelAndText a_dormP;
     static QuickPanelWithLabelAndText a_labP;
     static JPanel addStuPanel;
-    static JDialog addDialog;
+    static JFrame addDialog;
     static JButton addBtn;
     static JPanel tpp;
     static JPanel degreeP;
 
-     AddStudentDialog() {
+     AddStudentDialog(String title) {
 //owner.setEnabled(false);
 
         addStuPanel = new JPanel(new GridLayout(10, 1));
-        addDialog = new JDialog();
+        addDialog = new JFrame();
+        addDialog.setTitle(title);
         addDialog.setAlwaysOnTop(true);
         addDialog.add(addStuPanel, BorderLayout.CENTER);
 
@@ -88,7 +92,7 @@ public class AddStudentDialog{
                                 a_dormP.text.getText(), a_tutorP.text.getText(), a_labP.text.getText());
                     }
                     MainWindow.studentArrayList.add(add);
-                    SimpleMotion.exitMotion(addDialog);
+                    SimpleMotion.exitMotion(addDialog,MainWindow.MAIN_WINDOW);
                     MainWindow.switchStu(add);
                 } else {
                     if (isAllFilled() && MainWindow.ifIDExists(a_IDP.text.getText())) {

@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 //原本是打算建一个包含两个控件的panel，不过后来多重panel越来越多，就都写在这里了
 
@@ -194,7 +195,7 @@ class TemporaryDialog {
         showDialog(headline, f);
     }
 
-    TemporaryDialog(String headline, int height, int width, int suspendTime, Window f,boolean showBar) {
+    TemporaryDialog(String headline, int height, int width, int suspendTime, Window f, boolean showBar) {
         this.height = height;
         this.width = width;
         this.suspendTime = suspendTime;
@@ -240,30 +241,28 @@ class TemporaryDialog {
         new Thread(() -> {
             SimpleMotion.sleep(suspendTime);
             isAboutToExit = true;
-            SimpleMotion.exitMotion(dialog);
+            SimpleMotion.exitMotion(dialog,MainWindow.MAIN_WINDOW);
         }).start();
     }
 
     static void showLoadingCircleDialog(String infoText, int height, int width, boolean withOpeningMotion, Window f) {
-        var loadDialog = new TemporaryDialog("", height + 20, width + 20, (int) (Math.random() * 10000) % 1000 + 3000, withOpeningMotion, false,MainWindow.MAIN_WINDOW);
+        var loadDialog = new TemporaryDialog("", height + 30, width + 30, (int) (Math.random() * 10000) % 1000 + 2000, withOpeningMotion, false, MainWindow.MAIN_WINDOW);
         var loadPanel = new LoadingPanel();
         loadDialog.dialog.add(loadPanel);
         loadPanel.setBackground(Color.WHITE);
         loadPanel.show();
-        new TemporaryDialog(infoText, 80, 150, 3000, f,false);
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true){
-                    SimpleMotion.sleep(50);//降低占用率
-                    if(loadDialog.isAboutToExit) break;
-                }
-                while (loadPanel.miniCounter < 200){
-                    loadPanel.miniCounter += 10;
-                    SimpleMotion.sleep(40);
-                }
+        SimpleMotion.centerize(loadDialog.dialog,MainWindow.MAIN_WINDOW);
+        new Thread(() -> {
+            while (true) {
+                SimpleMotion.sleep(50);//降低占用率
+                if (loadDialog.isAboutToExit) break;
+            }
+            while (loadPanel.miniCounter < 200) {
+                loadPanel.miniCounter += 10;
+                SimpleMotion.sleep(40);
             }
         }).start();
     }
+
 }
 

@@ -13,6 +13,8 @@ public class MainWindow {
     static Student currentStudent = null;
     //tip：这里是引用，直接操作，不用重新赋
     public static JFrame MAIN_WINDOW = new JFrame();
+    //standard motion title
+    static final int IN_WARD = 0, TO_EDGE = 1;
 
     //关键元素
     static ArrayList<Student> studentArrayList;
@@ -75,21 +77,12 @@ public class MainWindow {
     //ArrayList待改进
     MainWindow() {
 //主程序部分
-        SimpleMotion.openMotion(MAIN_WINDOW, MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, null);
+        SimpleMotion.openMotion(MAIN_WINDOW, MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, LaunchWindow.LAUNCH_WINDOW);
         studentArrayList = initializeStudent();
         System.out.println("加载完成");
 //初始化窗口
-        MAIN_WINDOW.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        //退出动画
-        MAIN_WINDOW.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                super.windowClosing(e);
-                //退出动画
-                SimpleMotion.exitToEdge(MAIN_WINDOW);
-                System.exit(0);
-            }
-        });
+        setDefaultClosingMotion(MAIN_WINDOW,TO_EDGE,true);
+
         MAIN_WINDOW.setLayout(new BorderLayout());
 
 //设置基本框架
@@ -102,7 +95,8 @@ public class MainWindow {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                new AddStudentDialog();
+                new AddStudentDialog("新增学生");
+                setDefaultClosingMotion(AddStudentDialog.addDialog,IN_WARD,false);
             }
         });
         findStu = new JMenuItem("切换学生(W)");
@@ -110,7 +104,8 @@ public class MainWindow {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                new FindStudentDialog();
+                new FindStudentDialog("切换学生");
+                setDefaultClosingMotion(FindStudentDialog.findDialog,IN_WARD,false);
             }
         });
         manipulate.add(addStu);
@@ -123,7 +118,7 @@ public class MainWindow {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                TemporaryDialog.showLoadingCircleDialog("保存数据中", MAIN_WINDOW_HEIGHT, MAIN_WINDOW_WIDTH, false, MAIN_WINDOW);
+                TemporaryDialog.showLoadingCircleDialog("保存数据中", MAIN_WINDOW_HEIGHT, MAIN_WINDOW_WIDTH, true, MAIN_WINDOW);
             }
         });
         save.add(saveS);
@@ -132,13 +127,12 @@ public class MainWindow {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                TemporaryDialog.showLoadingCircleDialog("保存数据中", MAIN_WINDOW_HEIGHT, MAIN_WINDOW_WIDTH, false, MAIN_WINDOW);
+                TemporaryDialog.showLoadingCircleDialog("保存数据中", MAIN_WINDOW_HEIGHT, MAIN_WINDOW_WIDTH, true, MAIN_WINDOW);
                 new Thread(() -> {
-                    SimpleMotion.sleep(4000);
+                    SimpleMotion.sleep(3100);
                     SimpleMotion.exitToEdge(MAIN_WINDOW);
                     System.exit(0);
                 }).start();
-
             }
         });
         save.add(saveAndExit);
@@ -154,8 +148,8 @@ public class MainWindow {
                                           var helpDialog = new JDialog();
                                           helpDialog.setLayout(new FlowLayout());
                                           helpDialog.setTitle("帮助");
-                                          helpDialog.add(new JLabel("学生管理系统 V1.0.0 by Leo 最初版本  2021®"));
-                                          SimpleMotion.openMotion(helpDialog, 300, 100, null);
+                                          helpDialog.add(new JLabel("学生管理系统 V2.0.2 by Leo  2021®"));
+                                          SimpleMotion.openMotion(helpDialog, 400, 150, MAIN_WINDOW);
                                           System.out.println("帮助");
                                           helpDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
                                           helpDialog.addWindowListener(new WindowAdapter() {
@@ -568,8 +562,7 @@ public class MainWindow {
 
     ArrayList<Student> initializeStudent() {
         var studentArrayList = new ArrayList<Student>();
-        TemporaryDialog.showLoadingCircleDialog("加载数据中…", MAIN_WINDOW_HEIGHT, MAIN_WINDOW_WIDTH, false, MAIN_WINDOW);//避免线程冲突
-
+        new Thread(() -> TemporaryDialog.showLoadingCircleDialog("", (int) (MAIN_WINDOW_HEIGHT*1.5), (int) (MAIN_WINDOW_WIDTH*1.5), true, MAIN_WINDOW)).start();
         try {
             var path = LaunchWindow.ASSET_FOLDER + "//STUDENT.txt";
             var filename = new File(path);
@@ -579,7 +572,7 @@ public class MainWindow {
             line = bufferedReader.readLine();
             while (line != null) {
                 //line格式如：黄京源 14408010120 男 软件工程1401 博士 史晓楠 科创 9#232
-                String[] infoLine = line.split("\\s+");//分割字符串
+                var infoLine = line.split("\\s+");//分割字符串
                 if (infoLine[4].equals("本科"))
                     studentArrayList.add(new Bachelor(infoLine[0], infoLine[1], infoLine[2], infoLine[3], infoLine[7]));
                 if (infoLine[4].equals("硕士"))
@@ -603,7 +596,7 @@ public class MainWindow {
             var courseLine = bufferedReader.readLine();
 
             while (courseLine != null) {
-                String[] gradeLineArr = courseLine.split(",");//分割字符串
+                var gradeLineArr = courseLine.split(",");//分割字符串
                 //csNum = (gradeLineArr.length - 1) / 6;
                 for (var i = 1; i < gradeLineArr.length - 1; i += 6) {
                     wholeGradeData.add(new Grade(gradeLineArr[0], gradeLineArr[i + 1], gradeLineArr[i],
@@ -641,6 +634,33 @@ public class MainWindow {
             if (stu.getID().equals(str)) return true;
         }
         return false;
+    }
+
+
+    public static void setDefaultClosingMotion(JFrame w,int motionType, boolean shutDownJVMOrNot) {
+        w.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        switch (motionType){
+            case IN_WARD:w.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    super.windowClosing(e);
+                    SimpleMotion.exitMotion(w,null);
+                    if (shutDownJVMOrNot) {
+                        System.exit(0);
+                    }
+                }
+            });break;
+            case TO_EDGE:w.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e) {
+                    super.windowClosing(e);
+                    SimpleMotion.exitToEdge(w);
+                    if (shutDownJVMOrNot) {
+                        System.exit(0);
+                    }
+                }
+            });break;
+            default:break;
+        }
+
     }
 
 }

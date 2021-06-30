@@ -13,6 +13,8 @@ public class LaunchWindow {
 
     static final String userNameMD5 = "0F759DD1EA6C4C76CEDC299039CA4F23";
     static final String userPasswordMD5 = "202CB962AC59075B964B07152D234B70";
+    static final int LAUNCH_WINDOW_WIDTH = 500;
+    static final int LAUNCH_WINDOW_HEIGHT = 330;
 
     //核心组件
     static JLabel nameLabel = new JLabel("用户名：");
@@ -24,14 +26,14 @@ public class LaunchWindow {
 
     //ps: Mac系统下文件系统使用右斜杠，Windows系统需要改进
     static void createMainWindow() {
-        SimpleMotion.exitMotion(LAUNCH_WINDOW);
+        SimpleMotion.exitMotion(LAUNCH_WINDOW,null);
         new MainWindow();
     }
 
     public static void main(String[] args) {
 
         LAUNCH_WINDOW.setLayout(new GridLayout(6, 1));
-        LAUNCH_WINDOW.setSize(400, 300);
+        LAUNCH_WINDOW.setSize(LAUNCH_WINDOW_WIDTH, LAUNCH_WINDOW_HEIGHT);
         LAUNCH_WINDOW.setResizable(false);
         LAUNCH_WINDOW.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //LAUNCH_WINDOW.setLocation(600, 600);
@@ -68,7 +70,7 @@ public class LaunchWindow {
 
 //      创建窗口
         SimpleMotion.centerize(LAUNCH_WINDOW);
-        SimpleMotion.openMotion(LAUNCH_WINDOW, 400, 300, null);
+        SimpleMotion.openMotion(LAUNCH_WINDOW, LAUNCH_WINDOW_WIDTH, LAUNCH_WINDOW_HEIGHT, null);
 //      登陆
 
 
@@ -77,10 +79,12 @@ public class LaunchWindow {
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
                 if (verifyUserValid()) {
-                    createMainWindow();
+                    if (captcha.isAuthorized()) createMainWindow();
+                    else new TemporaryDialog("Captcha 错误！", LAUNCH_WINDOW);
                 } else {
                     new TemporaryDialog("账户错误！", LAUNCH_WINDOW);
                 }
+
             }
 
         });
@@ -91,7 +95,8 @@ public class LaunchWindow {
             public void keyTyped(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     if (verifyUserValid()) {
-                        createMainWindow();
+                        if (captcha.isAuthorized()) createMainWindow();
+                        else new TemporaryDialog("Captcha 错误！", LAUNCH_WINDOW);
                     } else {
                         new TemporaryDialog("账户错误！", LAUNCH_WINDOW);
                     }

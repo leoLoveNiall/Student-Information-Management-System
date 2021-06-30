@@ -6,11 +6,14 @@ import java.awt.event.WindowAdapter;
 import java.util.ArrayList;
 
 public class FindStudentDialog {
-    JDialog findDialog = new JDialog();
-    static private final int HEIGHT = 350, WIDTH = 450;
+    //名义上是dialog但实际上并不是
+    static JFrame findDialog;
+    static final int HEIGHT = 350, WIDTH = 450;
 
 
-    FindStudentDialog(){
+    FindStudentDialog(String title){
+        findDialog = new JFrame();
+        findDialog.setTitle(title);
         findDialog.setAlwaysOnTop(true);
         //初始化窗体
         var mainPanel = new JPanel();
@@ -86,7 +89,7 @@ public class FindStudentDialog {
                                 s = rb.getText().split(",");
                                 for (var stu : MainWindow.studentArrayList) {
                                     if (stu.getID().equals(s[2])) {
-                                        SimpleMotion.exitMotion(findDialog);
+                                        SimpleMotion.exitMotion(findDialog,MainWindow.MAIN_WINDOW);
                                         MainWindow.switchStu(stu);
                                         return;
                                     }
@@ -109,4 +112,8 @@ public class FindStudentDialog {
 
     }
 
+    @Override
+    public String toString() {
+        return "FindStudentDialog{}";
+    }
 }

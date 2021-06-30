@@ -59,7 +59,43 @@ public class LoadingPanel extends JPanel {
         drawArc(g);
     }
 
+    static int r_c = 0, g_c = 40, b_c = 70;
+    static boolean r_b = true, g_b = true, b_b = true;
+    static final int maxColorValue = 220,minColorValue = 40;
     private void drawArc(Graphics g) {
+
+        if (r_b) r_c += 6;
+        else r_c -= 7;
+        if (g_b) g_c += 8;
+        else g_c -= 9;
+        if (b_b) b_c += 10;
+        else b_c -= 11;
+        if (r_c >= maxColorValue) {
+            r_b = false;
+            r_c = maxColorValue;
+        }
+        if (r_c <= minColorValue) {
+            r_b = true;
+            r_c = minColorValue;
+        }
+        if (g_c >= maxColorValue) {
+            g_b = false;
+            g_c = maxColorValue;
+        }
+        if (g_c <= minColorValue) {
+            g_b = true;
+            g_c = minColorValue;
+        }
+        if (b_c >= maxColorValue) {
+            b_b = false;
+            b_c = maxColorValue;
+        }
+        if (b_c <= minColorValue) {
+            b_b = true;
+            b_c = minColorValue;
+        }
+
+
         Graphics2D g2d = (Graphics2D) g.create();
         //抗锯齿
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -68,7 +104,7 @@ public class LoadingPanel extends JPanel {
         //设置画笔颜色
         g2d.setColor(Color.WHITE);
         g2d.drawArc(width / 2 - 110 + miniCounter / 2, height / 2 - 110 + miniCounter / 2, 20 + 200 - miniCounter, 20 + 200 - miniCounter, 0, 360);
-        g2d.setColor(new Color(0x3a9f4));
+        g2d.setColor(new Color(r_c,g_c,b_c));
         g2d.fillArc(width / 2 - 110 + miniCounter / 2, height / 2 - 110 + miniCounter / 2, 20 + 200 - miniCounter, 20 + 200 - miniCounter, startAngle, arcAngle);
         g2d.setColor(Color.WHITE);
         g2d.fillArc(width / 2 - 105 + miniCounter / 2, height / 2 - 105 + miniCounter / 2, 20 + 190 - miniCounter, 20 + 190 - miniCounter, 0, 360);
@@ -83,9 +119,10 @@ public class LoadingPanel extends JPanel {
         public void actionPerformed(ActionEvent e) {
             if (startAngle < 360) {
                 //控制每个DELAY周期旋转的角度，+ 为逆时针  - 为顺时针
-                switch (orientation) {
-                    case ANTICLOCKWISE -> startAngle -= 5;
-                    default -> startAngle += 5;
+                if (orientation == ANTICLOCKWISE) {
+                    startAngle -= 5;
+                } else {
+                    startAngle += 5;
                 }
             } else {
                 startAngle = 0;
