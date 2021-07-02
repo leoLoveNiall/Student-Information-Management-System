@@ -63,7 +63,7 @@ public class LaunchWindow {
         iconPanel.add(iconLabel);
         topPanel.add(headLine);
         name = new QuickPanelWithLabelAndText("用户名","leo");
-        key = new QuickPanelWithLabelAndPasswordText("密码", "123");
+        key = new QuickPanelWithLabelAndPasswordText("密码  ", "123");
         userPanel.add(name);
         keyPanel.add(key);
         buttonPanel.add(loginButton);

@@ -79,7 +79,7 @@ public class MainWindow {
     static QuickPanelWithTwoLabels tutorP;
     static StandardSearchPanel gradeChangeSearchP;
     static StandardSearchPanel gradeSearch;
-
+    static JLabel iconLabel;
     //ArrayList待改进
     MainWindow() {
 //主程序部分
@@ -188,14 +188,10 @@ public class MainWindow {
             imageP.add(p2, BorderLayout.CENTER);
             p1.add(new JLabel("PROFILE"));
             MAIN_WINDOW.add(imageP, BorderLayout.WEST);
-            var iconLabel = new JLabel();
+            iconLabel = new JLabel();
             p2.add(iconLabel);
 
-            var icon = new ImageIcon(LaunchWindow.MEDIA_ASSET_FOLDER + "//profile.jpeg");
-            var img = icon.getImage();
-            img = img.getScaledInstance(100, 140, Image.SCALE_DEFAULT);
-            icon.setImage(img);
-            iconLabel.setIcon(icon);
+
         }
 
 
@@ -403,7 +399,7 @@ public class MainWindow {
                 super.mouseReleased(e);
                 var foundOrNot = false;
                 for (var g : currentStudent.gradeArrayList) {
-                    if (gradeSearch.t.getText().equals(g.getCourseID()) || gradeSearch.t.getText().equals(g.getCourseName())) {
+                    if (gradeChangeSearchP.t.getText().equals(g.getCourseID()) || gradeChangeSearchP.t.getText().equals(g.getCourseName())) {
                         courseName_cP.setText(g.getCourseName());
                         courseID_cP.setText(g.getCourseID());
                         courseCredit_cP.setText(g.getCredit());
@@ -537,6 +533,24 @@ public class MainWindow {
         c_majorP.text.setText(currentStu.getMajor());
         c_dormP.text.setText(currentStu.getDorm());
         topTab.setSelectedIndex(0);
+
+        var icon = new File(LaunchWindow.MEDIA_ASSET_FOLDER + "/profile/"+currentStu.getID()+".jpg");
+        if (icon.exists()){
+            var realIcon = new ImageIcon(icon.getPath());
+            var img = realIcon.getImage();
+            img = img.getScaledInstance(100, 100, Image.SCALE_DEFAULT);
+            realIcon.setImage(img);
+            iconLabel.setIcon(realIcon);
+        }else {
+            var defaultIcon = new ImageIcon(LaunchWindow.MEDIA_ASSET_FOLDER + "/profile.jpeg");
+            var img = defaultIcon.getImage();
+            img = img.getScaledInstance(100, 140, Image.SCALE_DEFAULT);
+            defaultIcon.setImage(img);
+            iconLabel.setIcon(defaultIcon);
+        }
+
+
+
         MotionUtil.upAndDown_B(MAIN_WINDOW, MAIN_WINDOW_HEIGHT);
     }
 

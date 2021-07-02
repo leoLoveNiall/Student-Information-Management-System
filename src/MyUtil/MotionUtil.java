@@ -1,6 +1,7 @@
 package MyUtil;
 
 import Window.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -11,7 +12,7 @@ import java.util.stream.IntStream;
 
 public class MotionUtil {
     public static void exitMotion(Window window, Window f) {
-//        //全部采用浮点数，使剧中效果更佳
+//        //全部采用浮点数，使居中效果更佳
 //        final double height = window.getHeight();
 //        final double width = window.getWidth();
         final int motionTick = 60;
@@ -40,7 +41,7 @@ public class MotionUtil {
             assert wList != null;
 
             //尽早结束
-            if (motionTick-i<=4) break;
+            if (motionTick - i <= 4) break;
 
             window.setSize(wList.get(i), hList.get(i));
             if (i > 3) if (f != null) {//降低割裂感
@@ -62,19 +63,23 @@ public class MotionUtil {
         }
         window.setVisible(true);
         final var motionTick = 60;
-
-
         var wList = getULAArray(width, motionTick, INCREASE);
         var hList = getULAArray(height, motionTick, INCREASE);
+        System.out.println(wList);
+        System.out.println(hList);
+        int[] pivotal = getPivotalXY(window);
         IntStream.range(0, motionTick).forEach(i -> {
             assert wList != null;
             assert hList != null;
-            window.setSize(wList.get(i), hList.get(i));
-            if (f == null) {
-                centerize(window);
-            } else {
-                centerize(window, f);
+            if ((wList.get(i) >= 3 || hList.get(i) >= 3)) {
+                window.setSize(wList.get(i), hList.get(i));
+                if (f == null) {
+                    centerize(window,pivotal[0],pivotal[1]);
+                } else {
+                    centerize(window, f);
+                }
             }
+
             sleep();
         });
 
@@ -229,7 +234,8 @@ public class MotionUtil {
 
         y = max, x = scope;
 
-        using arctangent x function:
+        using arc-tangent x function:
+
          */
         try {
             //  使用100是为了减少double的使用，可以减少转化
@@ -303,6 +309,6 @@ public class MotionUtil {
     }
 
     public static void main(String[] args) {
-        System.out.println(getULAArray(200, 40, DECREASE));
+        System.out.println(getULAArray(2000, 400, DECREASE));
     }
 }

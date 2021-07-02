@@ -14,7 +14,7 @@ import java.util.*;
 
 public class Captcha extends JPanel {
     ImageIcon icon;
-    JTextArea textArea = new JTextArea(0,8);
+    JTextArea textArea = new JTextArea(0,6);
     String code;
     public Captcha(){
         var captcha = new ImageVerifyCode();
@@ -85,7 +85,7 @@ class ImageVerifyCode {
         int index = r.nextInt(fontNames.length);
         String fontName = fontNames[index];// 生成随机的字体名称
         int style = r.nextInt(4);// 生成随机的样式, 0(无样式), 1(粗体), 2(斜体), 3(粗体+斜体)
-        int size = r.nextInt(5) + 20; // 生成随机字号
+        int size = r.nextInt(5) + 18; // 生成随机字号
         return new Font(fontName, style, size);
     }
 
