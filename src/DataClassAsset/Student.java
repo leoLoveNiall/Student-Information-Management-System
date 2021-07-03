@@ -9,6 +9,10 @@ public class Student {
     private String gender;
     private String major;
     private String dorm;
+    public static final byte BA = 0;
+    public static final byte MA = 1;
+    public static final byte DO = 2;
+
     public ArrayList<Grade> gradeArrayList = new ArrayList<Grade>();
 
     public Student(String name, String ID, String gender, String major, String dorm) {
@@ -28,8 +32,8 @@ public class Student {
 
     }
 
-    public String getTag() {
-        return "";
+    public byte getTag() {
+        return -1;
     }
 
     public String getName() {
@@ -58,6 +62,10 @@ public class Student {
 
     public String getLab() {
         return null;
+    }
+
+    public String getVali(){
+        return "";
     }
 
     

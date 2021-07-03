@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import DataClassAsset.*;
+import Window.MainWindow;
 
 public class MyCheckBox extends JCheckBox {
     public MyCheckBox(String s, boolean selected, boolean enabled) {
@@ -25,9 +26,10 @@ public class MyCheckBox extends JCheckBox {
         c2.setEnabled(false);
         c3.setEnabled(false);
         switch (s.getTag()) {
-            case "BA" -> makeMyCheckBoxAbleButNotUsable(c1);
-            case "MA" -> makeMyCheckBoxAbleButNotUsable(c2);
-            case "DO" -> makeMyCheckBoxAbleButNotUsable(c3);
+            case Student.BA -> makeMyCheckBoxAbleButNotUsable(c1);
+            case Student.MA -> makeMyCheckBoxAbleButNotUsable(c2);
+            case Student.DO -> makeMyCheckBoxAbleButNotUsable(c3);
+            default -> new TemporaryDialog("数据库出错！请联系管理员！"+s.toString(), MainWindow.MAIN_WINDOW);
         }
 
     }

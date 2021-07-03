@@ -9,11 +9,16 @@ public class Master extends Bachelor {
     }
 
     @Override
-    public String getTag() {
-        return "MA";
+    public byte getTag() {
+        return MA;
     }
 
     public String getTutor() {
         return tutor;
+    }
+
+    @Override
+    public String getVali() {
+        return "硕士";
     }
 }

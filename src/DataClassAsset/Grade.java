@@ -4,12 +4,12 @@ public class Grade {
     private String stuID;
     private String courseName;
     private String courseID;
-    private String credit;
+    private byte credit;
     private int reg;
     private int mid;
     private int fin;
 
-    public Grade(String stuID, String courseName, String courseID, String credit, int reg, int mid, int fin) {
+    public Grade(String stuID, String courseName, String courseID, byte credit, int reg, int mid, int fin) {
         this.stuID = stuID;
         this.courseName = courseName;
         this.courseID = courseID;
@@ -18,6 +18,7 @@ public class Grade {
         this.mid = mid;
         this.fin = fin;
     }
+
 
     public String getStuID() {
         return stuID;
@@ -31,7 +32,7 @@ public class Grade {
         return courseID;
     }
 
-    public String getCredit() {
+    public byte getCredit() {
         return credit;
     }
 

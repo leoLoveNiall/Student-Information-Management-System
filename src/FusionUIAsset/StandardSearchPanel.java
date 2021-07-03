@@ -30,4 +30,7 @@ public class StandardSearchPanel extends JPanel {
         add(t);
         add(b);
     }
+    public String getFilteredText(){
+        return t.getText().replace(" ","");
+    }
 }

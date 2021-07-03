@@ -10,6 +10,7 @@ import java.awt.event.*;
 
 public class LaunchWindow {
     static final String MEDIA_ASSET_FOLDER = System.getProperty("user.dir") + "/src/MediaAsset";
+    static final String OUTPUT_FOLDER = System.getProperty("user.home") +"/Desktop";
     static JFrame LAUNCH_WINDOW = new JFrame("西安科技大学·学生管理系统");
     //static final String ASSET_FOLDER = "/Users/kongweirui/Desktop/Java/DataAsset.Student-Inform" +
     //        "ation-Management-System/out/production/DataAsset.Student-Information-Management-System";
@@ -30,6 +31,7 @@ public class LaunchWindow {
     }
 
     public static void main(String[] args) {
+        System.out.println(System.getProperty("user.dir"));
         LAUNCH_WINDOW.setLayout(new GridLayout(6, 1));
         LAUNCH_WINDOW.setSize(LAUNCH_WINDOW_WIDTH, LAUNCH_WINDOW_HEIGHT);
         LAUNCH_WINDOW.setResizable(false);
@@ -38,7 +40,7 @@ public class LaunchWindow {
 //      设置图标panel和标签
         var iconPanel = new JPanel();
         var iconLabel = new JLabel();
-        var icon = new ImageIcon(MEDIA_ASSET_FOLDER + "//icon.jpeg");
+        var icon = new ImageIcon(MEDIA_ASSET_FOLDER + "/icon.jpeg");
         var img = icon.getImage();
         img = img.getScaledInstance(160, 60, Image.SCALE_DEFAULT);
         icon.setImage(img);
@@ -112,7 +114,7 @@ public class LaunchWindow {
     }
 
     static boolean verifyUserValid() {
-        return MD5.getMD5(name.getText()).equals(userNameMD5) &&
+        return MD5.getMD5(name.getFilteredText()).equals(userNameMD5) &&
                 MD5.getMD5(key.getPassword()).equals(userPasswordMD5);
     }
 }

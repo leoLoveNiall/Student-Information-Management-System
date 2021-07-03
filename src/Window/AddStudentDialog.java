@@ -16,10 +16,6 @@ import java.awt.event.MouseEvent;
 public class AddStudentDialog{
     //名义上是dialog但实际上并不是
 
-
-    //最开始的时候都把swing控件写在构造函数里了，后来又全部移出来，方便操作
-    //最开始的时候都把swing控件写在构造函数里了，后来又全部移出来，方便操作
-    //最开始的时候都把swing控件写在构造函数里了，后来又全部移出来，方便操作
     final static String[] degree = {"本科", "硕士", "博士"};
     final static String[] gender = {"顺性男 Cis Man", "顺性女 Cis Woman", "双性人 Bigender", "无性别 Agender",
             "跨性别 Trans", "流性人 Gender Fluid", "非常规性别 Nonconforming", "酷儿性别 Genderqueer",
@@ -86,23 +82,23 @@ public class AddStudentDialog{
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                if (isAllFilled() && !MainWindow.ifIDExists(a_IDP.getText())) {
+                if (isAllFilled() && !MainWindow.ifIDExists(a_IDP.getFilteredText())) {
                     switch (degree[degreeCB.getSelectedIndex()]) {
-                        case "本科" -> add = new Bachelor(a_nameP.getText(), a_IDP.getText(),
-                                gender[genderCB.getSelectedIndex()], a_majorP.getText(),
-                                a_dormP.getText());
-                        case "硕士" -> add = new Master(a_nameP.getText(), a_IDP.getText(),
-                                gender[genderCB.getSelectedIndex()], a_majorP.getText(),
-                                a_dormP.getText(), a_tutorP.getText());
-                        case "博士" -> add = new Doctor(a_nameP.getText(), a_IDP.getText(),
-                                gender[genderCB.getSelectedIndex()], a_majorP.getText(),
-                                a_dormP.getText(), a_tutorP.getText(), a_labP.getText());
+                        case "本科" -> add = new Bachelor(a_nameP.getFilteredText(), a_IDP.getFilteredText(),
+                                gender[genderCB.getSelectedIndex()], a_majorP.getFilteredText(),
+                                a_dormP.getFilteredText());
+                        case "硕士" -> add = new Master(a_nameP.getFilteredText(), a_IDP.getFilteredText(),
+                                gender[genderCB.getSelectedIndex()], a_majorP.getFilteredText(),
+                                a_dormP.getFilteredText(), a_tutorP.getFilteredText());
+                        case "博士" -> add = new Doctor(a_nameP.getFilteredText(), a_IDP.getFilteredText(),
+                                gender[genderCB.getSelectedIndex()], a_majorP.getFilteredText(),
+                                a_dormP.getFilteredText(), a_tutorP.getFilteredText(), a_labP.getFilteredText());
                     }
                     MainWindow.studentArrayList.add(add);
                     MotionUtil.exitMotion(addDialog, MainWindow.MAIN_WINDOW);
                     MainWindow.switchStu(add);
                 } else {
-                    if (isAllFilled() && MainWindow.ifIDExists(a_IDP.getText())) {
+                    if (isAllFilled() && MainWindow.ifIDExists(a_IDP.getFilteredText())) {
                         new TemporaryDialog("学号已存在！", 100, 200, addDialog);
                     }
 
@@ -135,27 +131,27 @@ public class AddStudentDialog{
 
     public boolean isAllFilled() {
 
-        if (a_nameP.getText().equals("0")) {
+        if (a_nameP.getFilteredText().equals("0")) {
             MotionUtil.displayErrorInfo(a_nameP.text, "姓名不能为空！");
             return false;
         }
-        if (a_IDP.getText().equals("0")) {
+        if (a_IDP.getFilteredText().equals("0")) {
             MotionUtil.displayErrorInfo(a_IDP.text, "学号不能为空！");
             return false;
         }
-        if (a_majorP.getText().equals("0")) {
+        if (a_majorP.getFilteredText().equals("0")) {
             MotionUtil.displayErrorInfo(a_majorP.text, "专业班级不能为空！");
             return false;
         }
-        if (a_dormP.getText().equals("0")) {
+        if (a_dormP.getFilteredText().equals("0")) {
             MotionUtil.displayErrorInfo(a_dormP.text, "寝室号不能为空！");
             return false;
         }
-        if (a_tutorP.getText().equals("0")) {
+        if (a_tutorP.getFilteredText().equals("0")) {
             MotionUtil.displayErrorInfo(a_tutorP.text, "导师不能为空！");
             return false;
         }
-        if (a_labP.getText().equals("0")) {
+        if (a_labP.getFilteredText().equals("0")) {
             MotionUtil.displayErrorInfo(a_labP.text, "实验室不能为空！");
             return false;
         }

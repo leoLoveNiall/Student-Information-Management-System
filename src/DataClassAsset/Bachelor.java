@@ -6,7 +6,12 @@ public class Bachelor extends Student {
     }
 
     @Override
-    public String getTag() {
-        return "BA";
+    public byte getTag() {
+        return BA;
+    }
+
+    @Override
+    public String getVali() {
+        return "本科";
     }
 }

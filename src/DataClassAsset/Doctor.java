@@ -9,8 +9,8 @@ public class Doctor extends Master {
     }
 
     @Override
-    public String getTag() {
-        return "DO";
+    public byte getTag() {
+        return DO;
     }
 
     public String getTutor() {
@@ -19,5 +19,10 @@ public class Doctor extends Master {
 
     public String getLab() {
         return lab;
+    }
+
+    @Override
+    public String getVali() {
+        return "博士";
     }
 }

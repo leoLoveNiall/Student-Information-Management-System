@@ -11,7 +11,10 @@ import java.util.Timer;
 import java.util.stream.IntStream;
 
 public class MotionUtil {
-    public static void exitMotion(Window window, Window f) {
+    public static void exitMotion(Window window, Window f){
+        exitMotion(window,f,false);
+    }
+    public static void exitMotion(Window window, Window f,boolean meanToHide) {
 //        //全部采用浮点数，使居中效果更佳
 //        final double height = window.getHeight();
 //        final double width = window.getWidth();
@@ -51,7 +54,11 @@ public class MotionUtil {
             }
             sleep();
         }
-        window.dispose();
+        if (!meanToHide) {
+            window.dispose();
+        }else {
+            window.setVisible(false);
+        }
     }
 
     public static void openMotion(Window window, int width, int height, Window f) {
@@ -118,11 +125,11 @@ public class MotionUtil {
         window.setLocation((sw - w) / 2, (sh - h) / 2);
     }
 
-    static void centerize(Window window, int pivotalX, int pivotalY) {
+    public static void centerize(Window window, int pivotalX, int pivotalY) {
         window.setLocation(pivotalX - window.getWidth() / 2, pivotalY - window.getHeight() / 2);
     }
 
-    static int[] getPivotalXY(Window window) {
+    public static int[] getPivotalXY(Window window) {
         return new int[]{window.getX() + window.getWidth() / 2, window.getY() + window.getHeight() / 2};
     }
 
@@ -227,7 +234,7 @@ public class MotionUtil {
 
     static final int INCREASE = 0, DECREASE = 1;
 
-    static ArrayList<Integer> getULAArray(int maximum, int scope, int gra) {
+    public static ArrayList<Integer> getULAArray(int maximum, int scope, int gra) {
         var periodLastFor = 30; // 50\100 at most
         var list = new ArrayList<Integer>();
         /*
