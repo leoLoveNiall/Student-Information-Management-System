@@ -10,53 +10,46 @@ import java.util.*;
 import java.util.Timer;
 import java.util.stream.IntStream;
 
+/**
+ * MotionUtil is a util class consists of excellent and glorious animations,
+ * most of whom apply to any supportive windows(Containers).
+ * Extends none.
+ * All static built-in.
+ *
+ * @author Kong Weirui
+ * @since 6.5
+ */
 public class MotionUtil {
-    public static void exitMotion(Window window, Window f){
-        exitMotion(window,f,false);
+    public static void exitMotion(Window window, Window f) {
+        exitMotion(window, f, false);
     }
-    public static void exitMotion(Window window, Window f,boolean meanToHide) {
-//        //全部采用浮点数，使居中效果更佳
-//        final double height = window.getHeight();
-//        final double width = window.getWidth();
-        final int motionTick = 60;
-//        final double orgX = window.getX(), orgY = window.getY();
-//        int[][] settings = new int[(int) motionTick][];
-//        for (var i = 0; i < motionTick; i++) {
-//            settings[i] = new int[]{(int) (width - width / motionTick * i),
-//                    (int) (height - height / motionTick * i), (int) (orgX + 0.5 * width * (i / motionTick)),
-//                    (int) (orgY + 0.5 * height * (i / motionTick))};
-//        }
-//        //实际操作发现如果在下面的循环体中写的话会造成计算时间不如延迟时间，导致闪屏，因此，先计算后调用
-//        for (var i = 0; i < motionTick; i++) {
-//            window.setSize(settings[i][0], settings[i][1]);
-//            window.setLocation(settings[i][2], settings[i][3]);
-//            sleep(20);
-//        }
 
+    //退出--缩小动画，默认缩小至 getPivotal() 的坐标、且对于窗口dispose()而不是setVisible(false).
+    public static void exitMotion(Window window, Window f, boolean meanToHide) {
+        final int motionTick = 60;
         var wList = getULAArray(window.getWidth(), motionTick, DECREASE);
         var hList = getULAArray(window.getHeight(), motionTick, DECREASE);
-
-        int[] pivotalXY = new int[2];
+        var pivotalXY = new int[2];
         if (f == null) pivotalXY = getPivotalXY(window);
-
         for (var i = 0; i < motionTick; i++) {
             assert hList != null;
             assert wList != null;
-
             //尽早结束
             if (motionTick - i <= 4) break;
-
             window.setSize(wList.get(i), hList.get(i));
-            if (i > 3) if (f != null) {//降低割裂感
-                centerize(window, f);
-            } else {
-                centerize(window, pivotalXY[0], pivotalXY[1]);
+            if (i > 3) {
+                if (f != null) {
+                    //降低割裂感
+                    centerize(window, f);
+                } else {
+                    centerize(window, pivotalXY[0], pivotalXY[1]);
+                }
             }
             sleep();
         }
         if (!meanToHide) {
             window.dispose();
-        }else {
+        } else {
             window.setVisible(false);
         }
     }
@@ -81,12 +74,11 @@ public class MotionUtil {
             if ((wList.get(i) >= 3 || hList.get(i) >= 3)) {
                 window.setSize(wList.get(i), hList.get(i));
                 if (f == null) {
-                    centerize(window,pivotal[0],pivotal[1]);
+                    centerize(window, pivotal[0], pivotal[1]);
                 } else {
                     centerize(window, f);
                 }
             }
-
             sleep();
         });
 
@@ -106,15 +98,21 @@ public class MotionUtil {
             }
         }, 1000);
 
-        //System.out.println("延时1000");
     }
 
+    /**
+     * To let a window is located in the center of its father.
+     */
     public static void centerize(Window window, Window father) {
         var w = window.getWidth();
         var h = window.getHeight();
-        window.setLocation(father.getX() + (father.getWidth() - w) / 2, father.getY() + (father.getHeight() - h) / 2);
+        window.setLocation(father.getX() + (father.getWidth() - w) / 2,
+                father.getY() + (father.getHeight() - h) / 2);
     }
 
+    /**
+     * To let a window is located in the center of the screen.
+     */
     public static void centerize(Window window) {
         var w = window.getWidth();
         var h = window.getHeight();
@@ -129,6 +127,11 @@ public class MotionUtil {
         window.setLocation(pivotalX - window.getWidth() / 2, pivotalY - window.getHeight() / 2);
     }
 
+    /**
+     * Aim get thw central point of any given window.
+     *
+     * @param window aimed window
+     */
     public static int[] getPivotalXY(Window window) {
         return new int[]{window.getX() + window.getWidth() / 2, window.getY() + window.getHeight() / 2};
     }
@@ -165,7 +168,6 @@ public class MotionUtil {
         var screenSize = kit.getScreenSize();
         final var sw = screenSize.width;
         final var sh = screenSize.height;
-
         var xList = getULAArray(sw - sx, seq, INCREASE);
         var yList = getULAArray(sh - sy, seq, INCREASE);
         var wList = getULAArray(width, seq, DECREASE);
@@ -179,38 +181,6 @@ public class MotionUtil {
             c.setBounds(sx + xList.get(i), sy + yList.get(i), wList.get(i), hList.get(i));
             sleep();
         }
-
-        //top spot (h,k)  random spot(m,n)
-//        final double wX = w.getX();
-//        final double wY = w.getY();
-//
-//        final double h = screenSize.getWidth();
-//        final double k = screenSize.getHeight();
-//        final double m = w.getWidth();
-//        final double n = w.getHeight();
-//        final double a = (k - n) / Math.pow(n - m, 2);
-
-//        final double y1 = screenSize.width;
-//        final double x1 = screenSize.height;
-//        final double y2 = w.getY();
-//        final double x2 = w.getX();
-//        final double y3 = y2;
-//        final double x3 = -y3;
-//        final double m = y1 * y1 * y2 + y2 * y2 * y3 + y1 * y3 * y3 - y3 * y3 * y2 - y2 * y2 * y1 - y1 * y1 * y3;
-//        final double a = (x1 * y2 + x2 * y3 + x3 * y1 - x3 * y2 - x2 * y1 - x1 * y3) / m;
-//        final double b = (y1 * y1 * x2 + y2 * y2 * x3 + y3 * y3 * x1 - y3 * y3 * x2 - y2 * y2 * x1 - y1 * y1 * x3) / m;
-//        final double c = (y1 * y1 * y2 * x3 + y2 * y2 * y3 * x1 + y3 * y3 * y1 * x2 - y3 * y3 * y2 * x1 - y2 * y2 * y1 * x3 - y1 * y1 * y3 * x2) / m;
-//        double y = w.getX();
-//        for (int i = 0; i < seq; i++) {
-////            w.setBounds((int) (a * Math.pow(w.getx(), 2) - 2 * a * k * w.getx() + k * k + h),
-////                    (int) (wx + i / seq * (k - wy)), (int) (m * (seq - i) / seq), (int) (n * (n - i) / seq));
-//            y += (screenSize.width - y2) / seq;
-//            w.setBounds((int)y,(int)(a*y*y+b*y+c),500,500);
-//
-//            sleep();
-//        }
-
-
         c.dispose();
     }
 
@@ -234,15 +204,21 @@ public class MotionUtil {
 
     static final int INCREASE = 0, DECREASE = 1;
 
+    /**
+     * 目标是非线性动画，接受参数是maximum和scope
+     * 曲线函数使用arctan实现
+     *
+     * @param maximum 表示最大值，由此为基础进行非线性积分运算
+     * @param scope   频率（数组长度）
+     * @param gra     输出数列是顺还是倒序
+     * @return 返回一个ArrayList
+     */
     public static ArrayList<Integer> getULAArray(int maximum, int scope, int gra) {
         var periodLastFor = 30; // 50\100 at most
         var list = new ArrayList<Integer>();
         /*
-
-        y = max, x = scope;
-
-        using arc-tangent x function:
-
+         * y = max, x = scope;
+         * using arc-tangent x function:
          */
         try {
             //  使用100是为了减少double的使用，可以减少转化
@@ -272,26 +248,28 @@ public class MotionUtil {
             } else {
                 finalList.add((int) (list.get(cnt) * maximum / sum) + finalList.get(cnt - 1));
             }
-        }//不能直接积分运算，故使用模拟计算，因此max不能过小
+        }
+        //不能直接积分运算，故使用模拟近似计算，因此max不能过小
 
         switch (gra) {
             case INCREASE:
-                //System.out.println(finalList);
                 return finalList;
             case DECREASE:
                 var realFinalList = new ArrayList<Integer>();
                 for (int tmp : finalList) {
                     realFinalList.add(maximum - tmp);
                 }
-                //System.out.println(realFinalList);
                 return realFinalList;
             default:
                 return null;
         }
-
     }
 
-
+    /**
+     * 这里是为了减少代码量，添加一个KeyListener，当按下esc使退出
+     *
+     * @param Motion 动画方式，参见静态变量
+     */
     public static void addEscToExist(Window w, Window f, int Motion) {
         switch (Motion) {
             case MainWindow.TO_EDGE -> w.addKeyListener(new KeyAdapter() {

@@ -17,5 +17,21 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$USER_HOME$/Downloads/commons-net-3.8.0" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="file://$USER_HOME$/Downloads/commons-net-3.8.0/apidocs" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="file://$USER_HOME$/Downloads/commons-net-3.8.0" />
+          <root url="file://$USER_HOME$/Downloads/commons-net-3.8.0" />
+        </SOURCES>
+        <jarDirectory url="file://$USER_HOME$/Downloads/commons-net-3.8.0" recursive="false" />
+        <jarDirectory url="file://$USER_HOME$/Downloads/commons-net-3.8.0" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
   </component>
 </module>

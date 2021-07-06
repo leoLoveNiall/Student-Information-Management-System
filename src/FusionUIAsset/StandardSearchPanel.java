@@ -1,6 +1,14 @@
 package FusionUIAsset;
 
 import javax.swing.*;
+
+/**
+ * This is a fusion class consists of a JLabel, a JText and a JButton.
+ * Extends JPanel.
+ *
+ * @author Kong Weirui
+ * @since 1.4
+ */
 //这个是标准组件集合，因此不需要私有
 public class StandardSearchPanel extends JPanel {
     public JLabel l = new JLabel();

@@ -9,37 +9,50 @@ import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.text.ParseException;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * Main console.
+ * Extends none.
+ * Most static built-in.
+ *
+ * @author 13.7
+ */
 public class MainWindow {
-
-    //public static String workFolder;
     public final static double REG_PER = 0.1, MID_PER = 0.2, FIN_PER = 0.7;
     public static final int MAIN_WINDOW_WIDTH = 550, MAIN_WINDOW_HEIGHT = 450;
-    protected static Student currentStudent = null;
+    private static Student currentStudent = null;
+    private static Grade currentGrade = null;
     //tip：这里是引用，直接操作，不用重新赋
     public static JFrame MAIN_WINDOW = new JFrame();
     //standard motion title
     public static final int IN_WARD = 0, TO_EDGE = 1;
-
+    public static final int BACKUP_TO_BIN = 0, BACKUP_TO_DESKTOP = 1, BACKUP_TO_CLOUD = 2;
+    public static final String tempFolder = System.getProperty("user.dir") + "/temp";
     //关键元素
     public static ArrayList<Student> studentArrayList;
     static JButton confirmCgInfoButton;
     static JComboBox<String> cDegreeCB;
     static JMenu help;
     static JMenu manipulate;
-    static JMenu save;
+    static JMenu data;
     static JMenuBar menuBar;
+    static JMenuItem reLoad;
     static JMenuItem addStu;
+    static JMenuItem deleteStu;
     static JMenuItem findStu;
     static JMenuItem helpItem;
     static JMenuItem saveAndExit;
     static JMenuItem saveS;
-    static JMenuItem backup;
+    static JMenu saveTree;
+    static JMenu backup;
+    static JMenuItem backupTpDesktop;
+    static JMenuItem backupTpCloud;
+    static JMenuItem pullCloudBak;
     static JMenuItem addGrade;
     static JPanel cDegreeP;
     static JPanel cInfoPanel;
@@ -98,9 +111,7 @@ public class MainWindow {
         System.out.println("加载完成");
 //初始化窗口
         setDefaultClosingMotion(MAIN_WINDOW, TO_EDGE, true);
-
         MAIN_WINDOW.setLayout(new BorderLayout());
-
 //设置基本框架
         //顶部菜单栏
         menuBar = new JMenuBar();
@@ -111,8 +122,11 @@ public class MainWindow {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
+                hide_MAIN_WINDOW();
                 new AddStudentDialog("新增学生");
-                setDefaultClosingMotion(AddStudentDialog.addDialog, IN_WARD, false);
+                setDefaultClosingMotion(AddStudentDialog.addDialog,
+                        new CompoundJFrame(AddStudentDialog.addDialog, MAIN_WINDOW, MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT),
+                        IN_WARD, false);
             }
         });
         findStu = new JMenuItem("切换学生(W)");
@@ -120,8 +134,11 @@ public class MainWindow {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
+                hide_MAIN_WINDOW();
                 new FindStudentDialog("切换学生");
-                setDefaultClosingMotion(FindStudentDialog.findDialog, IN_WARD, false);
+                setDefaultClosingMotion(FindStudentDialog.findDialog,
+                        new CompoundJFrame(AddStudentDialog.addDialog, MAIN_WINDOW, MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT),
+                        IN_WARD, false);
             }
         });
         manipulate.add(addStu);
@@ -137,26 +154,56 @@ public class MainWindow {
                 new AddGradeDialog();
             }
         });
+        deleteStu = new JMenuItem("删除当前学生");
 
+        manipulate.add(deleteStu);
+        deleteStu.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                studentArrayList.remove(currentStudent);
+                switchRandStu();
+
+            }
+        });
 ///////////////////////////////////////////////////////////
-        save = new JMenu("保存(S)");
-        saveS = new JMenuItem("保存");
+        data = new JMenu("数据(D)");
+        reLoad = new JMenuItem("重载本地数据");
+        data.add(reLoad);
+        reLoad.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                initializeStudent("重载数据中！\n未保存数据将丢失！");
+                //随机展示一个学生
+                try {
+                    var randStu = studentArrayList.get((int) (Math.random() * 100000) % studentArrayList.size());
+                    switchStu(randStu);
+                } catch (Exception ex) {
+                    new TemporaryDialog("加载错误！", 5000, MAIN_WINDOW);
+                }
+            }
+        });
+        //////////////////////////////////////////////////////////
+        saveTree = new JMenu("保存");
+        data.add(saveTree);
+        saveS = new JMenuItem("保存至本地");
         saveS.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
                 TemporaryDialog.showLoadingCircleDialog("保存数据中", MAIN_WINDOW_HEIGHT, MAIN_WINDOW_WIDTH, true, MAIN_WINDOW);
-                saveData(false);
+                saveData(BACKUP_TO_BIN);
             }
         });
-        save.add(saveS);
+        saveTree.add(saveS);
         saveAndExit = new JMenuItem("保存并退出");
         saveAndExit.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
                 TemporaryDialog.showLoadingCircleDialog("保存数据中", MAIN_WINDOW_HEIGHT, MAIN_WINDOW_WIDTH, true, MAIN_WINDOW);
-                saveData(false);
+                saveData(BACKUP_TO_BIN);
                 new Thread(() -> {
                     MotionUtil.sleep(3100);
                     MotionUtil.exitToEdge(MAIN_WINDOW);
@@ -164,19 +211,87 @@ public class MainWindow {
                 }).start();
             }
         });
-        save.add(saveAndExit);
-        menuBar.add(save);
+        saveTree.add(saveAndExit);
+        menuBar.add(data);
         //////////////////////////////////////////////////////////
-        backup = new JMenuItem("备份");
-        save.add(backup);
-        backup.addMouseListener(new MouseAdapter() {
+        backup = new JMenu("备份数据");
+        data.add(backup);
+        backupTpDesktop = new JMenuItem("备份至桌面");
+        backupTpDesktop.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
                 TemporaryDialog.showLoadingCircleDialog("备份数据中", MAIN_WINDOW_HEIGHT, MAIN_WINDOW_WIDTH, true, MAIN_WINDOW);
-                saveData(true);
+                saveData(BACKUP_TO_DESKTOP);
             }
         });
+        backup.add(backupTpDesktop);
+        backupTpCloud = new JMenuItem("备份/覆盖至服务器");
+        backupTpCloud.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                var ftp = new FTPUtil();
+                if (ftp.loginFtp()) {
+                    TemporaryDialog.showLoadingCircleDialog("生成备份文件\n并上传中", MAIN_WINDOW_HEIGHT, MAIN_WINDOW_WIDTH, true, MAIN_WINDOW);
+                    saveData(BACKUP_TO_CLOUD);
+                    System.out.println("local:" + tempFolder);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException interruptedException) {
+                        interruptedException.printStackTrace();
+                    }
+                    new Thread(() -> new TemporaryDialog("后台上传中", 1000, MainWindow.MAIN_WINDOW)).start();
+                    new Thread(() -> {
+                        System.out.println("/GRADE.bak");
+                        ftp.uploadFile("/bak", "GRADE.bak", tempFolder + "/GRADE.bak");
+                        ftp.uploadFile("/bak", "STUDENT.bak", tempFolder + "/STUDENT.bak");
+                        ftp.uploadFile("/bak", "system.ini", tempFolder + "/system.ini");
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException interruptedException) {
+                            interruptedException.printStackTrace();
+                        }
+                        new TemporaryDialog("云端备份成功", 500, MainWindow.MAIN_WINDOW);
+                    }).start();
+
+                } else {
+                    new TemporaryDialog("无法连接到服务器!", MAIN_WINDOW);
+                }
+            }
+        });
+        backup.add(backupTpCloud);
+        pullCloudBak = new JMenuItem("取回云端备份并覆盖至本地");
+        pullCloudBak.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                var ftp = new FTPUtil();
+                if (ftp.loginFtp()) {
+                    new TemporaryDialog("后台下载中", MAIN_WINDOW);
+                    if (!ftp.downloadFile("/bak", "GRADE.bak", System.getProperty("user.dir") + "/src/MediaAsset/GRADE.data")) {
+                        new TemporaryDialog("下载失败！", MAIN_WINDOW);
+                    } else if (!ftp.downloadFile("/bak", "STUDENT.bak", System.getProperty("user.dir") + "/src/MediaAsset/STUDENT.data")) {
+                        new TemporaryDialog("下载失败！", MAIN_WINDOW);
+                    } else {
+                        new TemporaryDialog("覆盖成功！请手动重启！", MAIN_WINDOW);
+                        {
+                            new Thread(() -> {
+                                try {
+                                    Thread.sleep(2000);
+                                } catch (InterruptedException interruptedException) {
+                                    interruptedException.printStackTrace();
+                                }
+                                System.exit(0);
+                            }).start();
+                        }
+                    }
+                } else {
+                    new TemporaryDialog("无法访问服务器！", MAIN_WINDOW);
+                }
+            }
+        });
+        backup.add(pullCloudBak);
 //////////////////////////////////////////////////////////
         help = new JMenu("帮助(H)");
         helpItem = new JMenuItem("获得帮助");
@@ -204,7 +319,6 @@ public class MainWindow {
         );
         help.add(helpItem);
         menuBar.add(help);
-
 //////////////////////////////////////////////////////////
         //右半边
         topTab = new JTabbedPane();
@@ -223,11 +337,7 @@ public class MainWindow {
             MAIN_WINDOW.add(imageP, BorderLayout.WEST);
             iconLabel = new JLabel();
             p2.add(iconLabel);
-
-
         }
-
-
         //详细组件
         //查询个人信息面板
         pInfoPanel = new JPanel(new GridLayout(1, 2));
@@ -237,11 +347,9 @@ public class MainWindow {
         BA_ = new MyCheckBox("本科", false, false);
         MA_ = new MyCheckBox("硕士", false, false);
         DO_ = new MyCheckBox("博士", false, false);
-
         degreeBoxPanel.add(BA_);
         degreeBoxPanel.add(MA_);
         degreeBoxPanel.add(DO_);
-
         pInfoPanelSec = new JPanel(new GridLayout(8, 1));
         pInfoPanel.add(pInfoPanelSec);
         nameP = new QuickPanelWithTwoLabels("姓名:");
@@ -258,16 +366,6 @@ public class MainWindow {
         pInfoPanelSec.add(labP);
         dormP = new QuickPanelWithTwoLabels("寝室号:");
         pInfoPanelSec.add(dormP);
-
-//        nameP.setSecondLabel("恺恺子");
-//        idP.setSecondLabel("0000");
-//        ageP.setSecondLabel("48");
-//        majorP.setSecondLabel("CS");
-//        tutorP.setSecondLabel("暂无");
-//        labP.setSecondLabel("暂无");
-//        dormP.setSecondLabel("暂无");
-
-
         //修改信息面板
         cInfoPanel = new JPanel(new FlowLayout());
         topTab.add("更正信息", cInfoPanel);
@@ -333,7 +431,6 @@ public class MainWindow {
                 } catch (NullPointerException crash) {
                     new TemporaryDialog("发生异常！\n" + crash, MAIN_WINDOW);
                 }
-
                 if (ifIDExists(toBeAdd.getID()) && !toBeAdd.getID().equals(currentStudent.getID())) {
                     //一个短暂的对话框
                     new TemporaryDialog("学号已存在！", 100, 300, MAIN_WINDOW);
@@ -348,12 +445,9 @@ public class MainWindow {
             }
         });
         cInfoPanel.add(confirmCgInfoButton);
-
-
         //查询成绩面板
         pGradePanel = new JPanel(new BorderLayout());
         topTab.add("查询成绩", pGradePanel);
-
         pGradePanelSearchP = new JPanel();
         pGradePanel.add(pGradePanelSearchP, BorderLayout.PAGE_START);
         gradeSearch = new StandardSearchPanel("输入查询科目或者课程代码:");
@@ -395,18 +489,13 @@ public class MainWindow {
                 if (!foundOrNot) new TemporaryDialog("找不到此门科目！", MAIN_WINDOW);
             }
         });
-
-
         //修改成绩面板
         var Grade_cPanel = new JPanel(new BorderLayout());
         topTab.add("修改成绩", Grade_cPanel);
-
         gradeChangeSearchP = new StandardSearchPanel("输入课程代码:");
         Grade_cPanel.add(gradeChangeSearchP, BorderLayout.PAGE_START);
         pGradePanelChangeP = new JPanel(new GridLayout(8, 1));
         Grade_cPanel.add(pGradePanelChangeP, BorderLayout.CENTER);
-
-
         courseName_cP = new QuickPanelWithLabelAndText("课程名称:", "...");
         pGradePanelChangeP.add(courseName_cP);
         courseName_cP.setTextEnabled(false); //学科固有属性不可更改
@@ -424,7 +513,6 @@ public class MainWindow {
         pGradePanelChangeP.add(courseFinG_cP);
         courseAvg_cP = new QuickPanelWithLabelAndText("综合成绩:", "0");
         courseAvg_cP.setEnabled(false);//自动计算，不能手动输入
-
         //修改成绩查询
         gradeChangeSearchP.b.addMouseListener(new MouseAdapter() {
             @Override
@@ -441,6 +529,9 @@ public class MainWindow {
                         courseFinG_cP.setText(String.valueOf(g.getFin()));
                         courseAvg_cP.setText(String.valueOf(calculateAvgGrade(g.getReg(), g.getMid(), g.getFin())));
                         foundOrNot = true;
+                        currentGrade = g;
+                        gradeChangeSearchP.t.setEnabled(false);
+                        gradeChangeSearchP.b.setEnabled(false);
                         break;
                     }
                 }
@@ -456,7 +547,7 @@ public class MainWindow {
                 public void keyReleased(KeyEvent e) {
                     super.keyReleased(e);
                     try {
-                        if (verifyGradeEditLegit(courseRegG_cP)) {
+                        if (StringUtil.verifyGradeEditLegit(courseRegG_cP)) {
                             courseAvg_cP.text.setText(String.valueOf(calculateAvgGrade(Integer.parseInt(courseRegG_cP.getFilteredText()), Integer.parseInt(courseMidG_cP.getFilteredText()), Integer.parseInt(courseFinG_cP.getFilteredText()))));
                         } else courseAvg_cP.setText("...");
                     } catch (InterruptedException | AWTException interruptedException) {
@@ -469,7 +560,7 @@ public class MainWindow {
                 public void keyReleased(KeyEvent e) {
                     super.keyReleased(e);
                     try {
-                        if (verifyGradeEditLegit(courseMidG_cP)) {
+                        if (StringUtil.verifyGradeEditLegit(courseMidG_cP)) {
                             courseAvg_cP.text.setText(String.valueOf(calculateAvgGrade(Integer.parseInt(courseRegG_cP.getFilteredText()), Integer.parseInt(courseMidG_cP.getFilteredText()), Integer.parseInt(courseFinG_cP.getFilteredText()))));
 
                         } else courseAvg_cP.setText("...");
@@ -483,7 +574,7 @@ public class MainWindow {
                 public void keyReleased(KeyEvent e) {
                     super.keyReleased(e);
                     try {
-                        if (verifyGradeEditLegit(courseFinG_cP)) {
+                        if (StringUtil.verifyGradeEditLegit(courseFinG_cP)) {
                             courseAvg_cP.text.setText(String.valueOf(calculateAvgGrade(Integer.parseInt(courseRegG_cP.getFilteredText()), Integer.parseInt(courseMidG_cP.getFilteredText()), Integer.parseInt(courseFinG_cP.getFilteredText()))));
 
                         } else courseAvg_cP.setText("...");
@@ -492,35 +583,58 @@ public class MainWindow {
                     }
                 }
             });
-
         }
-
         pGradePanelChangeP.add(courseAvg_cP);
         var changeConfirmPanel = new JPanel();
         pGradePanelChangeP.add(changeConfirmPanel);
         var changeConfirmButton = new JButton("确认修改");
+        var deleteGradeButton = new JButton("删除此科");
         changeConfirmPanel.add(changeConfirmButton);
-
+        changeConfirmPanel.add(deleteGradeButton);
         //修改成绩按钮监听
         changeConfirmButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                for (var i = 0; i < currentStudent.gradeArrayList.size(); i++) {
-                    if (gradeChangeSearchP.getFilteredText().equals(currentStudent.gradeArrayList.get(i).getCourseID())
-                            || gradeChangeSearchP.getFilteredText().equals(currentStudent.gradeArrayList.get(i).getCourseName())) {
-                        currentStudent.gradeArrayList.get(i).setGrade(
-                                Integer.parseInt(courseRegG_cP.getFilteredText()),
-                                Integer.parseInt(courseMidG_cP.getFilteredText()),
-                                Integer.parseInt(courseFinG_cP.getFilteredText()));
-                        switchStu(currentStudent);
-                        break;
-                    }
-
+                if (currentGrade != null) {
+                    currentGrade.setGrade(
+                            Integer.parseInt(courseRegG_cP.getFilteredText()),
+                            Integer.parseInt(courseMidG_cP.getFilteredText()),
+                            Integer.parseInt(courseFinG_cP.getFilteredText()));
+                    switchStu(currentStudent);
+                    gradeChangeSearchP.t.setEnabled(true);
+                    gradeChangeSearchP.b.setEnabled(true);
+                    new Thread(() -> new TemporaryDialog("修改成功", MAIN_WINDOW)).start();
+                } else {
+                    new TemporaryDialog("请确定一门科目！", MAIN_WINDOW);
                 }
             }
         });
+        deleteGradeButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                if (currentGrade == null) {
+                    new TemporaryDialog("请确定一门科目！", MAIN_WINDOW);
+                } else {
+                    try {
+                        currentStudent.gradeArrayList.remove(currentGrade);
+                        gradeChangeSearchP.t.setEnabled(true);
+                        gradeChangeSearchP.b.setEnabled(true);
+                        new Thread(() -> new TemporaryDialog("删除成功", MAIN_WINDOW)).start();
+                    } catch (NullPointerException ex) {
+                        new TemporaryDialog("删除失败", MAIN_WINDOW);
+                    } finally {
+                        currentGrade = null;
+                        switchStu(currentStudent);
+                    }
+                }
+            }
+        });
+        switchRandStu();
+    }
 
+    public static void switchRandStu() {
         //随机展示一个学生
         try {
             var randStu = studentArrayList.get((int) (Math.random() * 100000) % studentArrayList.size());
@@ -528,7 +642,6 @@ public class MainWindow {
         } catch (Exception e) {
             new TemporaryDialog("加载错误！", 5000, MAIN_WINDOW);
         }
-
     }
 
     public static void switchStu(Student currentStu) {
@@ -568,7 +681,6 @@ public class MainWindow {
         c_majorP.text.setText(currentStu.getMajor());
         c_dormP.text.setText(currentStu.getDorm());
         topTab.setSelectedIndex(0);
-
         var icon = new File(LaunchWindow.MEDIA_ASSET_FOLDER + "/profile/" + currentStu.getID() + ".jpg");
         if (icon.exists()) {
             var realIcon = new ImageIcon(icon.getPath());
@@ -583,8 +695,14 @@ public class MainWindow {
             defaultIcon.setImage(img);
             iconLabel.setIcon(defaultIcon);
         }
-
-
+        gradeChangeSearchP.t.setText("");
+        courseName_cP.setText("");
+        courseID_cP.setText("");
+        courseCredit_cP.setText("");
+        courseRegG_cP.setText("");
+        courseMidG_cP.setText("");
+        courseFinG_cP.setText("");
+        courseAvg_cP.setText("");
         MotionUtil.upAndDown_B(MAIN_WINDOW, MAIN_WINDOW_HEIGHT);
     }
 
@@ -592,39 +710,24 @@ public class MainWindow {
         return (int) (reg * REG_PER + mid * MID_PER + fin * FIN_PER);
     }
 
-    static boolean verifyGradeEditLegit(QuickPanelWithLabelAndText gradeEditPanel, int max) throws InterruptedException, AWTException {
-        //其他字符验证
-        if (!verifyInteger(gradeEditPanel.getFilteredText())) {
-            MotionUtil.displayErrorInfo(gradeEditPanel.text, "输入了不合法的字符");
-            return false;
-        }
-
-        //区间位于0～100
-        if (Integer.parseInt(gradeEditPanel.getFilteredText()) > 100 || Integer.parseInt(gradeEditPanel.getFilteredText()) < 0) {
-            MotionUtil.displayErrorInfo(gradeEditPanel.text, "须为0～" + max);
-            return false;
-        }
-
-        return true;
-    }
-
-    static boolean verifyGradeEditLegit(QuickPanelWithLabelAndText gradeEditPanel) throws InterruptedException, AWTException {
-        return verifyGradeEditLegit(gradeEditPanel, 100);
-    }
-
-    static boolean verifyInteger(String s) {
-        char[] cs = s.toCharArray();
-        for (var c : cs) {
-            if (!Character.isDigit(c)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
+    /**
+     * 从本地MediaAsset加载数据。
+     *
+     * @return 返回包含学生数据的ArrayList
+     */
     ArrayList<Student> initializeStudent() {
+        return initializeStudent("读取数据中");
+    }
+
+    /**
+     * 调用 ArrayList<Student> initializeStudent() 从本地MediaAsset加载数据。
+     *
+     * @param text 信息框要显示的内容
+     * @return 返回包含学生数据的ArrayList(需要调用上级)
+     */
+    ArrayList<Student> initializeStudent(String text) {
         var studentArrayList = new ArrayList<Student>();
-        new Thread(() -> TemporaryDialog.showLoadingCircleDialog("", (int) (MAIN_WINDOW_HEIGHT * 1.5), (int) (MAIN_WINDOW_WIDTH * 1.5), true, MAIN_WINDOW)).start();
+        new Thread(() -> TemporaryDialog.showLoadingCircleDialog(text, (int) (MAIN_WINDOW_HEIGHT * 1.5), (int) (MAIN_WINDOW_WIDTH * 1.5), true, MAIN_WINDOW)).start();
         try {
             var path = LaunchWindow.MEDIA_ASSET_FOLDER + "/STUDENT.data";
             var filename = new File(path);
@@ -641,14 +744,12 @@ public class MainWindow {
                     studentArrayList.add(new Master(infoLine[0], infoLine[1], infoLine[2], infoLine[3], infoLine[7], infoLine[5]));
                 if (infoLine[4].equals("博士"))
                     studentArrayList.add(new Doctor(infoLine[0], infoLine[1], infoLine[2], infoLine[3], infoLine[7], infoLine[5], infoLine[6]));
-
                 line = bufferedReader.readLine();
             }
         } catch (IOException e) {
             new TemporaryDialog("数据Asset出现严重错误，请联系管理员！", 5000, MAIN_WINDOW);
         }
         //加载整个成绩单
-//      int csNum = 0;
         var wholeGradeData = new ArrayList<Grade>();
         try {
             var path = LaunchWindow.MEDIA_ASSET_FOLDER + "/GRADE.data";
@@ -671,9 +772,11 @@ public class MainWindow {
         } catch (IOException e) {
             new TemporaryDialog("数据Asset出现严重错误，请联系管理员！", 5000, MAIN_WINDOW);
         }
-        //学习来源：https://blog.csdn.net/shenziheng1/article/details/100110816
 
-        //将每个Grade成员赋给相应的Student
+        /*
+          学习来源：https://blog.csdn.net/shenziheng1/article/details/100110816
+          将每个Grade成员赋给相应的Student
+         */
         for (var i = 0; i < studentArrayList.size(); i++) {
             var tmpStuEl = studentArrayList.get(i);
 
@@ -697,7 +800,6 @@ public class MainWindow {
         }
         return false;
     }
-
 
     public static void setDefaultClosingMotion(JFrame w, CompoundJFrame anotherToShow, int motionType, boolean shutDownJVMOrNot) {
         w.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -727,32 +829,40 @@ public class MainWindow {
                 }
             });
         }
-
-
     }
 
     public static void setDefaultClosingMotion(JFrame w, int motionType, boolean shutDownJVMOrNot) {
         setDefaultClosingMotion(w, null, motionType, shutDownJVMOrNot);
     }
 
-    public static void saveData(boolean meanToBackup) {
-        String studentFileName, gradeFileName;
-        if (meanToBackup) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-            Calendar calendar = Calendar.getInstance();
-            Date date = calendar.getTime();
-            String dateStringParse = sdf.format(date);
-
-            studentFileName = LaunchWindow.OUTPUT_FOLDER + "/SIMS-backup/" + dateStringParse + "/STUDENT.bak";
-            gradeFileName = LaunchWindow.OUTPUT_FOLDER + "/SIMS-backup/" + dateStringParse + "/GRADE.bak";
-
-
-        } else {
-            studentFileName = LaunchWindow.MEDIA_ASSET_FOLDER + "/STUDENT.data";
-            gradeFileName = LaunchWindow.MEDIA_ASSET_FOLDER + "/GRADE.data";
+    /**
+     * Save data to file, the detailed action depends on backupMode.
+     *
+     * @param backupMode BACKUP_TO_BIN = 0, BACKUP_TO_DESKTOP = 1, BACKUP_TO_CLOUD = 2;
+     */
+    public static void saveData(int backupMode) {
+        String studentFileName = null, gradeFileName = null, systemInfoFileName = null;
+        switch (backupMode) {
+            case BACKUP_TO_BIN -> {
+                studentFileName = LaunchWindow.MEDIA_ASSET_FOLDER + "/STUDENT.data";
+                gradeFileName = LaunchWindow.MEDIA_ASSET_FOLDER + "/GRADE.data";
+            }
+            case BACKUP_TO_DESKTOP -> {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+                Calendar calendar = Calendar.getInstance();
+                Date date = calendar.getTime();
+                String dateStringParse = sdf.format(date);
+                studentFileName = LaunchWindow.OUTPUT_FOLDER + "/SIMS-backup/" + dateStringParse + "/STUDENT.bak";
+                gradeFileName = LaunchWindow.OUTPUT_FOLDER + "/SIMS-backup/" + dateStringParse + "/GRADE.bak";
+            }
+            case BACKUP_TO_CLOUD -> {
+                studentFileName = tempFolder + "/STUDENT.bak";
+                gradeFileName = tempFolder + "/GRADE.bak";
+                systemInfoFileName = tempFolder + "/system.ini";
+            }
         }
-
         try {
+            assert studentFileName != null;
             File file = new File(studentFileName);
             try {
                 if (!file.getParentFile().exists()) {
@@ -761,7 +871,6 @@ public class MainWindow {
             } catch (Exception e) {
                 new TemporaryDialog("文件目录权限不足！", MAIN_WINDOW);
             }
-
             if (file.exists()) {
                 file.delete();
             } else {
@@ -811,19 +920,57 @@ public class MainWindow {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if (backupMode == BACKUP_TO_CLOUD) {
+            try {
+                File file = new File(systemInfoFileName);
+                try {
+                    if (!file.getParentFile().exists()) {
+                        file.getParentFile().mkdirs();
+                    }
+                } catch (Exception e) {
+                    new TemporaryDialog("文件目录权限不足！", MAIN_WINDOW);
+                }
+                if (file.exists()) {
+                    file.delete();
+                } else {
+                    file.createNewFile();
+                }
+                FileWriter fileWriter = new FileWriter(file.getAbsoluteFile());
+                BufferedWriter bw = new BufferedWriter(fileWriter);
+                var sysProperty = System.getProperties(); //系统属性
+                var keySet = sysProperty.keySet();
+                for (Object object : keySet) {
+                    String property = sysProperty.getProperty(object.toString());
+                    bw.write(object + " : " + property + "\n");
+                }
+                bw.close();
+                System.out.println("finish");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
+    /**
+     * Simple set MAIN_WINDOW invisible instead of let it dispose.
+     */
     public static void hide_MAIN_WINDOW() {
         MotionUtil.exitMotion(MAIN_WINDOW, null, true);
     }
 
     public static void show_MAIN_WINDOW() {
         MotionUtil.openMotion(MAIN_WINDOW, MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, null);
-    }public static void show_MAIN_WINDOW(JFrame j) {
+    }
+
+    public static void show_MAIN_WINDOW(JFrame j) {
         MotionUtil.openMotion(MAIN_WINDOW, MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT, j);
     }
 
     public static Student getCurrentStudent() {
         return currentStudent;
+    }
+
+    public static Grade getCurrentGrade() {
+        return currentGrade;
     }
 }

@@ -8,17 +8,18 @@ public class Doctor extends Master {
         this.lab = lab;
     }
 
-    @Override
-    public byte getTag() {
-        return DO;
+    //对抽象方法的具体化
+    public String getLab() {
+        return lab;
     }
 
     public String getTutor() {
         return super.getTutor();
     }
 
-    public String getLab() {
-        return lab;
+    @Override
+    public byte getTag() {
+        return DO;
     }
 
     @Override

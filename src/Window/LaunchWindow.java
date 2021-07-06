@@ -3,33 +3,39 @@ package Window;
 import FusionUIAsset.*;
 import MyUtil.*;
 
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * LaunchWindow is the main entrance of SIMS.
+ * The next aimed window is Main_Window.MAIN_WINDOW.
+ * Extends none.
+ * Most static built-in.
+ *
+ * @author 9.5
+ */
 public class LaunchWindow {
     static final String MEDIA_ASSET_FOLDER = System.getProperty("user.dir") + "/src/MediaAsset";
-    static final String OUTPUT_FOLDER = System.getProperty("user.home") +"/Desktop";
-    static JFrame LAUNCH_WINDOW = new JFrame("西安科技大学·学生管理系统");
-    //static final String ASSET_FOLDER = "/Users/kongweirui/Desktop/Java/DataAsset.Student-Inform" +
-    //        "ation-Management-System/out/production/DataAsset.Student-Information-Management-System";
-
+    static final String OUTPUT_FOLDER = System.getProperty("user.home") + "/Desktop";
     static final String userNameMD5 = "0F759DD1EA6C4C76CEDC299039CA4F23";
     static final String userPasswordMD5 = "202CB962AC59075B964B07152D234B70";
     static final int LAUNCH_WINDOW_WIDTH = 500;
     static final int LAUNCH_WINDOW_HEIGHT = 330;
-
     static QuickPanelWithLabelAndText name;
     static QuickPanelWithLabelAndPasswordText key;
     static JButton loginButton = new JButton("登录");
+    static JFrame LAUNCH_WINDOW = new JFrame("西安科技大学·学生管理系统");
 
     //ps: Mac系统下文件系统使用右斜杠，Windows系统需要改进
     static void createMainWindow() {
-        MotionUtil.exitMotion(LAUNCH_WINDOW,null);
+        MotionUtil.exitMotion(LAUNCH_WINDOW, null);
         new MainWindow();
     }
 
+    /**
+     * 主函数完成登录信息验证以及控件放置，并导向 Main_Window.MAIN_WINDOW
+     */
     public static void main(String[] args) {
         System.out.println(System.getProperty("user.dir"));
         LAUNCH_WINDOW.setLayout(new GridLayout(6, 1));
@@ -60,11 +66,10 @@ public class LaunchWindow {
         LAUNCH_WINDOW.add(keyPanel);
         LAUNCH_WINDOW.add(captcha);
         LAUNCH_WINDOW.add(buttonPanel);
-
 //      放置控件
         iconPanel.add(iconLabel);
         topPanel.add(headLine);
-        name = new QuickPanelWithLabelAndText("用户名","leo");
+        name = new QuickPanelWithLabelAndText("用户名", "leo");
         key = new QuickPanelWithLabelAndPasswordText("密码  ", "123");
         userPanel.add(name);
         keyPanel.add(key);
@@ -92,7 +97,6 @@ public class LaunchWindow {
         });
 
         var enterToEnter = new KeyAdapter() {
-
             @Override
             public void keyTyped(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
@@ -104,15 +108,14 @@ public class LaunchWindow {
                     }
                 }
             }
-
         };
         LAUNCH_WINDOW.addKeyListener(enterToEnter);
         name.text.addKeyListener(enterToEnter);
         key.text.addKeyListener(enterToEnter);
-
         System.out.println("YEE");
     }
 
+    //与默认填充的用户的MD5进行比对
     static boolean verifyUserValid() {
         return MD5.getMD5(name.getFilteredText()).equals(userNameMD5) &&
                 MD5.getMD5(key.getPassword()).equals(userPasswordMD5);

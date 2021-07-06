@@ -5,6 +5,7 @@ import FusionUIAsset.CompoundJFrame;
 import FusionUIAsset.QuickPanelWithLabelAndText;
 import FusionUIAsset.TemporaryDialog;
 import MyUtil.MotionUtil;
+import MyUtil.StringUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +13,14 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
+/**
+ * AddGradeDialog allows user add student grade data voa GUI.
+ * Extends none.
+ * Less static built-in.
+ *
+ * @author Kong Weirui
+ * @since 3.3
+ */
 public class AddGradeDialog {
     private static final byte MAXIMUM_COURSE_CREDIT = 20;
     JFrame addGradeDialog = new JFrame();
@@ -37,7 +45,7 @@ public class AddGradeDialog {
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridLayout(9, 1));
         addGradeDialog.add(mainPanel);
-        stuInfo_aP = new QuickPanelWithLabelAndText("操作对象", MainWindow.currentStudent.getName());
+        stuInfo_aP = new QuickPanelWithLabelAndText("操作对象", MainWindow.getCurrentStudent().getName());
         stuInfo_aP.setTextEnabled(false);
         mainPanel.add(stuInfo_aP);
         courseName_aP = new QuickPanelWithLabelAndText("课程名称:", "...");
@@ -62,7 +70,7 @@ public class AddGradeDialog {
                 public void keyReleased(KeyEvent e) {
                     super.keyReleased(e);
                     try {
-                        MainWindow.verifyGradeEditLegit(courseCredit_aP, 20);
+                        StringUtil.verifyGradeEditLegit(courseCredit_aP, MAXIMUM_COURSE_CREDIT);
                     } catch (InterruptedException | AWTException interruptedException) {
                         interruptedException.printStackTrace();
                     }
@@ -73,7 +81,7 @@ public class AddGradeDialog {
                 public void keyReleased(KeyEvent e) {
                     super.keyReleased(e);
                     try {
-                        if (MainWindow.verifyGradeEditLegit(courseRegG_aP)) {
+                        if (StringUtil.verifyGradeEditLegit(courseRegG_aP)) {
                             courseAvg_aP.text.setText(String.valueOf(MainWindow.calculateAvgGrade(Integer.parseInt(courseRegG_aP.getFilteredText()),
                                     Integer.parseInt(courseMidG_aP.getFilteredText()), Integer.parseInt(courseFinG_aP.getFilteredText()))));
                         } else courseAvg_aP.setText("...");
@@ -87,7 +95,7 @@ public class AddGradeDialog {
                 public void keyReleased(KeyEvent e) {
                     super.keyReleased(e);
                     try {
-                        if (MainWindow.verifyGradeEditLegit(courseMidG_aP)) {
+                        if (StringUtil.verifyGradeEditLegit(courseMidG_aP)) {
                             courseAvg_aP.text.setText(String.valueOf(MainWindow.calculateAvgGrade(Integer.parseInt(courseRegG_aP.getFilteredText()),
                                     Integer.parseInt(courseMidG_aP.getFilteredText()), Integer.parseInt(courseFinG_aP.getFilteredText()))));
 
@@ -102,7 +110,7 @@ public class AddGradeDialog {
                 public void keyReleased(KeyEvent e) {
                     super.keyReleased(e);
                     try {
-                        if (MainWindow.verifyGradeEditLegit(courseFinG_aP)) {
+                        if (StringUtil.verifyGradeEditLegit(courseFinG_aP)) {
                             courseAvg_aP.text.setText(String.valueOf(MainWindow.calculateAvgGrade(Integer.parseInt(courseRegG_aP.getFilteredText()),
                                     Integer.parseInt(courseMidG_aP.getFilteredText()), Integer.parseInt(courseFinG_aP.getFilteredText()))));
 
@@ -131,8 +139,8 @@ public class AddGradeDialog {
                 if (ifCurriculumIsAlreadyExisted()) {
                     new TemporaryDialog("该科目ID已存在！\n请重试", addGradeDialog);
                 } else {
-                    MainWindow.currentStudent.gradeArrayList.add(new Grade(
-                            MainWindow.currentStudent.getID(),
+                    MainWindow.getCurrentStudent().gradeArrayList.add(new Grade(
+                            MainWindow.getCurrentStudent().getID(),
                             courseName_aP.getFilteredText(),
                             courseID_aP.getFilteredText(),
                             Byte.parseByte(courseCredit_aP.getFilteredText()),
@@ -151,8 +159,12 @@ public class AddGradeDialog {
         });
     }
 
+    /**
+     * 验证科目号是否存在
+     * @return 返回验证结果
+     */
     public boolean ifCurriculumIsAlreadyExisted() {
-        for (Grade g : MainWindow.currentStudent.gradeArrayList) {
+        for (Grade g : MainWindow.getCurrentStudent().gradeArrayList) {
             if (g.getCourseID().equals(courseID_aP.getFilteredText())) {
                 return true;
             }

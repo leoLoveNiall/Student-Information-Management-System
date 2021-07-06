@@ -6,6 +6,13 @@ import java.awt.event.MouseEvent;
 import DataClassAsset.*;
 import Window.MainWindow;
 
+/**
+ * This is a fusion class for checkboxes.
+ * By using MyCheckBox to quickly set enables and unables of a couple of checkboxes.
+ *
+ * @author Kong Weirui
+ * @since 5.4
+ */
 public class MyCheckBox extends JCheckBox {
     public MyCheckBox(String s, boolean selected, boolean enabled) {
         //设定一个初始化的操作
@@ -31,9 +38,7 @@ public class MyCheckBox extends JCheckBox {
             case Student.DO -> makeMyCheckBoxAbleButNotUsable(c3);
             default -> new TemporaryDialog("数据库出错！请联系管理员！"+s.toString(), MainWindow.MAIN_WINDOW);
         }
-
     }
-
 
     public static void makeMyCheckBoxAbleButNotUsable(MyCheckBox supreme) {
         supreme.setEnabled(true);

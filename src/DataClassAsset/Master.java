@@ -8,13 +8,15 @@ public class Master extends Bachelor {
         this.tutor = tutor;
     }
 
+
+    //对抽象方法的具体化
+    public String getTutor() {
+        return tutor;
+    }
+
     @Override
     public byte getTag() {
         return MA;
-    }
-
-    public String getTutor() {
-        return tutor;
     }
 
     @Override

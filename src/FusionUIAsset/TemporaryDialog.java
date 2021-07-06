@@ -2,9 +2,18 @@ package FusionUIAsset;
 
 import MyUtil.*;
 import Window.*;
+
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * This is a class for a temporary dialog(JFrame exactly).
+ * Extends none.
+ * All built-in.
+ *
+ * @author Kong Weirui
+ * @since 6.5
+ */
 public class TemporaryDialog {
     JDialog dialog = new JDialog();
     int suspendTime = 1000;
@@ -45,6 +54,13 @@ public class TemporaryDialog {
         //考虑到简化代码的同时并保持简便的实现
     }
 
+    public TemporaryDialog(String headline, Window f, boolean showBar) {
+        this.showBar = showBar;
+        dialog.setAlwaysOnTop(true);
+        dialog.setUndecorated(showBar);
+        showDialog(headline, f);
+    }
+
     public TemporaryDialog(String headline, Window f) {
         dialog.setAlwaysOnTop(true);
         dialog.setUndecorated(showBar);
@@ -74,7 +90,8 @@ public class TemporaryDialog {
     }
 
     public static void showLoadingCircleDialog(String infoText, int height, int width, boolean withOpeningMotion, Window f) {
-        var loadDialog = new TemporaryDialog("", height + 30, width + 30, (int) (Math.random() * 10000) % 1000 + 2000, withOpeningMotion, false, MainWindow.MAIN_WINDOW);
+        var loadDialog = new TemporaryDialog("", height + 30, width + 30, (int) (Math.random() * 10000) % 1000 + 2000, withOpeningMotion, false, f);
+        new Thread(() -> new TemporaryDialog(infoText, MainWindow.MAIN_WINDOW, false)).start();
         var loadPanel = new LoadingPanel();
         loadDialog.dialog.add(loadPanel);
         loadPanel.setBackground(Color.WHITE);

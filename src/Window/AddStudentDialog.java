@@ -13,7 +13,14 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class AddStudentDialog{
+/**
+ * AddGradeDialog allows user add student data voa GUI.
+ * Extends none.
+ * Less static built-in.
+ *
+ * @author 4.1
+ */
+public class AddStudentDialog {
     //名义上是dialog但实际上并不是
 
     final static String[] degree = {"本科", "硕士", "博士"};
@@ -35,14 +42,12 @@ public class AddStudentDialog{
     static JPanel tpp;
     static JPanel degreeP;
 
-     AddStudentDialog(String title) {
-//owner.setEnabled(false);
+    AddStudentDialog(String title) {
+
         addStuPanel = new JPanel(new GridLayout(10, 1));
         addDialog = new JFrame();
         addDialog.setTitle(title);
         addDialog.add(addStuPanel, BorderLayout.CENTER);
-
-
         //topPanel
         tpp = new JPanel(new FlowLayout());
         tpp.add(new JLabel("添加学生"));
@@ -60,10 +65,8 @@ public class AddStudentDialog{
         a_genderP = new JPanel();
         a_genderP.setLayout(new FlowLayout());
         a_genderP.add(new JLabel("性别"));
-
         a_genderP.add(genderCB);
         addStuPanel.add(a_genderP);
-
         a_majorP = new QuickPanelWithLabelAndText("  专业班级:");
         addStuPanel.add(a_majorP);
         a_dormP = new QuickPanelWithLabelAndText("寝室号:");
@@ -76,8 +79,6 @@ public class AddStudentDialog{
         a_labP.setText("不可用", false);
         addBtn = new JButton("确认添加");
         addStuPanel.add(addBtn);
-
-
         addBtn.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
@@ -95,13 +96,13 @@ public class AddStudentDialog{
                                 a_dormP.getFilteredText(), a_tutorP.getFilteredText(), a_labP.getFilteredText());
                     }
                     MainWindow.studentArrayList.add(add);
-                    MotionUtil.exitMotion(addDialog, MainWindow.MAIN_WINDOW);
+                    MotionUtil.exitMotion(addDialog, null);
+                    MainWindow.show_MAIN_WINDOW(addDialog);
                     MainWindow.switchStu(add);
                 } else {
                     if (isAllFilled() && MainWindow.ifIDExists(a_IDP.getFilteredText())) {
                         new TemporaryDialog("学号已存在！", 100, 200, addDialog);
                     }
-
                 }
             }
         });
@@ -122,7 +123,6 @@ public class AddStudentDialog{
                 a_tutorP.setText("", true);
                 a_labP.setText("", true);
             }
-
         });
 
         MotionUtil.addEscToExist(addDialog, MainWindow.MAIN_WINDOW, MainWindow.IN_WARD);
@@ -130,7 +130,6 @@ public class AddStudentDialog{
     }
 
     public boolean isAllFilled() {
-
         if (a_nameP.getFilteredText().equals("0")) {
             MotionUtil.displayErrorInfo(a_nameP.text, "姓名不能为空！");
             return false;

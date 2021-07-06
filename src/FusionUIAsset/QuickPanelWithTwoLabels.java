@@ -2,12 +2,16 @@ package FusionUIAsset;
 
 import javax.swing.*;
 
+/**
+ * This is a fusion class.
+ * Extends DoublePanel.
+ *
+ * @author Kong Weirui
+ * @since 2.1
+ */
 public class QuickPanelWithTwoLabels extends DoublePanel {
-
-
     private JLabel label1 = new JLabel();
     private JLabel label2 = new JLabel();
-
 
     public QuickPanelWithTwoLabels(String str) {
         super(2, 1);

@@ -11,7 +11,13 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-//在GitHub的源码的基础上做了一定修改
+/**
+ * This is a motion UI util.
+ *
+ * @author Kong Weirui
+ * @author Anonymous
+ * @since 1.1
+ */
 
 public class LoadingPanel extends JPanel {
 
@@ -61,9 +67,19 @@ public class LoadingPanel extends JPanel {
         drawArc(g);
     }
 
+    /**
+     * @param r_c = 1;
+     * @param g_c = 35;
+     * @param b_c = 70;
+     * refer to where RGB param values shall start
+     * booleans are the same with ints.
+     * <p>
+     * Set @param maxColorValue and minColorValue in case of virtually pure white and black.
+     */
     static int r_c = 1, g_c = 35, b_c = 70;
     static boolean r_b = true, g_b = true, b_b = true;
-    static final int maxColorValue = 220,minColorValue = 20;
+    static final int maxColorValue = 220, minColorValue = 20;
+
     private void drawArc(Graphics g) {
 
         if (r_b) r_c += 5;
@@ -98,15 +114,15 @@ public class LoadingPanel extends JPanel {
         }
 
 
-        Graphics2D g2d = (Graphics2D) g.create();
+        var g2d = (Graphics2D) g.create();
         //抗锯齿
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        int width = getWidth();
-        int height = getHeight();
+        var width = getWidth();
+        var height = getHeight();
         //设置画笔颜色
         g2d.setColor(Color.WHITE);
         g2d.drawArc(width / 2 - 110 + miniCounter / 2, height / 2 - 110 + miniCounter / 2, 20 + 200 - miniCounter, 20 + 200 - miniCounter, 0, 360);
-        g2d.setColor(new Color(r_c,g_c,b_c));
+        g2d.setColor(new Color(r_c, g_c, b_c));
         g2d.fillArc(width / 2 - 110 + miniCounter / 2, height / 2 - 110 + miniCounter / 2, 20 + 200 - miniCounter, 20 + 200 - miniCounter, startAngle, arcAngle);
         g2d.setColor(Color.WHITE);
         g2d.fillArc(width / 2 - 105 + miniCounter / 2, height / 2 - 105 + miniCounter / 2, 20 + 190 - miniCounter, 20 + 190 - miniCounter, 0, 360);
@@ -159,10 +175,10 @@ public class LoadingPanel extends JPanel {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
         frame.setLocationRelativeTo(null);
-        LoadingPanel lodingPanel = new LoadingPanel();
-        lodingPanel.setBackground(Color.WHITE);
-        lodingPanel.show();
-        frame.add(lodingPanel);
+        var loadingPanel = new LoadingPanel();
+        loadingPanel.setBackground(Color.WHITE);
+        loadingPanel.show();
+        frame.add(loadingPanel);
         frame.setVisible(true);
     }
 }

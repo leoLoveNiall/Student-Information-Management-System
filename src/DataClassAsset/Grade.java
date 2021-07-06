@@ -1,6 +1,18 @@
 package DataClassAsset;
 
 public class Grade {
+    /**
+     * 这是成绩类，包括七个基本参数
+     *
+     * @param stuID 学生学号
+     * @param courseName 课程名称
+     * @param courseID 课程代号
+     * @param credit 学分
+     * @param reg 平时成绩
+     * @param mid 期中成绩
+     * @param fin 期末成绩
+     *
+     */
     private String stuID;
     private String courseName;
     private String courseID;

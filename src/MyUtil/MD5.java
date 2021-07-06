@@ -3,12 +3,14 @@ package MyUtil;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-//以下MD5加密代码来自网络
-/*      作者：cxm
-        链接：https://zhuanlan.zhihu.com/p/269031563
-        来源：知乎
-        著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
-*/
+//以下MD5加密代码来自网络,并做了相应修改
+
+/**
+ * 作者：cxm
+ * 链接：https://zhuanlan.zhihu.com/p/269031563
+ * 来源：知乎
+ * 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+ */
 public class MD5 {
     public static String getMD5(String src) {
         //计时
@@ -31,13 +33,10 @@ public class MD5 {
                 sb.append(chars[bb & 15]);
             }
             // 打印加密后的字符串
-
             //计时
             var endTime = System.currentTimeMillis();
             var Time = endTime - starTime;
             System.out.println("MD5计算用时：" + Time + "ms");
-
-
             return String.valueOf(sb);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();

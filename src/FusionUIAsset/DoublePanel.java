@@ -1,11 +1,13 @@
 package FusionUIAsset;
-
 import javax.swing.*;
 import java.awt.*;
 
-//原本是打算建一个包含两个控件的panel，不过后来多重panel越来越多，就都写在这里了
-
-
+/**
+ * This is a fusion class for two syn-unit class.
+ * By using DoublePanel to decrease redundant add and set command.
+ * @author Kong Weirui
+ * @since 1.1
+ */
 
 public class DoublePanel extends JPanel {
     DoublePanel() {
@@ -14,11 +16,6 @@ public class DoublePanel extends JPanel {
     public DoublePanel(int row, int col) {
         setLayout(new FlowLayout());
     }
-
-//    void setDefaultSize()
-//    {
-//        this.setSize(10,20);
-//    }
 
     void add(JLabel l, JTextField t) {
         super.add(l);

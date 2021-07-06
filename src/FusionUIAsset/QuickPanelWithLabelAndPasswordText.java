@@ -2,7 +2,14 @@ package FusionUIAsset;
 
 import javax.swing.*;
 
-public class QuickPanelWithLabelAndPasswordText  extends DoublePanel {
+/**
+ * This is a fusion class.
+ * Extends DoublePanel.
+ *
+ * @author Kong Weirui
+ * @since 2.1
+ */
+public class QuickPanelWithLabelAndPasswordText extends DoublePanel {
     public JLabel label = new JLabel("");
     public JPasswordField text = new JPasswordField("", 10);
 
