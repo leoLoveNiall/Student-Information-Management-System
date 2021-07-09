@@ -2,6 +2,7 @@ package Window;
 
 import FusionUIAsset.*;
 import MyUtil.*;
+import User.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,12 +19,13 @@ import java.awt.event.*;
 public class LaunchWindow {
     static final String MEDIA_ASSET_FOLDER = System.getProperty("user.dir") + "/src/MediaAsset";
     static final String OUTPUT_FOLDER = System.getProperty("user.home") + "/Desktop";
-    static final String userNameMD5 = "0F759DD1EA6C4C76CEDC299039CA4F23";
-    static final String userPasswordMD5 = "202CB962AC59075B964B07152D234B70";
+    static final String sampleSuperAdminUserName = "0F759DD1EA6C4C76CEDC299039CA4F23";
+    static final String sampleSuperAdminUserPassword = "202CB962AC59075B964B07152D234B70";
     static final int LAUNCH_WINDOW_WIDTH = 500;
     static final int LAUNCH_WINDOW_HEIGHT = 330;
     static QuickPanelWithLabelAndText name;
     static QuickPanelWithLabelAndPasswordText key;
+    static User currentUser;
     static JButton loginButton = new JButton("登录");
     static JFrame LAUNCH_WINDOW = new JFrame("西安科技大学·学生管理系统");
 
@@ -91,9 +93,7 @@ public class LaunchWindow {
                 } else {
                     new TemporaryDialog("账户错误！", LAUNCH_WINDOW);
                 }
-
             }
-
         });
 
         var enterToEnter = new KeyAdapter() {
@@ -117,8 +117,16 @@ public class LaunchWindow {
 
     //与默认填充的用户的MD5进行比对
     static boolean verifyUserValid() {
-        return MD5.getMD5(name.getFilteredText()).equals(userNameMD5) &&
-                MD5.getMD5(key.getPassword()).equals(userPasswordMD5);
+        if( MD5.getMD5(name.getFilteredText()).equals(sampleSuperAdminUserName) &&
+                MD5.getMD5(key.getPassword()).equals(sampleSuperAdminUserPassword)){
+            currentUser = new SuperAdminUser();
+            return true;
+        }
+        return false;
+    }
+
+    public static User getCurrentUser() {
+        return currentUser;
     }
 }
 

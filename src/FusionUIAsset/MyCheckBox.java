@@ -5,6 +5,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import DataClassAsset.*;
 import Window.MainWindow;
+import Window.TemporaryDialog;
 
 /**
  * This is a fusion class for checkboxes.

@@ -1,7 +1,7 @@
-package FusionUIAsset;
+package Window;
 
+import FusionUIAsset.LoadingPanel;
 import MyUtil.*;
-import Window.*;
 
 import javax.swing.*;
 import java.awt.*;

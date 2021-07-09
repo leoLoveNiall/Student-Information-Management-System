@@ -81,7 +81,6 @@ public class MotionUtil {
             }
             sleep();
         });
-
     }
 
     public static void displayErrorInfo(JTextField tf, String info) {
@@ -109,7 +108,6 @@ public class MotionUtil {
         window.setLocation(father.getX() + (father.getWidth() - w) / 2,
                 father.getY() + (father.getHeight() - h) / 2);
     }
-
     /**
      * To let a window is located in the center of the screen.
      */

@@ -3,7 +3,6 @@ package Window;
 import DataClassAsset.Grade;
 import FusionUIAsset.CompoundJFrame;
 import FusionUIAsset.QuickPanelWithLabelAndText;
-import FusionUIAsset.TemporaryDialog;
 import MyUtil.MotionUtil;
 import MyUtil.StringUtil;
 

@@ -35,3 +35,4 @@ public class QuickPanelWithLabelAndPasswordText extends DoublePanel {
         text.setText(t);
     }
 }
+

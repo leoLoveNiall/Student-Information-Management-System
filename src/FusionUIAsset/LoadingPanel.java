@@ -28,7 +28,7 @@ public class LoadingPanel extends JPanel {
     int orientation;
     static final int CLOCKWISE = 0;
     static final int ANTICLOCKWISE = 1;
-    int miniCounter = 0;
+    public int miniCounter = 0;
 
     public LoadingPanel() {
         this.delay = 12;

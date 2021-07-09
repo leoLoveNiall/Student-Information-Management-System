@@ -3,6 +3,7 @@ package Window;
 import FusionUIAsset.*;
 import MyUtil.*;
 import DataClassAsset.*;
+import User.User;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
@@ -33,6 +34,7 @@ public class MainWindow {
     public static final int IN_WARD = 0, TO_EDGE = 1;
     public static final int BACKUP_TO_BIN = 0, BACKUP_TO_DESKTOP = 1, BACKUP_TO_CLOUD = 2;
     public static final String tempFolder = System.getProperty("user.dir") + "/temp";
+    private final User currentUser = LaunchWindow.getCurrentUser();
     //关键元素
     public static ArrayList<Student> studentArrayList;
     static JButton confirmCgInfoButton;
@@ -121,12 +123,18 @@ public class MainWindow {
         addStu.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
-                super.mouseReleased(e);
-                hide_MAIN_WINDOW();
-                new AddStudentDialog("新增学生");
-                setDefaultClosingMotion(AddStudentDialog.addDialog,
-                        new CompoundJFrame(AddStudentDialog.addDialog, MAIN_WINDOW, MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT),
-                        IN_WARD, false);
+                if (currentUser.getTag() == User.SUPER_ADMIN_USER) {
+                    super.mouseReleased(e);
+                    hide_MAIN_WINDOW();
+                    new AddStudentDialog("新增学生");
+                    setDefaultClosingMotion(AddStudentDialog.addDialog,
+                            new CompoundJFrame(AddStudentDialog.addDialog, MAIN_WINDOW, MAIN_WINDOW_WIDTH, MAIN_WINDOW_HEIGHT),
+                            IN_WARD, false);
+                } else {
+                    showNoAccess();
+                    //admin only
+                }
+
             }
         });
         findStu = new JMenuItem("切换学生(W)");
@@ -151,7 +159,12 @@ public class MainWindow {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                new AddGradeDialog();
+                if (!(currentUser.getTag() == User.STUDENT_USER)) {
+                    new AddGradeDialog();
+                } else {
+                    showNoAccess();
+                    //teacher and admin
+                }
             }
         });
         deleteStu = new JMenuItem("删除当前学生");
@@ -161,8 +174,14 @@ public class MainWindow {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                studentArrayList.remove(currentStudent);
-                switchRandStu();
+                if (currentUser.getTag() == User.SUPER_ADMIN_USER) {
+                    studentArrayList.remove(currentStudent);
+                    switchRandStu();
+                } else {
+                    showNoAccess();
+                    //admin only
+                }
+
 
             }
         });
@@ -413,35 +432,41 @@ public class MainWindow {
         confirmCgInfoButton = new JButton("确认修改");
         confirmCgInfoButton.addMouseListener(new MouseAdapter() {
             public void mouseReleased(MouseEvent e) {
-                Student toBeAdd = switch (degree[cDegreeCB.getSelectedIndex()]) {
-                    case "本科" -> new Bachelor(c_nameP.getFilteredText(), c_idP.getFilteredText(),
-                            c_genderP.getFilteredText(), c_majorP.getFilteredText(),
-                            c_dormP.getFilteredText());
-                    case "硕士" -> new Master(c_nameP.getFilteredText(), c_idP.getFilteredText(),
-                            c_genderP.getFilteredText(), c_majorP.getFilteredText(),
-                            c_dormP.getFilteredText(), c_tutorP.getFilteredText());
-                    case "博士" -> new Doctor(c_nameP.getFilteredText(), c_idP.getFilteredText(),
-                            c_genderP.getFilteredText(), c_majorP.getFilteredText(),
-                            c_dormP.getFilteredText(), c_tutorP.getFilteredText(), c_labP.getFilteredText());
-                    default -> null;
-                };
-                try {
-                    assert toBeAdd != null;
-                    toBeAdd.gradeArrayList = (ArrayList<Grade>) currentStudent.gradeArrayList.clone();
-                } catch (NullPointerException crash) {
-                    new TemporaryDialog("发生异常！\n" + crash, MAIN_WINDOW);
-                }
-                if (ifIDExists(toBeAdd.getID()) && !toBeAdd.getID().equals(currentStudent.getID())) {
-                    //一个短暂的对话框
-                    new TemporaryDialog("学号已存在！", 100, 300, MAIN_WINDOW);
+                if (currentUser.getTag() == User.SUPER_ADMIN_USER) {
+                    Student toBeAdd = switch (degree[cDegreeCB.getSelectedIndex()]) {
+                        case "本科" -> new Bachelor(c_nameP.getFilteredText(), c_idP.getFilteredText(),
+                                c_genderP.getFilteredText(), c_majorP.getFilteredText(),
+                                c_dormP.getFilteredText());
+                        case "硕士" -> new Master(c_nameP.getFilteredText(), c_idP.getFilteredText(),
+                                c_genderP.getFilteredText(), c_majorP.getFilteredText(),
+                                c_dormP.getFilteredText(), c_tutorP.getFilteredText());
+                        case "博士" -> new Doctor(c_nameP.getFilteredText(), c_idP.getFilteredText(),
+                                c_genderP.getFilteredText(), c_majorP.getFilteredText(),
+                                c_dormP.getFilteredText(), c_tutorP.getFilteredText(), c_labP.getFilteredText());
+                        default -> null;
+                    };
+                    try {
+                        assert toBeAdd != null;
+                        toBeAdd.gradeArrayList = (ArrayList<Grade>) currentStudent.gradeArrayList.clone();
+                    } catch (NullPointerException crash) {
+                        new TemporaryDialog("发生异常！\n" + crash, MAIN_WINDOW);
+                    }
+                    if (ifIDExists(toBeAdd.getID()) && !toBeAdd.getID().equals(currentStudent.getID())) {
+                        //一个短暂的对话框
+                        new TemporaryDialog("学号已存在！", 100, 300, MAIN_WINDOW);
+                    } else {
+                        studentArrayList.remove(currentStudent);
+                        studentArrayList.add(toBeAdd);
+                        currentStudent = studentArrayList.get(studentArrayList.size() - 1);
+                        System.out.println("修改成功");
+                        //重新加载
+                        switchStu(currentStudent);
+                    }
                 } else {
-                    studentArrayList.remove(currentStudent);
-                    studentArrayList.add(toBeAdd);
-                    currentStudent = studentArrayList.get(studentArrayList.size() - 1);
-                    System.out.println("修改成功");
-                    //重新加载
-                    switchStu(currentStudent);
+                    showNoAccess();
+                    //admin only
                 }
+
             }
         });
         cInfoPanel.add(confirmCgInfoButton);
@@ -492,7 +517,7 @@ public class MainWindow {
         //修改成绩面板
         var Grade_cPanel = new JPanel(new BorderLayout());
         topTab.add("修改成绩", Grade_cPanel);
-        gradeChangeSearchP = new StandardSearchPanel("输入课程代码:");
+        gradeChangeSearchP = new StandardSearchPanel("输入课程代码或名称:");
         Grade_cPanel.add(gradeChangeSearchP, BorderLayout.PAGE_START);
         pGradePanelChangeP = new JPanel(new GridLayout(8, 1));
         Grade_cPanel.add(pGradePanelChangeP, BorderLayout.CENTER);
@@ -596,17 +621,22 @@ public class MainWindow {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                if (currentGrade != null) {
-                    currentGrade.setGrade(
-                            Integer.parseInt(courseRegG_cP.getFilteredText()),
-                            Integer.parseInt(courseMidG_cP.getFilteredText()),
-                            Integer.parseInt(courseFinG_cP.getFilteredText()));
-                    switchStu(currentStudent);
-                    gradeChangeSearchP.t.setEnabled(true);
-                    gradeChangeSearchP.b.setEnabled(true);
-                    new Thread(() -> new TemporaryDialog("修改成功", MAIN_WINDOW)).start();
+                if (!(currentUser.getTag() == User.STUDENT_USER)) {
+                    if (currentGrade != null) {
+                        currentGrade.setGrade(
+                                Integer.parseInt(courseRegG_cP.getFilteredText()),
+                                Integer.parseInt(courseMidG_cP.getFilteredText()),
+                                Integer.parseInt(courseFinG_cP.getFilteredText()));
+                        switchStu(currentStudent);
+                        gradeChangeSearchP.t.setEnabled(true);
+                        gradeChangeSearchP.b.setEnabled(true);
+                        new Thread(() -> new TemporaryDialog("修改成功", MAIN_WINDOW)).start();
+                    } else {
+                        new TemporaryDialog("请确定一门科目！", MAIN_WINDOW);
+                    }
                 } else {
-                    new TemporaryDialog("请确定一门科目！", MAIN_WINDOW);
+                    showNoAccess();
+                    //teacher and admin
                 }
             }
         });
@@ -614,20 +644,25 @@ public class MainWindow {
             @Override
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
-                if (currentGrade == null) {
-                    new TemporaryDialog("请确定一门科目！", MAIN_WINDOW);
-                } else {
-                    try {
-                        currentStudent.gradeArrayList.remove(currentGrade);
-                        gradeChangeSearchP.t.setEnabled(true);
-                        gradeChangeSearchP.b.setEnabled(true);
-                        new Thread(() -> new TemporaryDialog("删除成功", MAIN_WINDOW)).start();
-                    } catch (NullPointerException ex) {
-                        new TemporaryDialog("删除失败", MAIN_WINDOW);
-                    } finally {
-                        currentGrade = null;
-                        switchStu(currentStudent);
+                if (!(currentUser.getTag() == User.STUDENT_USER)) {
+                    if (currentGrade == null) {
+                        new TemporaryDialog("请确定一门科目！", MAIN_WINDOW);
+                    } else {
+                        try {
+                            currentStudent.gradeArrayList.remove(currentGrade);
+                            gradeChangeSearchP.t.setEnabled(true);
+                            gradeChangeSearchP.b.setEnabled(true);
+                            new Thread(() -> new TemporaryDialog("删除成功", MAIN_WINDOW)).start();
+                        } catch (NullPointerException ex) {
+                            new TemporaryDialog("删除失败", MAIN_WINDOW);
+                        } finally {
+                            currentGrade = null;
+                            switchStu(currentStudent);
+                        }
                     }
+                } else {
+                    showNoAccess();
+                    //teacher and admin
                 }
             }
         });
@@ -972,5 +1007,9 @@ public class MainWindow {
 
     public static Grade getCurrentGrade() {
         return currentGrade;
+    }
+
+    public static void showNoAccess() {
+        new TemporaryDialog("您没有该权限!", MAIN_WINDOW);
     }
 }

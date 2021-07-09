@@ -5,7 +5,6 @@ import DataClassAsset.Doctor;
 import DataClassAsset.Master;
 import DataClassAsset.Student;
 import FusionUIAsset.QuickPanelWithLabelAndText;
-import FusionUIAsset.TemporaryDialog;
 import MyUtil.*;
 
 import javax.swing.*;
@@ -14,7 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 /**
- * AddGradeDialog allows user add student data voa GUI.
+ * AddStuDialog allows user add student data voa GUI.
  * Extends none.
  * Less static built-in.
  *
